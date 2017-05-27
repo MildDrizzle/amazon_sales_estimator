@@ -7,6 +7,16 @@ let Calculator = (function() {
         $_bsr = $("#bsr"),
         $_unit_sales = $("#estimation");
 
+    let getEstimation = (x1, y1, x2, y2) => {
+        let sqrtX1 = Math.sqrt(x1),
+            sqrtX2 = Math.sqrt(x2 + 1);
+
+        let alpa = (y2 - y1) / (sqrtX1 - sqrtX2);
+        let max = (y2 * sqrtX1 - y1 * sqrtX2) / (sqrtX1 - sqrtX2);
+
+        return {alpa, max};
+    }
+
     let calculate = () => {
         _data = InitialData[_domain];
 
@@ -14,12 +24,17 @@ let Calculator = (function() {
             if (_data[i].max < _bsr) {
                 continue;
             } else {
-                _estimation = _data[i].estSale;
+                if (i == _data.length - 1) {
+                    _estimation = _data[i].estSale;
+                } else {
+                    let coefficients = getEstimation(_data[i].min, _data[i].estSale, _data[i].max, _data[i + 1].estSale);
+                    _estimation = coefficients.max - coefficients.alpa * Math.sqrt(_bsr);
+                }
                 break;
             }
         }
         
-        $_unit_sales.val(_estimation);
+        $_unit_sales.val(parseInt(_estimation));
     }
 
     let init = () => {

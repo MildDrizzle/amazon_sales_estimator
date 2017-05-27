@@ -30,7 +30,7 @@ let estComSalesScale = [
         {min: 80001, max: 100000, estSale: 7 },
         {min: 100001, max: 200000, estSale: 2 },
         {min: 200001, max: 500000, estSale: 1 },
-        {min: 500001, max: -1, estSale: 1}
+        {min: 500001, max: Number.POSITIVE_INFINITY, estSale: 1}
     ];
 
 let estAuSalesScale = [
