@@ -29,12 +29,37 @@
       "default_title": "KindleSpy"
    },
    "content_scripts": [ {
-      "js": [ "libs/jquery-2.1.4.min.js", "browser-api/Chrome.js", "src/common/Helper.js", "src/common/Pager.js", "src/common/BookStorage.js", "src/common/AsyncRunner.js", "src/common/DataStorage.js", "src/parser/BookPageParser.js", "src/parser/SearchPageParser.js", "src/amazon/AmazonComParser.js", "src/amazon/AmazonCoUkParser.js", "src/amazon/AmazonDeParser.js", "src/amazon/AmazonFrParser.js", "src/amazon/AmazonCaParser.js", "src/amazon/AmazonItParser.js", "src/amazon/AmazonEsParser.js", "src/amazon/AmazonInParser.js", "src/amazon/AmazonJpParser.js", "src/amazon/AmazonAuParser.js", "src/page/BestSellersPage.js", "src/page/AuthorPage.js", "src/page/SearchResultsPage.js", "src/page/AuthorSearchResultsPage.js", "src/page/SingleBookPage.js", "src/pageScript.js" ],
+      "js": [ "libs/jquery-2.1.4.min.js",
+        "browser-api/Chrome.js",
+        "src/common/Helper.js",
+        "src/common/Pager.js",
+        "src/common/BookStorage.js", 
+        "src/common/AsyncRunner.js", 
+        "src/common/DataStorage.js", 
+        "src/parser/BookPageParser.js", 
+        "src/parser/SearchPageParser.js", 
+        "src/amazon/AmazonComParser.js", 
+        "src/amazon/AmazonCoUkParser.js", 
+        "src/amazon/AmazonDeParser.js", 
+        "src/amazon/AmazonFrParser.js", 
+        "src/amazon/AmazonCaParser.js", 
+        "src/amazon/AmazonItParser.js", 
+        "src/amazon/AmazonEsParser.js", 
+        "src/amazon/AmazonInParser.js", 
+        "src/amazon/AmazonJpParser.js", 
+        "src/amazon/AmazonAuParser.js", 
+        "src/page/BestSellersPage.js", 
+        "src/page/AuthorPage.js", 
+        "src/page/SearchResultsPage.js", 
+        "src/page/AuthorSearchResultsPage.js", 
+        "src/page/SingleBookPage.js", 
+        "src/pageScript.js"
+      ],
       "matches": [ "\u003Call_urls>" ],
       "run_at": "document_start"
    } ],
    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
-   "description": "KindleSpy analyses Amazon Kindle categories & author pages allowing you to find luctrative niche markets with ease.",
+   "description": "Estimation Sales",
    "icons": {
       "128": "icons/zoom-128.png",
       "16": "icons/zoom-16.png",
@@ -42,7 +67,13 @@
    },
    "manifest_version": 2,
    "name": "EstSales",
-   "permissions": [ "tabs", "storage", "alarms", "http://*/*", "https://*/*" ],
+   "permissions": [
+       "tabs",
+       "storage",
+       "alarms",
+       "http://*/*",
+       "https://*/*"
+    ],
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "4.3.37"
+   "version": "0.0.1"
 }
