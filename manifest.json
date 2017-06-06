@@ -55,7 +55,18 @@
         "src/page/SingleBookPage.js", 
         "src/pageScript.js"
       ],
-      "matches": [ "\u003Call_urls>" ],
+      "matches": [ 
+          "*://*.amazon.com/*",
+          "*://*.amazon.ca/*",
+          "*://*.amazon.com.au/*",
+          "*://*.amazon.co.uk/*",
+          "*://*.amazon.de/*",
+          "*://*.amazon.es/*",
+          "*://*.amazon.fr/*",
+          "*://*.amazon.in/*",
+          "*://*.amazon.it/*",
+          "*://*.amazon.jp/*"
+        ],
       "run_at": "document_start"
    } ],
    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
