@@ -1,0 +1,13 @@
+.wrapper {
+    padding-top: 15px;
+    width: 768px;
+}
+
+table#tbl-items td {
+    vertical-align: middle;}
+    table#tbl-items td img.property-img {
+        width: 72px;}
+    table#tbl-items tbody tr td:nth-child(2) {
+        text-align: center;}
+    table#tbl-items tbody tr td:last-child {
+        text-align: center;}
