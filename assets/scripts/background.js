@@ -1,8 +1,9 @@
 'use strict';
 
-let Background = (function() {
-	let _tabsInfo = {},
-		checkAuth = function(callback) {
+let Background = (() => {
+	let _tabsInfo = {};
+	let _data = {};
+	let checkAuth = (callback) => {
 			let _token = JSON.parse(localStorage._token || "null");
 			
 			if (!_token) {
@@ -20,9 +21,19 @@ let Background = (function() {
 					return _token;
 				}
 			}
-		},
+		};
 
-		init = function() {
+	let getData = () => {
+		return _data;
+	}
+
+	let setData = (params) => {
+		for (let p in params) {
+			_data[p] = params[p];
+		}
+	}
+
+	let init = () => {
 			chrome.runtime.onInstalled.addListener(function (details) {
 				console.log('previousVersion', details.previousVersion);
 				checkAuth();
@@ -114,10 +125,13 @@ let Background = (function() {
 		};
 
 	return {
-		init: init
+		init: init,
+		get: getData,
+		set: setData
 	};
 })();
 
 (function(window, jQuery) {
-	Background.init();
+	window.Background = Background;
+	window.Background.init();
 })(window, $);
