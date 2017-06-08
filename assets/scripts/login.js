@@ -9,9 +9,10 @@ let Login = (function() {
             "login"
         ],
 
-        _curStep = JSON.parse(localStorage._curStep || "null") || "step_1",
+        _curStep = JSON.parse(localStorage._curStep || "null") || "step_1";
+    let _background = chrome.extension.getBackgroundPage().Background;
 
-        goTo = function(step) {
+    let goTo = function(step) {
             _steps.forEach(function(val) {
                 if (step == val) {
                     $("#" + val).show();
@@ -20,26 +21,26 @@ let Login = (function() {
                     $("#" + val).hide();
                 }
             });
-        },
+        };
 
-        setToken = function(token, user) {
+    let setToken = function(token, user) {
             localStorage._token = JSON.stringify(token || "");
             localStorage._user = JSON.stringify(user || {});
-        },
+        };
 
-        controlButtonHandler = function(event) {
+    let controlButtonHandler = function(event) {
             event.preventDefault();
 
             if (event.target.getAttribute('data-target')) {
                 if (event.target.getAttribute('data-action') === "register") {
-                    restAPI.register($("#username").val(), $("#email").val(), $("#password").val(), function(response) {
+                    _background.register($("#username").val(), $("#email").val(), $("#password").val(), function(response) {
                         if (response.status) {
                             setToken(response.token, response.user);
                             goTo(event.target.getAttribute('data-target'));
                         }
                     });
                 } else if (event.target.getAttribute('data-action') === "login") {
-                    restAPI.login($("#login-email").val(), $("#login-password").val(), function(response) {
+                    _background.login($("#login-email").val(), $("#login-password").val(), function(response) {
                         if (response.status) {
                             setToken(response.token, response.user);
                             goTo(event.target.getAttribute('data-target'));
@@ -59,9 +60,9 @@ let Login = (function() {
                     });
                 }
             }
-        },
+        };
 
-        init = function() {
+    let init = function() {
             $("button.step-control-button").click(controlButtonHandler);
             goTo(_curStep);
         };

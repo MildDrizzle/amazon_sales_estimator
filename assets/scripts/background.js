@@ -3,6 +3,8 @@
 let Background = (() => {
 	let _tabsInfo = {};
 	let _data = {};
+	let _restAPI = restAPI;
+
 	let checkAuth = (callback) => {
 			let _token = JSON.parse(localStorage._token || "null");
 			
@@ -127,7 +129,9 @@ let Background = (() => {
 	return {
 		init: init,
 		get: getData,
-		set: setData
+		set: setData,
+		login: _restAPI.login,
+		register: _restAPI.register
 	};
 })();
 
