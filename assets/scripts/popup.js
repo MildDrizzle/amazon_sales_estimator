@@ -9,130 +9,132 @@ let Popup = (function() {
             "login"
         ],
 
-        _itemsTable = null,
+        _itemsTable = null;
 
-        _curStep = JSON.parse(localStorage._curStep || "null") || "step_1",
+    let _curStep = JSON.parse(localStorage._curStep || "null") || "step_1";
 
-        drawTable = function() {
-            let data = JSON.parse(localStorage._histories || "{}"),
-                index = 1;
+    let _background = chrome.extension.getBackgroundPage().Background;
 
-            const getUrl = (domain, num) => {
-                let url = null;
-                switch(domain) {
-                    case "rightmove.co.uk":
-                        url = `http://www.${domain}/property-for-sale/property-${num}.html`;
-                        break;
+    let drawTable = function() {
+        let data = JSON.parse(localStorage._histories || "{}"),
+            index = 1;
 
-                    case "zoopla.co.uk":
-                        url = `http://www.${domain}/for-sale/details/${num}`;
-                        break;
+        const getUrl = (domain, num) => {
+            let url = null;
+            switch(domain) {
+                case "rightmove.co.uk":
+                    url = `http://www.${domain}/property-for-sale/property-${num}.html`;
+                    break;
 
-                    case "onthemarket.com":
-                        url = `https://www.${domain}/details/${num}/`;
-                        break;
+                case "zoopla.co.uk":
+                    url = `http://www.${domain}/for-sale/details/${num}`;
+                    break;
 
-                    default:
-                        break;
-                }
+                case "onthemarket.com":
+                    url = `https://www.${domain}/details/${num}/`;
+                    break;
 
-                return url;
+                default:
+                    break;
             }
 
-            for (let domain in data) {
-                let items = data[domain];
-                for (let itemNum in items) {
-                    let logs = items[itemNum].histories,
-                        img = items[itemNum].img,
-                        ref = items[itemNum].ref,
-                        item = logs[logs.length - 1],
-                        url = getUrl(domain, itemNum);
+            return url;
+        }
 
-                    _itemsTable.row.add([
-                        ref,
-                        `<img class="property-img" src="${img}" />`,
-                        item.title,
-                        item.price,
-                        item['address/subtitle'],
-                        `<span title='${item.agent.address}'>${item.agent.name}</span>`,
-                        `<a class='btn btn-info' target='_blank' href='${url}'>View property</a>`
-                    ]).draw();
+        for (let domain in data) {
+            let items = data[domain];
+            for (let itemNum in items) {
+                let logs = items[itemNum].histories,
+                    img = items[itemNum].img,
+                    ref = items[itemNum].ref,
+                    item = logs[logs.length - 1],
+                    url = getUrl(domain, itemNum);
 
-                    index ++;
-                }
+                _itemsTable.row.add([
+                    ref,
+                    `<img class="property-img" src="${img}" />`,
+                    item.title,
+                    item.price,
+                    item['address/subtitle'],
+                    `<span title='${item.agent.address}'>${item.agent.name}</span>`,
+                    `<a class='btn btn-info' target='_blank' href='${url}'>View property</a>`
+                ]).draw();
+
+                index ++;
             }
-        },
+        }
+    };
 
-        getToken = () => {
-            return JSON.parse(localStorage._token);
-        },
+    let getToken = () => {
+        return JSON.parse(localStorage._token);
+    };
 
-        getUser = () => {
-            return JSON.parse(localStorage._user);
-        },
+    let getUser = () => {
+        return JSON.parse(localStorage._user);
+    };
 
-        goTo = (step) => {
-            _steps.forEach(function(val) {
-                if (step == val) {
-                    $("#" + val).show();
-                    localStorage._curStep = JSON.stringify(step);
-                } else {
-                    $("#" + val).hide();
-                }
-            });
-
-            if (step == "step_4") {
-                drawTable();
-            }
-        },
-
-        setToken = function(token, user) {
-            localStorage._token = JSON.stringify(token || "");
-            localStorage._user = JSON.stringify(user || {});
-        },
-
-        controlButtonHandler = function(event) {
-            event.preventDefault();
-
-            if (event.target.getAttribute('data-target')) {
-                if (event.target.getAttribute('data-action') === "register") {
-                    restAPI.register($("#username").val(), $("#email").val(), $("#password").val(), function(response) {
-                        if (response.status) {
-                            setToken(response.token, response.user);
-                            goTo(event.target.getAttribute('data-target'));
-                        }
-                    });
-                } else if (event.target.getAttribute('data-action') === "login") {
-                    restAPI.login($("#login-email").val(), $("#login-password").val(), function(response) {
-                        if (response.status) {
-                            setToken(response.token, response.user);
-                            goTo(event.target.getAttribute('data-target'));
-                        }
-                    });
-                } else if (event.target.getAttribute('data-action') === "logout") {
-                    localStorage._token = JSON.stringify(null);
-                    goTo(event.target.getAttribute('data-target'));
-                } else {
-                    goTo(event.target.getAttribute('data-target'));
-                }
+    let goTo = (step) => {
+        _steps.forEach(function(val) {
+            if (step == val) {
+                $("#" + val).show();
+                localStorage._curStep = JSON.stringify(step);
             } else {
-                if (event.target.getAttribute('data-action') === "done") {
-                    console.log("Clicking done...");
-                }
+                $("#" + val).hide();
             }
-        },
+        });
 
-        init = function() {
-            $("button.step-control-button").click(controlButtonHandler);
-            _itemsTable = $("table#tbl-items").DataTable({
-                "autoWidth": false
-            });
+        if (step == "step_4") {
+            drawTable();
+        }
+    };
 
-            if (!getToken() || !(getUser() || {}).id) {
-                _curStep = "login";
+    let setToken = function(token, user) {
+        localStorage._token = JSON.stringify(token || "");
+        localStorage._user = JSON.stringify(user || {});
+    };
+
+    let controlButtonHandler = function(event) {
+        event.preventDefault();
+
+        if (event.target.getAttribute('data-target')) {
+            if (event.target.getAttribute('data-action') === "register") {
+                _background.register($("#username").val(), $("#email").val(), $("#password").val(), function(response) {
+                    if (response.status) {
+                        setToken(response.token, response.user);
+                        goTo(event.target.getAttribute('data-target'));
+                    }
+                });
+            } else if (event.target.getAttribute('data-action') === "login") {
+                _background.login($("#login-email").val(), $("#login-password").val(), function(response) {
+                    if (response.status) {
+                        setToken(response.token, response.user);
+                        goTo(event.target.getAttribute('data-target'));
+                    }
+                });
+            } else if (event.target.getAttribute('data-action') === "logout") {
+                localStorage._token = JSON.stringify(null);
+                goTo(event.target.getAttribute('data-target'));
+            } else {
+                goTo(event.target.getAttribute('data-target'));
             }
-            goTo(_curStep);
-        };
+        } else {
+            if (event.target.getAttribute('data-action') === "done") {
+                console.log("Clicking done...");
+            }
+        }
+    };
+
+    let init = function() {
+        $("button.step-control-button").click(controlButtonHandler);
+        _itemsTable = $("table#tbl-items").DataTable({
+            "autoWidth": false
+        });
+
+        if (!getToken() || !(getUser() || {}).id) {
+            _curStep = "login";
+        }
+        goTo(_curStep);
+    };
 
     return {
         init: init
