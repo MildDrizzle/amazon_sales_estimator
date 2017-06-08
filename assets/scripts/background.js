@@ -3,10 +3,33 @@
 let Background = (() => {
 	let _tabsInfo = {};
 	let _data = {
-		domain: "amazon.com",
-		category: "Books"
+		domain: JSON.parse(localStorage._domain || "null") || "amazon.com",
+		category: JSON.parse(localStorage._category || "null") || "Books"
 	};
 	let _restAPI = restAPI;
+
+	let amazonBaseUrl = (domain, category) => {
+		let urls = {
+			"Books": {
+				"amazon.com": `https://www.${domain}/best-sellers-books-Amazon/zgbs/books/`,
+				"others": `https://www.${domain}/gp/bestsellers/books/`
+			},
+			"eBooks": {
+				"amazon.com": `https://www.${domain}/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/`,
+				"others": `https://www.${domain}/gp/bestsellers/digital-text/`
+			}
+		}
+
+		if (domain == "amazon.com") {
+			return (domain && category) ? urls[category][domain] : null;
+		} else {
+			return (domain && category) ? urls[category]["others"] : null;
+		}
+	};
+
+	let getCurUrl = () => {
+		return amazonBaseUrl(_data.domain, _data.category);
+	}
 
 	let checkAuth = (callback) => {
 		let _token = JSON.parse(localStorage._token || "null");
@@ -36,6 +59,7 @@ let Background = (() => {
 		for (let p in params) {
 			_data[p] = params[p];
 		}
+		localStorage._data = JSON.stringify(_data);
 	}
 
 	let init = () => {
@@ -134,7 +158,8 @@ let Background = (() => {
 		get: getData,
 		set: setData,
 		login: _restAPI.login,
-		register: _restAPI.register
+		register: _restAPI.register,
+		url: getCurUrl
 	};
 })();
 

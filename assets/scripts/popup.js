@@ -98,7 +98,9 @@ let Popup = (function() {
         _steps.forEach(function(val) {
             if (step == val) {
                 $("#" + val).show();
-                localStorage._curStep = JSON.stringify(step);
+                _background.set({
+                    _curStep: step
+                });
             } else {
                 $("#" + val).hide();
             }
@@ -110,8 +112,10 @@ let Popup = (function() {
     };
 
     let setToken = function(token, user) {
-        localStorage._token = JSON.stringify(token || "");
-        localStorage._user = JSON.stringify(user || {});
+        _background.set( {
+            _token: token || "",
+            _user: user || {}
+        });
     };
 
     let controlButtonHandler = function(event) {
@@ -146,6 +150,22 @@ let Popup = (function() {
     };
 
     let init = function() {
+        let curUrl = _background.url();
+        chrome.tabs.query({url: curUrl}, (tabs) => {
+            if (tabs.length > 0) {
+                _background.set({
+                    curTab: tabs[0].id
+                });
+            } else {
+                chrome.tabs.create({
+                    url: curUrl
+                }, (tab) => {
+                    _background.set({
+                        curTab: tab.id
+                    });
+                });
+            }
+        })
         $("button.step-control-button").click(controlButtonHandler);
         _itemsTable = $("table#tbl-items").DataTable({
             "autoWidth": false
