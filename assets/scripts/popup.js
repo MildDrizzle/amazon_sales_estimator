@@ -149,23 +149,7 @@ let Popup = (function() {
         }
     };
 
-    let init = function() {
-        let curUrl = _background.url();
-        chrome.tabs.query({url: curUrl}, (tabs) => {
-            if (tabs.length > 0) {
-                _background.set({
-                    curTab: tabs[0].id
-                });
-            } else {
-                chrome.tabs.create({
-                    url: curUrl
-                }, (tab) => {
-                    _background.set({
-                        curTab: tab.id
-                    });
-                });
-            }
-        })
+    let initEvents = () => {
         $("button.step-control-button").click(controlButtonHandler);
         _itemsTable = $("table#tbl-items").DataTable({
             "autoWidth": false
@@ -178,6 +162,37 @@ let Popup = (function() {
         goTo(_curStep);
 
         initializeComponents();
+    };
+
+    let init = function() {
+        let curUrl = _background.url();
+        chrome.tabs.query({url: curUrl}, (tabs) => {
+            if (tabs.length > 0) {
+                _background.set({
+                    curTab: tabs[0].id
+                });
+                
+                initEvents();
+
+                let status = _background.get();
+
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    from: "popup",
+                    action: "get_data",
+                    domain: status.domain,
+                    category: status.category,
+                    page: status.page || 1
+                });
+            } else {
+                chrome.tabs.create({
+                    url: curUrl
+                }, (tab) => {
+                    _background.set({
+                        curTab: tab.id
+                    });
+                });
+            }
+        });
     };
 
     return {

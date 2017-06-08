@@ -4,7 +4,8 @@ let Background = (() => {
 	let _tabsInfo = {};
 	let _data = {
 		domain: JSON.parse(localStorage._domain || "null") || "amazon.com",
-		category: JSON.parse(localStorage._category || "null") || "Books"
+		category: JSON.parse(localStorage._category || "null") || "Books",
+		products: []
 	};
 	let _restAPI = restAPI;
 
@@ -70,73 +71,14 @@ let Background = (() => {
 
 			chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 				switch(request.from) {
-					case "cs":
-						if (request.action === "check_auth") {
-							let hostname = request.hostname,
-								itemNumber = request.number,
-								histories = ((JSON.parse(localStorage._histories || "{}")[hostname] || "{}")[itemNumber] || {}).histories || [],
-								descUrl = request.descUrl;
-
-							chrome.tabs.create({url: descUrl, active: false}, function(tab) {
-								_tabsInfo[tab.id.toString()] = sender.tab.id;
-							});
-							sendResponse({
-								token: JSON.parse(localStorage._token || "null"),
-								histories: histories
-							});
-						} else if (request.action == "expired") {
-							localStorage._token = JSON.stringify(null);
-							localStorage._curStep = JSON.stringify("login");
-						} else if (request.action == "save_histories") {
-							let hostname = request.hostname,
-								itemNumber = request.number,
-								imageUrl = request.imageUrl,
-								histories = request.histories,
-								savedHistories = JSON.parse(localStorage._histories || "{}");
-
-							if (!savedHistories[hostname]) {
-								savedHistories[hostname] = {};
-							}
-
-							savedHistories[hostname][itemNumber] = {
-								img: imageUrl,
-								histories: histories
-							};
-
-							localStorage._histories = JSON.stringify(savedHistories);
-						} else if (request.action == "history") {
-							let item = (JSON.parse(localStorage._histories || "{}")[request.domain] || "{}")[request.number] || [];
-
-							sendResponse({
-								histories: item.histories || [],
-								user: JSON.parse(localStorage._user || "{}")
-							});
-						} else if (request.action == "get_remote_histories") {
-							request.data.token = JSON.parse(localStorage._token || "null");
-							restAPI.getHistory(request.data, (response) => {
-								let savedHistory = JSON.parse(localStorage._histories || "{}");
-								if (!savedHistory[request.data.host]) {
-									savedHistory[request.data.host] = {};
-								}
-								if (response.status) {
-									savedHistory[request.data.host][request.data.number] = {
-										img: request.data.img,
-										ref: response.ref,
-										histories: response.histories
-									};
-									localStorage._histories = JSON.stringify(savedHistory);
-									chrome.tabs.sendMessage(sender.tab.id, {
-										from: "background",
-										action: "feed_histories",
-										img: request.data.img,
-										histories: response.histories,
-										user: JSON.parse(localStorage._user || "{}")
-									});
-								} else if (response.message == "Your token was expired.") {
-									localStorage._token = JSON.stringify(null);
-									localStorage._user = JSON.stringify({});
-								}
-							});
+					case "amazon":
+						if (request.action == "status") {
+							let temp = getData();
+							temp.status = true;
+							sendResponse(temp);
+						} else if (request.action == "product-info") {
+							let info = request.data;
+							_data.products.push(info);
 						}
 						break;
 

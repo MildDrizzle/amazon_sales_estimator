@@ -29,20 +29,27 @@
 	"content_scripts": [
 		{
 			"matches": [
-				"*://www.rightmove.co.uk/*",
-				"*://www.zoopla.co.uk/*",
-				"*://www.onthemarket.com/*"
+				"*://www.amazon.com/*",
+				"*://www.amazon.ca/*",
+				"*://www.amazon.com.au/*",
+				"*://www.amazon.co.uk/*",
+				"*://www.amazon.de/*",
+				"*://www.amazon.es/*",
+				"*://www.amazon.fr/*",
+				"*://www.amazon.in/*",
+				"*://www.amazon.it/*",
+				"*://www.amazon.jp/*"
 			],
 			"css": [
 				"assets/styles/content.css"
 			],
 			"js": [
 				"assets/scripts/jquery.js",
-				"assets/scripts/jquery.canvasjs.min.js",
-				"assets/scripts/common.js",
+				"assets/scripts/bookParser.js",
+				"assets/scripts/eBookParser.js",
 				"assets/scripts/content.js"
 			],
-			"run_at": "document_end",
+			"run_at": "document_start",
 			"all_frames": true
 		}
 	],
