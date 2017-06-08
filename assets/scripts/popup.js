@@ -15,6 +15,9 @@ let Popup = (function() {
 
     let _background = chrome.extension.getBackgroundPage().Background;
 
+    let $_category = $("#category");
+    let $_domain = $("#domain");
+
     let drawTable = function() {
         let data = JSON.parse(localStorage._histories || "{}"),
             index = 1;
@@ -72,6 +75,12 @@ let Popup = (function() {
     let getUser = () => {
         return JSON.parse(localStorage._user);
     };
+
+    let initializeComponents = () => {
+        let settings = _background.get();
+        $_category.val(settings.category || "Books");
+        $_domain.val(settings.domain || "amazon.com");
+    }
 
     let goTo = (step) => {
         _steps.forEach(function(val) {
@@ -134,6 +143,8 @@ let Popup = (function() {
             _curStep = "login";
         }
         goTo(_curStep);
+
+        initializeComponents();
     };
 
     return {

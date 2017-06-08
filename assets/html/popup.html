@@ -87,31 +87,48 @@
 				</div>
 
 				<div class="panel panel-default" style="display:none;" id="step_4">
-					<div class="panel-heading">
-						<h3>Properties you have viewed.</h3>
+					<div class="logo-container">
 					</div>
-					<div class="panel-body">
-						<table id="tbl-items" class="table table-striped table-bordered" cellspacing="0" width="100%">
+					<div class="content">
+						<table id="results" style="width:100%;">
 							<thead>
 								<tr>
-									<th width="30px">#</th>
-									<th width="80px">Image</th>
-									<th width="90px">Title</th>
+									<th>#</th>
+									<th>Title</th>
+									<th>Action</th>
+									<th>Pages</th>
 									<th>Price</th>
-									<th>Address</th>
-									<th>Agent</th>
-									<th width="80px"></th>
+									<th>Revenue</th>
+									<th>BSR</th>
 								</tr>
 							</thead>
 							<tbody>
+
 							</tbody>
 						</table>
 					</div>
-					<div class="panel-footer">
-						<div class="row">
-							<div class="col-xs-4 col-xs-offset-8">
-								<button class="btn btn-danger step-control-button form-control" data-target="login" data-action="logout">Logout</button>
-							</div>
+					<div class="footer">
+						<div class="col-xs-6">
+							<label for="domain">Domain</label>
+							<select name="domain" id="domain">
+								<option value="amazon.com.au">amazon.com.au</option>
+								<option value="amazon.ca">amazon.ca</option>
+								<option value="amazon.com">amazon.com</option>
+								<option value="amazon.co.uk">amazon.co.uk</option>
+								<option value="amazon.de">amazon.de</option>
+								<option value="amazon.es">amazon.es</option>
+								<option value="amazon.fr">amazon.fr</option>
+								<option value="amazon.in">amazon.in</option>
+								<option value="amazon.it">amazon.it</option>
+								<option value="amazon.jp">amazon.jp</option>
+							</select>
+						</div>
+						<div class="col-xs-6">
+							<label for="category">Category</label>
+							<select name="category" id="category">
+								<option value="Books">Books</option>
+								<option value="eBooks">eBooks</option>
+							</select>
 						</div>
 					</div>
 				</div>

@@ -2,7 +2,10 @@
 
 let Background = (() => {
 	let _tabsInfo = {};
-	let _data = {};
+	let _data = {
+		domain: "amazon.com",
+		category: "Books"
+	};
 	let _restAPI = restAPI;
 
 	let checkAuth = (callback) => {
