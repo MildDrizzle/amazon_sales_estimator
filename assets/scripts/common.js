@@ -1,7 +1,7 @@
 'use strict';
 
-// let env = "dev";
-let env = "product";
+let env = "dev";
+// let env = "product";
 
 let restAPI = (function(window, jQuery) {
 	let _mainHost = null,
@@ -12,11 +12,11 @@ let restAPI = (function(window, jQuery) {
 	} else {
 		_mainHost = "http://54.175.85.52/";
 	}
-	_v1ApiBaseUrl = _mainHost + "api/";
+	_v1ApiBaseUrl = _mainHost + "api/v1/";
 
 	let register = function(name, email, password, callback) {
 			$.ajax({
-				url: _v1ApiBaseUrl + "signup",
+				url: _v1ApiBaseUrl + "register",
 				data: JSON.stringify({
 					name: name,
 					email: email,
@@ -36,7 +36,7 @@ let restAPI = (function(window, jQuery) {
 
 		login = function(email, password, callback) {
 			$.ajax({
-				url: _v1ApiBaseUrl + "signin",
+				url: _v1ApiBaseUrl + "login",
 				data: JSON.stringify({
 					email: email,
 					password: password
@@ -72,7 +72,7 @@ let restAPI = (function(window, jQuery) {
 	return {
 		base: _mainHost,
 		apiBaseUrl: _v1ApiBaseUrl,
-		getHistory: getHistory,
+		// getHistory: getHistory,
 		register: register,
 		login: login
 	};
