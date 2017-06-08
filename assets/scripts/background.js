@@ -9,24 +9,24 @@ let Background = (() => {
 	let _restAPI = restAPI;
 
 	let checkAuth = (callback) => {
-			let _token = JSON.parse(localStorage._token || "null");
-			
-			if (!_token) {
-				chrome.tabs.query({url: chrome.extension.getURL("assets/html/login.html")}, function(tabs) {
-					if (tabs.length > 0) {
-						chrome.tabs.update(tabs[0].id, {active: true});
-					} else {
-						chrome.tabs.create({url: chrome.extension.getURL("assets/html/login.html")});
-					}
-				})
-			} else {
-				if (typeof callback === "function") {
-					callback(_token);
+		let _token = JSON.parse(localStorage._token || "null");
+		
+		if (!_token) {
+			chrome.tabs.query({url: chrome.extension.getURL("assets/html/login.html")}, function(tabs) {
+				if (tabs.length > 0) {
+					chrome.tabs.update(tabs[0].id, {active: true});
 				} else {
-					return _token;
+					chrome.tabs.create({url: chrome.extension.getURL("assets/html/login.html")});
 				}
+			})
+		} else {
+			if (typeof callback === "function") {
+				callback(_token);
+			} else {
+				return _token;
 			}
-		};
+		}
+	};
 
 	let getData = () => {
 		return _data;

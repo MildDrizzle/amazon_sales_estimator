@@ -80,6 +80,18 @@ let Popup = (function() {
         let settings = _background.get();
         $_category.val(settings.category || "Books");
         $_domain.val(settings.domain || "amazon.com");
+
+        $_category.change((event) => {
+            _background.set({
+                category: event.target.value
+            });
+        });
+
+        $_domain.change((event) => {
+            _background.set({
+                domain: event.target.value
+            });
+        });
     }
 
     let goTo = (step) => {
@@ -142,6 +154,7 @@ let Popup = (function() {
         if (!getToken() || !(getUser() || {}).id) {
             _curStep = "login";
         }
+        
         goTo(_curStep);
 
         initializeComponents();
