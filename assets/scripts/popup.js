@@ -165,16 +165,16 @@ let Popup = (function() {
     };
 
     let init = function() {
-        let curUrl = _background.url();
-        chrome.tabs.query({url: curUrl}, (tabs) => {
+        // let curUrl = _background.url();
+        let curUrl = `https://www.${JSON.parse(localStorage._data || "{}").domain || "amazon.com"}/`;
+        chrome.tabs.query({url: curUrl + "*"}, (tabs) => {
             if (tabs.length > 0) {
                 _background.set({
                     curTab: tabs[0].id
                 });
-                
-                initEvents();
 
                 let status = _background.get();
+                initEvents();
 
                 chrome.tabs.sendMessage(tabs[0].id, {
                     from: "popup",

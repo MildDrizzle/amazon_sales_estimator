@@ -358,5 +358,5 @@ let InitialData = {
         "amazon.fr": estFrSalesScale,
         "amazon.in": estInSalesScale,
         "amazon.it": estItSalesScale,
-        "amazon.jp": estJpSalesScale
+        "amazon.co.jp": estJpSalesScale
     };

@@ -11,8 +11,9 @@ let ContentScript = (function() {
 	};
 
 	const init = (domain, category) => {
-		_parser = PARSERS[category];
-		_parser.init(domain);
+		// _parser = PARSERS[category];
+		BookParser.init(domain);
+		EBookParser.init(domain);
 	};
 
 	return {

@@ -38,7 +38,7 @@
 				"*://www.amazon.fr/*",
 				"*://www.amazon.in/*",
 				"*://www.amazon.it/*",
-				"*://www.amazon.jp/*"
+				"*://www.amazon.co.jp/*"
 			],
 			"css": [
 				"assets/styles/content.css"
