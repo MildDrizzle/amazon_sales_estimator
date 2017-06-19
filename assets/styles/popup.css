@@ -5,9 +5,15 @@
 
 table#tbl-items td {
     vertical-align: middle;}
+    table td a.track-link {
+        cursor: pointer;}
     table#tbl-items td img.property-img {
         width: 72px;}
     table#tbl-items tbody tr td:nth-child(2) {
         text-align: center;}
     table#tbl-items tbody tr td:last-child {
         text-align: center;}
+
+#track #product-image {
+    width: 100%;
+    height: 327px;}

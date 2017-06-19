@@ -5,7 +5,8 @@ let Popup = (function() {
             "step_1",
             "step_2",
             "step_3",
-            "step_4",
+            "results",
+            "track",
             "login"
         ],
 
@@ -18,55 +19,51 @@ let Popup = (function() {
     let $_category = $("#category");
     let $_domain = $("#domain");
 
+    let _globalTimer = null;
+
     let drawTable = function() {
-        let data = JSON.parse(localStorage._histories || "{}"),
-            index = 1;
+        let products = _background.get().products,
+            index = 1,
+            $tbody = $("table#results tbody");
+        
+        $tbody.children().remove();
 
-        const getUrl = (domain, num) => {
-            let url = null;
-            switch(domain) {
-                case "rightmove.co.uk":
-                    url = `http://www.${domain}/property-for-sale/property-${num}.html`;
-                    break;
+        for (let i = 0; i < products.length; i ++) {
+            let $record = $("<tr/>");
+            
+            $record.append($("<td/>").text(i + 1));
+            $record.append($("<td/>").text(products[i].title));
+            $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
+            $record.append($("<td/>").text(products[i].pages));
+            $record.append($("<td/>").text(products[i].price));
+            $record.append($("<td/>").text("Coming soon."));
+            $record.append($("<td/>").text(products[i].bsr));
 
-                case "zoopla.co.uk":
-                    url = `http://www.${domain}/for-sale/details/${num}`;
-                    break;
-
-                case "onthemarket.com":
-                    url = `https://www.${domain}/details/${num}/`;
-                    break;
-
-                default:
-                    break;
-            }
-
-            return url;
+            $record.appendTo($tbody);
         }
 
-        for (let domain in data) {
-            let items = data[domain];
-            for (let itemNum in items) {
-                let logs = items[itemNum].histories,
-                    img = items[itemNum].img,
-                    ref = items[itemNum].ref,
-                    item = logs[logs.length - 1],
-                    url = getUrl(domain, itemNum);
+        $tbody.on("click", "a.track-link", (event => {
+            let index = event.target.getAttribute("data-index");
+            let product = _background.get().products[index];
 
-                _itemsTable.row.add([
-                    ref,
-                    `<img class="property-img" src="${img}" />`,
-                    item.title,
-                    item.price,
-                    item['address/subtitle'],
-                    `<span title='${item.agent.address}'>${item.agent.name}</span>`,
-                    `<a class='btn btn-info' target='_blank' href='${url}'>View property</a>`
-                ]).draw();
-
-                index ++;
-            }
-        }
+            renderTrackForm(product);
+            goTo("track");
+        }));
     };
+
+    const renderTrackForm = (product) => {
+        let $img = $("#product-image"),
+            $graph = $("#graph-container"),
+            $title = $("#product-title"),
+            $bsr = $("#product-bsr"),
+            $estSales = $("#proudct-estSales"),
+            $asin = $("#product-asin");
+
+        $img[0].src = product.img;
+        $title.text(product.title);
+        $asin.text(product.asin);
+        $bsr.text("#" + product.bsr);
+    }
 
     let getToken = () => {
         return JSON.parse(localStorage._token);
@@ -106,7 +103,7 @@ let Popup = (function() {
             }
         });
 
-        if (step == "step_4") {
+        if (step == "results") {
             drawTable();
         }
     };
@@ -167,32 +164,45 @@ let Popup = (function() {
     let init = function() {
         // let curUrl = _background.url();
         let curUrl = `https://www.${JSON.parse(localStorage._data || "{}").domain || "amazon.com"}/`;
-        chrome.tabs.query({url: curUrl + "*"}, (tabs) => {
-            if (tabs.length > 0) {
-                _background.set({
-                    curTab: tabs[0].id
-                });
+        let products = _background.get().products;
 
-                let status = _background.get();
-                initEvents();
-
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    from: "popup",
-                    action: "get_data",
-                    domain: status.domain,
-                    category: status.category,
-                    page: status.page || 1
-                });
-            } else {
-                chrome.tabs.create({
-                    url: curUrl
-                }, (tab) => {
+        if (products.length == 0) {
+            chrome.tabs.query({url: curUrl + "*"}, (tabs) => {
+                if (tabs.length > 0) {
                     _background.set({
-                        curTab: tab.id
+                        curTab: tabs[0].id
                     });
-                });
-            }
-        });
+
+                    let status = _background.get();
+                    initEvents();
+
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        from: "popup",
+                        action: "get_data",
+                        domain: status.domain,
+                        category: status.category,
+                        page: status.page || 1
+                    });
+                } else {
+                    chrome.tabs.create({
+                        url: curUrl
+                    }, (tab) => {
+                        _background.set({
+                            curTab: tab.id
+                        });
+                    });
+                }
+            });
+        } else {
+            initEvents();
+            console.log(products);
+        }
+
+        if (!_globalTimer) {
+            _globalTimer = window.setInterval(() => {
+                drawTable();
+            }, 1000);
+        }
     };
 
     return {
