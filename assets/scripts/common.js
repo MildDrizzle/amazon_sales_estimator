@@ -29,7 +29,7 @@ let restAPI = (function(window, jQuery) {
 			_settings.data.domain = domain;
 			_settings.data.category = category;
 			$.ajax(_settings).done((response) => {
-				if (typeof callback === "function" && response.status) {
+				if (typeof callback === "function") {
 					callback(response.samples);
 				}
 			});
