@@ -36,7 +36,7 @@ let Popup = (function() {
             $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
             $record.append($("<td/>").text(products[i].pages));
             $record.append($("<td/>").text(products[i].price));
-            $record.append($("<td/>").text("Coming soon."));
+            $record.append($("<td/>").text(products[i].estSale));
             $record.append($("<td/>").text(products[i].bsr));
 
             $record.appendTo($tbody);
@@ -168,8 +168,11 @@ let Popup = (function() {
         }
         
         goTo(_curStep);
-
-        initializeComponents();
+        if (_background.samples().length == 0) {
+            _background.updateSamples(() => {
+                initializeComponents();
+            });
+        }
     };
 
     let updateTable = () => {

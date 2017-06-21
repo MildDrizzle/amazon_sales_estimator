@@ -7,6 +7,7 @@ let Background = (() => {
 		category: JSON.parse(localStorage._data || "{}")._category || "eBooks",
 		products: []
 	};
+
 	let _restAPI = restAPI;
 	let _initialSamples = [];
 
@@ -75,6 +76,40 @@ let Background = (() => {
 		})
 	};
 
+	let getEstimation = (x1, y1, x2, y2) => {
+        let sqrtX1 = Math.sqrt(x1),
+            sqrtX2 = Math.sqrt(x2 + 1);
+
+        let alpa = (y2 - y1) / (sqrtX1 - sqrtX2);
+        let max = (y2 * sqrtX1 - y1 * sqrtX2) / (sqrtX1 - sqrtX2);
+
+        return {alpa, max};
+    }
+
+    let calculate = (bsr) => {
+		if (typeof bsr === "string") {
+			bsr = parseInt(bsr);
+		}
+        let _data = _initialSamples;
+		let _estimation = null;
+
+        for (let i = 0; i < _data.length; i ++) {
+            if (_data[i].max < bsr) {
+                continue;
+            } else {
+                if (i == _data.length - 1) {
+                    _estimation = _data[i].est;
+                } else {
+                    let coefficients = getEstimation(_data[i].min, _data[i].est, _data[i].max, _data[i + 1].est);
+                    _estimation = coefficients.max - coefficients.alpa * Math.sqrt(bsr);
+                }
+                break;
+            }
+        }
+        
+        return _estimation;
+    }
+
 	let init = () => {
 			chrome.runtime.onInstalled.addListener(function (details) {
 				console.log('previousVersion', details.previousVersion);
@@ -90,6 +125,9 @@ let Background = (() => {
 							sendResponse(temp);
 						} else if (request.action == "product-info") {
 							let info = request.data;
+							if (parseInt(info.bsr) != NaN) {
+								info.estSale = parseInt(calculate(info.bsr));
+							}
 							_data.products.push(info);
 						}
 						break;
@@ -119,7 +157,8 @@ let Background = (() => {
 		samples: getSamples,
 		register: _restAPI.register,
 		updateSamples: updateSamples,
-		url: getCurUrl
+		url: getCurUrl,
+		estimation: calculate
 	};
 })();
 
