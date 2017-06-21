@@ -79,15 +79,23 @@ let Popup = (function() {
         $_domain.val(settings.domain || "amazon.com");
 
         $_category.change((event) => {
+            event.preventDefault();
             _background.set({
-                category: event.target.value
+                category: event.target.value,
+                products: []
             });
+
+            updateTable();
         });
 
         $_domain.change((event) => {
+            event.preventDefault();
             _background.set({
-                domain: event.target.value
+                domain: event.target.value,
+                products: []
             });
+
+            updateTable();
         });
     }
 
@@ -161,8 +169,7 @@ let Popup = (function() {
         initializeComponents();
     };
 
-    let init = function() {
-        // let curUrl = _background.url();
+    let updateTable = () => {
         let curUrl = `https://www.${JSON.parse(localStorage._data || "{}").domain || "amazon.com"}/`;
         let products = _background.get().products;
 
@@ -197,6 +204,11 @@ let Popup = (function() {
             initEvents();
             console.log(products);
         }
+    }
+
+    let init = function() {
+        // let curUrl = _background.url();
+        updateTable();
 
         if (!_globalTimer) {
             _globalTimer = window.setInterval(() => {

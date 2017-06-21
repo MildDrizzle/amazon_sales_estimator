@@ -27,7 +27,7 @@ let EBookParser = (() => {
         let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
         let price = priceText.match(/(\d+.)\d+/g)[0];
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
-        let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul") : $page.find("#detail_bullets_id .content ul")).text().trim();
+        let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
         let pages = bulletString.match(/\s(\d+)\spages/g)[0].trim().split(" ")[0];
         let isbn = bulletString.match(/ISBN:\s(\d+)/g)[0].split(" ")[1];
         let asin = $page.find("input[name='ASIN.0']").val();
@@ -81,7 +81,7 @@ let EBookParser = (() => {
 
             if (anchor) {
                 parseDetail(anchor, bsr, reviews);
-                break;
+                // break;
             }
         }
     }
