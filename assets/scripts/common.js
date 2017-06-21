@@ -12,9 +12,30 @@ let restAPI = (function(window, jQuery) {
 	} else {
 		_mainHost = "http://54.175.85.52/";
 	}
-	_v1ApiBaseUrl = _mainHost + "api/v1/";
 
-	let register = function(name, email, password, callback) {
+	_v1ApiBaseUrl = _mainHost + "api/v1/";
+	let _settings = {
+			"url": _v1ApiBaseUrl + "iSamples",
+			"method": "POST",
+			"data": {
+				"token": JSON.parse(localStorage._token || "null"),
+			},
+			"headers": {
+				"accept": "application/json"
+			}
+		};
+
+	const getInitialSamples = (domain, category, callback) => {
+			_settings.data.domain = domain;
+			_settings.data.category = category;
+			$.ajax(_settings).done((response) => {
+				if (typeof callback === "function" && response.status) {
+					callback(response.samples);
+				}
+			});
+		};
+
+	const register = function(name, email, password, callback) {
 			$.ajax({
 				url: _v1ApiBaseUrl + "register",
 				data: JSON.stringify({
@@ -32,9 +53,9 @@ let restAPI = (function(window, jQuery) {
 					}
 				}
 			});
-		},
+		};
 
-		login = function(email, password, callback) {
+	const login = function(email, password, callback) {
 			$.ajax({
 				url: _v1ApiBaseUrl + "login",
 				data: JSON.stringify({
@@ -51,28 +72,12 @@ let restAPI = (function(window, jQuery) {
 					}
 				}
 			});
-		},
-
-		getHistory = function(params, callback) {
-			$.ajax({
-				url: _v1ApiBaseUrl + "properties",
-				data: JSON.stringify(params),
-				method: "post",
-				contentType: "application/json",
-				success: function(res) {
-					if (typeof callback === "function") {
-						callback(res);
-					} else {
-						console.log(res);
-					}
-				}
-			})
 		};
 
 	return {
 		base: _mainHost,
 		apiBaseUrl: _v1ApiBaseUrl,
-		// getHistory: getHistory,
+		samples: getInitialSamples,
 		register: register,
 		login: login
 	};

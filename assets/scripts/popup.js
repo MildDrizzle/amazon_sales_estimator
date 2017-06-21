@@ -85,7 +85,9 @@ let Popup = (function() {
                 products: []
             });
 
-            updateTable();
+            _background.updateSamples(() => {
+                updateTable();
+            });
         });
 
         $_domain.change((event) => {
@@ -94,8 +96,9 @@ let Popup = (function() {
                 domain: event.target.value,
                 products: []
             });
-
-            updateTable();
+            _background.updateSamples(() => {
+                updateTable();
+            });
         });
     }
 

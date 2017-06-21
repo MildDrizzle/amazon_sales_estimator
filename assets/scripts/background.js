@@ -3,11 +3,12 @@
 let Background = (() => {
 	let _tabsInfo = {};
 	let _data = {
-		domain: JSON.parse(localStorage._domain || "null") || "amazon.com",
-		category: JSON.parse(localStorage._category || "null") || "Books",
+		domain: JSON.parse(localStorage._data || "{}")._domain || "amazon.com",
+		category: JSON.parse(localStorage._data || "{}")._category || "eBooks",
 		products: []
 	};
 	let _restAPI = restAPI;
+	let _initialSamples = [];
 
 	let amazonBaseUrl = (domain, category) => {
 		let urls = {
@@ -61,7 +62,18 @@ let Background = (() => {
 			_data[p] = params[p];
 		}
 		localStorage._data = JSON.stringify(_data);
-	}
+	};
+
+	const updateSamples = (callback) => {
+		let domain = JSON.parse(localStorage._data || "{}")._domain || "amazon.com",
+			category = JSON.parse(localStorage._data || "{}")._category || "eBooks";
+		_restAPI.samples(domain, category, (samples) => {
+			_initialSamples = samples;
+			if (typeof callback === "function") {
+				callback(samples);
+			}
+		})
+	};
 
 	let init = () => {
 			chrome.runtime.onInstalled.addListener(function (details) {
@@ -95,12 +107,18 @@ let Background = (() => {
 			});
 		};
 
+	const getSamples = () => {
+		return _initialSamples;
+	}
+
 	return {
 		init: init,
 		get: getData,
 		set: setData,
 		login: _restAPI.login,
+		samples: getSamples,
 		register: _restAPI.register,
+		updateSamples: updateSamples,
 		url: getCurUrl
 	};
 })();

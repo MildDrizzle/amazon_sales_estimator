@@ -2,6 +2,60 @@ let EBookParser = (() => {
     let _urls = [],
         _detail = {};
 
+    let comPatterns = {
+        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    };
+    let caPatterns = {
+        pagesPattern: /Paperback:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let auPatterns = {
+        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let ukPatterns = {
+        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let dePatterns = {
+        pagesPattern: /Ausgabe:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let esPatterns = {
+        pagesPattern: /blanda:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let frPatterns = {
+        pagesPattern: /Broché:\s(\d+)\s/g,
+        // pagesPattern:/Relié:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let inPatterns = {
+        pagesPattern: /Paperback:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let itPatterns = {
+        pagesPattern: /flessibile:\s(\d+)\s/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let jpPatterns = {
+        pagesPattern: /大型本:\s(\d+)/g,
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+    }
+    let regPatterns = {
+        "amazon.com": comPatterns,
+        "amazon.ca": caPatterns,
+        "amazon.com.au": auPatterns,
+        "amazon.co.uk": ukPatterns,
+        "amazon.de": dePatterns,
+        "amazon.es": esPatterns,
+        "amazon.fr": frPatterns,
+        "amazon.in": inPatterns,
+        "amazon.it": itPatterns,
+        "amazon.co.jp": jpPatterns
+    }
+
     const getSearchPageUrl = (domain, page) => {
         let url = null;
         page = parseInt(page);
