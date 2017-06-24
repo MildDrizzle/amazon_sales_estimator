@@ -28,7 +28,6 @@ let BookParser = (() => {
     }
     let frPatterns = {
         pagesPattern: /(Broché|Poche|imprimée)(\s*):\s(\d+)\s/g,
-        // pagesPattern:/Relié:\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let inPatterns = {
@@ -56,6 +55,12 @@ let BookParser = (() => {
         "amazon.co.jp": jpPatterns
     }
 
+    /**
+     * Getting a proper amazon Best Seller Ranking url for Books category for the given page.
+     * @param {string} domain 
+     * @param {number} page 
+     * @return {string}
+     */
     const getSearchPageUrl = (domain, page) => {
         let url = null;
         page = parseInt(page);
@@ -69,6 +74,12 @@ let BookParser = (() => {
         return url;
     };
 
+    /**
+     * Parse an amazon product detail page and extract price, currency, pages, isbn, asin, etc and return them in an object.
+     * @param {string} text 
+     * @param {RegEx} pattern 
+     * @return {object}
+     */
     const extractInfo = (text, pattern) => {
         let $page = $(text);
         let title = $page.find("#productTitle").text().trim();
@@ -97,11 +108,16 @@ let BookParser = (() => {
             pages,
             asin,
             isbn
-            // bsr,
-            // reviews
         };
     };
 
+    /**
+     * Build an object with necessary info like ASIN, ISBN, title, bsr, details, etc and feed to background script to store.
+     * @param {string} url 
+     * @param {number} bsr 
+     * @param {number} reviews 
+     * @param {string} domain 
+     */
     const parseDetail = (url, bsr, reviews, domain) => {
         $.ajax({
             url: url,
@@ -120,6 +136,13 @@ let BookParser = (() => {
         });
     }
 
+    /**
+     * Method to parse response text for the amazon best seller ranking search page. This page will parse the response text and extract 
+     * detail products page urls.
+     * @param {string} text 
+     * @param {string} domain 
+     * @return {void}
+     */
     const parseSearchResult = (text, domain) => {
         let $items = $(text);
         let urls = [];
@@ -140,6 +163,12 @@ let BookParser = (() => {
         }
     }
 
+    /**
+     * Function to start parsing the current amazon books given domain and page.
+     * @param {string} domain 
+     * @param {number} page 
+     * @return {void}
+     */
     const extractProducts = (domain, page) => {
         let searchUrl = getSearchPageUrl(domain, page);
 
@@ -150,9 +179,16 @@ let BookParser = (() => {
                 parseSearchResult(response, domain);
             }
         })
-        console.log(searchUrl);
     };
-    let init = (domain) => {
+
+    /**
+     * Initializer of Book Parsing Took for the given domain. This will be executed by message sent from backgroudn script.
+     * So when user choose "Books" category in Popup.
+     * @param {string} domain 
+     * @return {void}
+     */
+    const init = (domain) => {
+        domain = window.location.host.substr("www.".length);
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             let page = (request.page) ? request.page : 1;
             if (request.category == "Books") {

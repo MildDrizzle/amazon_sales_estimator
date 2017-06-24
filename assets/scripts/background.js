@@ -11,8 +11,14 @@ let Background = (() => {
 	let _restAPI = restAPI;
 	let _initialSamples = [];
 
-	let amazonBaseUrl = (domain, category) => {
-		let urls = {
+	/**
+	 * Getting a proper amazon best seller ranking url according to given domain and category.
+	 * @param {string} domain 
+	 * @param {string} category 
+	 * @return {string}
+	 */
+	const amazonBaseUrl = (domain, category) => {
+		const urls = {
 			"Books": {
 				"amazon.com": `https://www.${domain}/best-sellers-books-Amazon/zgbs/books/`,
 				"others": `https://www.${domain}/gp/bestsellers/books/`
@@ -30,11 +36,19 @@ let Background = (() => {
 		}
 	};
 
-	let getCurUrl = () => {
+	/**
+	 * Getting a correct amazon best seller ranking eBooks/Books url.
+	 * @return {string}
+	 */
+	const getCurUrl = () => {
 		return amazonBaseUrl(_data.domain, _data.category);
 	}
 
-	let checkAuth = (callback) => {
+	/**
+	 * Check if the current user is authenticated. This method should be able to check if the token is expired or not.
+	 * @param {function} callback 
+	 */
+	const checkAuth = (callback) => {
 		let _token = JSON.parse(localStorage._token || "null");
 		
 		if (!_token) {
@@ -54,10 +68,19 @@ let Background = (() => {
 		}
 	};
 
-	let getData = () => {
+	/**
+	 * Getting a current data stored in Background object.
+	 * @return {object}
+	 */
+	const getData = () => {
 		return _data;
 	}
 
+	/**
+	 * Setting the current state.
+	 * @param {object} params 
+	 * @return {void}
+	 */
 	let setData = (params) => {
 		for (let p in params) {
 			_data[p] = params[p];
@@ -65,10 +88,16 @@ let Background = (() => {
 		localStorage._data = JSON.stringify(_data);
 	};
 
+	/**
+	 * Update initial Samples in order to compute coefficients according to given domain and category.
+	 * @param {function} callback 
+	 * @return {void}
+	 */
 	const updateSamples = (callback) => {
 		let domain = JSON.parse(localStorage._data || "{}")._domain || "amazon.com",
 			category = JSON.parse(localStorage._data || "{}")._category || "eBooks";
-		_restAPI.samples(domain, category, (samples) => {
+		_restAPI.samples(domain, category, (response) => {
+			let samples = response.samples;
 			_initialSamples = samples || [];
 			if (typeof callback === "function") {
 				callback(samples);
@@ -79,7 +108,17 @@ let Background = (() => {
 		})
 	};
 
-	let getEstimation = (x1, y1, x2, y2) => {
+	/**
+	 * Getting the proper coefficients to be used in computing estimation of monthly unit sales for a product.
+	 * In this function, the initial samples data pulled from database will be used.
+	 * The result will be {alpha, max}
+	 * @param {number} x1 
+	 * @param {number} y1 
+	 * @param {number} x2 
+	 * @param {number} y2 
+	 * @return {object}
+	 */
+	const getCoefficients = (x1, y1, x2, y2) => {
         let sqrtX1 = Math.sqrt(x1),
             sqrtX2 = Math.sqrt(x2 + 1);
 
@@ -89,7 +128,12 @@ let Background = (() => {
         return {alpa, max};
     }
 
-    let calculate = (bsr) => {
+	/**
+	 * Getting the estimation of monthly unit sales of a product based on coefficients given by method {getCoefficients}.
+	 * @param {number} bsr 
+	 * @return {number}
+	 */
+    const calculate = (bsr) => {
 		if (typeof bsr === "string") {
 			bsr = parseInt(bsr);
 		}
@@ -103,7 +147,7 @@ let Background = (() => {
                 if (i == _data.length - 1) {
                     _estimation = _data[i].est;
                 } else {
-                    let coefficients = getEstimation(_data[i].min, _data[i].est, _data[i].max, _data[i + 1].est);
+                    let coefficients = getCoefficients(_data[i].min, _data[i].est, _data[i].max, _data[i + 1].est);
                     _estimation = coefficients.max - coefficients.alpa * Math.sqrt(bsr);
                 }
                 break;
@@ -148,6 +192,10 @@ let Background = (() => {
 			});
 		};
 
+	/**
+	 * Getting initialize samples data. This will be used for debugging and will be removed in production mode.
+	 * @return {array}
+	 */
 	const getSamples = () => {
 		return _initialSamples;
 	}

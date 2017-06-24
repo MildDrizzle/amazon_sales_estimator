@@ -51,6 +51,11 @@ let Popup = (function() {
         }));
     };
 
+    /**
+     * Render Tracking product view with specific/selected product. In this view, user will be able to watch/unwatch a product or see chart of the product details.
+     * @param {object} product 
+     * @return {void}
+     */
     const renderTrackForm = (product) => {
         let $img = $("#product-image"),
             $graph = $("#graph-container"),
@@ -65,15 +70,16 @@ let Popup = (function() {
         $bsr.text("#" + product.bsr);
     }
 
-    let getToken = () => {
+
+    const getToken = () => {
         return JSON.parse(localStorage._token);
     };
 
-    let getUser = () => {
+    const getUser = () => {
         return JSON.parse(localStorage._user);
     };
 
-    let initializeComponents = () => {
+    const initializeComponents = () => {
         let settings = _background.get();
         $_category.val(settings.category || "Books");
         $_domain.val(settings.domain || "amazon.com");
@@ -102,7 +108,11 @@ let Popup = (function() {
         });
     }
 
-    let goTo = (step) => {
+    /**
+     * Switch to the specific step such as register, login, results and tracking.
+     * @param {string} step 
+     */
+    const goTo = (step) => {
         _steps.forEach(function(val) {
             if (step == val) {
                 $("#" + val).show();
@@ -119,16 +129,21 @@ let Popup = (function() {
         }
     };
 
-    let setToken = function(token, user) {
-        // _background.set( {
-        //     _token: token || "",
-        //     _user: user || {}
-        // });
+    /**
+     * Set token / user via Background methods into local storage.
+     * @param {string} token 
+     * @param {object} user 
+     */
+    const setToken = function(token, user) {
         localStorage._token = JSON.stringify(token);
         localStorage._user = JSON.stringify(user);
     };
 
-    let controlButtonHandler = function(event) {
+    /**
+     * Event handler for control buttons placed on popup view. With the buttons, user should be able to switch to other views.
+     * @param {object} event 
+     */
+    const controlButtonHandler = function(event) {
         event.preventDefault();
 
         if (event.target.getAttribute('data-target')) {
@@ -154,12 +169,11 @@ let Popup = (function() {
             }
         } else {
             if (event.target.getAttribute('data-action') === "done") {
-                console.log("Clicking done...");
             }
         }
     };
 
-    let initEvents = () => {
+    const initEvents = () => {
         $("button.step-control-button").click(controlButtonHandler);
         _itemsTable = $("table#tbl-items").DataTable({
             "autoWidth": false
@@ -179,7 +193,7 @@ let Popup = (function() {
         }
     };
 
-    let updateTable = () => {
+    const updateTable = () => {
         let curUrl = `https://www.${JSON.parse(localStorage._data || "{}").domain || "amazon.com"}/`;
         let products = _background.get().products;
 
@@ -212,12 +226,13 @@ let Popup = (function() {
             });
         } else {
             initEvents();
-            console.log(products);
         }
     }
 
-    let init = function() {
-        // let curUrl = _background.url();
+    /**
+     * Initializer of this object. In this method, periodic bot to refresh table will be initialized.
+     */
+    const init = function() {
         updateTable();
 
         if (!_globalTimer) {

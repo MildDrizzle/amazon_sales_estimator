@@ -56,6 +56,11 @@ let EBookParser = (() => {
         "amazon.co.jp": jpPatterns
     }
 
+    /**
+     * Getting the proper amazon BSR based eBooks search page with given domain and page number.
+     * @param {string} domain 
+     * @param {number} page 
+     */
     const getSearchPageUrl = (domain, page) => {
         let url = null;
         page = parseInt(page);
@@ -69,6 +74,12 @@ let EBookParser = (() => {
         return url;
     };
 
+    /**
+     * Function to parse necessary product detail info from amazon product detail page.
+     * @param {string} text 
+     * @param {string} pattern 
+     * @return {object}
+     */
     const extractInfo = (text, pattern) => {
         let $page = $(text);
         let title = $page.find("#ebooksProductTitle").text().trim();
@@ -79,7 +90,6 @@ let EBookParser = (() => {
             break;
         }
         let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
-        // if (priceText == "")
         let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
@@ -105,6 +115,14 @@ let EBookParser = (() => {
         };
     };
 
+    /**
+     * Function to send ajax request to amazon product detail page and send request to parse product detail and seed data to Background Script.
+     * @param {string} url 
+     * @param {number} bsr 
+     * @param {number} reviews 
+     * @param {string} domain 
+     * @return {void}
+     */
     const parseDetail = (url, bsr, reviews, domain) => {
         $.ajax({
             url: url,
@@ -123,6 +141,12 @@ let EBookParser = (() => {
         });
     }
 
+    /**
+     * Parse the search result page and get all of product result pages from the url given by trigger.
+     * @param {string} text 
+     * @param {string} domain 
+     * @return {void}
+     */
     const parseSearchResult = (text, domain) => {
         let $items = $(text);
         let urls = [];
@@ -143,6 +167,12 @@ let EBookParser = (() => {
         }
     }
 
+    /**
+     * Trigger to scraping all of products from BSR based amazon search result pages.
+     * @param {string} domain 
+     * @param {number} page 
+     * @return {void}
+     */
     const extractProducts = (domain, page) => {
         let searchUrl = getSearchPageUrl(domain, page);
 
@@ -152,10 +182,15 @@ let EBookParser = (() => {
             success: (response) => {
                 parseSearchResult(response, domain);
             }
-        })
-        console.log(searchUrl);
+        });
     };
-    let init = (domain) => {
+
+    /**
+     * Initializer of eBook page scraping TOOL.
+     * @param {string} domain 
+     * @return {void}
+     */
+    const init = (domain) => {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             let page = (request.page) ? request.page : 1;
             if (request.category === "eBooks") {
