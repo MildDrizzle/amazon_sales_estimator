@@ -71,6 +71,20 @@ let Popup = (function() {
         $title.text(product.title);
         $asin.text(product.asin);
         $bsr.text("#" + product.bsr);
+
+        let trackingProducts = _background.items().filter(item => item.product.asin == product.asin);
+        let trackButton = document.getElementById("product-track");
+        if (trackingProducts.length > 0) {
+            trackButton.setAttribute("data-id", trackingProducts[0].product.id);
+            trackButton.setAttribute("data-action", "untrack");
+            trackButton.textContent = "Untrack this product";
+            trackButton.className = "btn btn-danger pull-right";
+        } else {
+            trackButton.setAttribute("data-id", null);
+            trackButton.setAttribute("data-action", "track");
+            trackButton.textContent = "Track this product";
+            trackButton.className = "btn btn-primary pull-right";
+        }
     }
 
 
