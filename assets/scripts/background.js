@@ -221,11 +221,12 @@ let Background = (() => {
 			if (typeof success === "function") {
 				success(response);
 				//	Getting tracking products once 
-				_restAPI.trackings(_data.domain, _data.category, (response) => {
-					if (response.status) {
-						_trackedProducts = response.items;
-					}
-				});
+				updateSamples();
+				// _restAPI.trackings(_data.domain, _data.category, (response) => {
+				// 	if (response.status) {
+				// 		_trackedProducts = response.items;
+				// 	}
+				// });
 			}
 		}, failure)
 	};
@@ -242,14 +243,30 @@ let Background = (() => {
 			if (response.status) {
 				if (typeof success === "function") {
 					success(response);
-					let found = _trackedProducts.filter(item => item.product.id == response.product.id);
+					let found = _trackedProducts.filter(item => item.product.id == response.item.product.id);
 
 					if (found.length == 0) {
-						_trackedProducts.push({
-							product: response.product,
-							histories: response.histories
-						});
+						_trackedProducts.push(response.item);
 					}
+				}
+			}
+		})
+	}
+
+	/**
+	 * Background script function to stop watching a product.
+	 * @param {number} id 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 * @return {void}
+	 */
+	const untrackProduct = (id, success, failure) => {
+		_restAPI.untrack(id, (response) => {
+			if (response.status) {
+				_trackedProducts = _trackedProducts.filter(item => item.product.id != id);
+
+				if (typeof success === "function") {
+					success(response);
 				}
 			}
 		})
@@ -274,7 +291,8 @@ let Background = (() => {
 		url: getCurUrl,
 		estimation: calculate,
 		items: getTrackingProducts,
-		track: trackProduct
+		track: trackProduct,
+		untrack: untrackProduct
 	};
 })();
 

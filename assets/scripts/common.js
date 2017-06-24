@@ -88,6 +88,22 @@ let restAPI = (function(window, jQuery) {
 	}
 
 	/**
+	 * Unwatch a product/Stop tracking a product.
+	 * @param {number} id 
+	 * @param {funtion} success 
+	 * @param {function} failure 
+	 * @return {void}
+	 */
+	const untrackProduct = (id, success, failure) => {
+		let params = {
+			token: JSON.parse(localStorage._token),
+			id: id
+		};
+
+		sendRequest(_v1ApiBaseUrl + "items/del", params, success, failure);
+	}
+
+	/**
 	 * Getting all of products being tracked by authenticated user for given domain and category.
 	 * @param {string} domain 
 	 * @param {string} category 
@@ -143,6 +159,7 @@ let restAPI = (function(window, jQuery) {
 		apiBaseUrl: _v1ApiBaseUrl,
 		trackings: getTrackingProducts,
 		track: trackProduct,
+		untrack: untrackProduct,
 		samples: getInitialSamples,
 		register: register,
 		login: login

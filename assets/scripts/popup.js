@@ -188,11 +188,20 @@ let Popup = (function() {
                     _background.track(selectedProduct, (response) => {
                         console.log(response);
                         event.target.setAttribute("data-action", "untrack");
+                        event.target.setAttribute("data-id", response.product.id);
                         event.target.textContent = "Untrack this product";
+                        event.target.className = "btn btn-danger pull-right";
                     })
                     break;
 
                 case "untrack":
+                    let productID = event.target.getAttribute("data-id");
+                    _background.untrack(productID, (response) => {
+                        event.target.setAttribute("data-action", "track");
+                        event.target.setAttribute("data-id", null);
+                        event.target.textContent = "Track this product";
+                        event.target.className = "btn btn-primary pull-right";
+                    })
                     break;
 
                 default:
