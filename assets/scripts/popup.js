@@ -120,10 +120,12 @@ let Popup = (function() {
     };
 
     let setToken = function(token, user) {
-        _background.set( {
-            _token: token || "",
-            _user: user || {}
-        });
+        // _background.set( {
+        //     _token: token || "",
+        //     _user: user || {}
+        // });
+        localStorage._token = JSON.stringify(token);
+        localStorage._user = JSON.stringify(user);
     };
 
     let controlButtonHandler = function(event) {
@@ -172,6 +174,8 @@ let Popup = (function() {
             _background.updateSamples(() => {
                 initializeComponents();
             });
+        } else {
+            initializeComponents();
         }
     };
 

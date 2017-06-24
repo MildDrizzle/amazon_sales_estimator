@@ -25,12 +25,26 @@ let restAPI = (function(window, jQuery) {
 			}
 		};
 
-	const getInitialSamples = (domain, category, callback) => {
+	/**
+	 * 
+	 * @param {string} domain 
+	 * @param {string} category 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 */
+	const getInitialSamples = (domain, category, success, failure) => {
 			_settings.data.domain = domain;
 			_settings.data.category = category;
+			_settings.data.token = JSON.parse(localStorage._token);
 			$.ajax(_settings).done((response) => {
-				if (typeof callback === "function") {
-					callback(response.samples);
+				if (response.status) {
+					if (typeof success === "function") {
+						success(response.samples);
+					}
+				} else {
+					if (typeof failure === "function") {
+						failure();
+					}
 				}
 			});
 		};

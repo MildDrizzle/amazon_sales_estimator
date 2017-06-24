@@ -69,10 +69,13 @@ let Background = (() => {
 		let domain = JSON.parse(localStorage._data || "{}")._domain || "amazon.com",
 			category = JSON.parse(localStorage._data || "{}")._category || "eBooks";
 		_restAPI.samples(domain, category, (samples) => {
-			_initialSamples = samples;
+			_initialSamples = samples || [];
 			if (typeof callback === "function") {
 				callback(samples);
 			}
+		}, () => {
+			localStorage._token = JSON.stringify(null);
+			localStorage._user = JSON.stringify({});
 		})
 	};
 
