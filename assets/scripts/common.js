@@ -9,7 +9,11 @@ if (env == "dev") {
 	_mainHost = "http://54.175.85.52/";
 }
 
+/**
+ * Object to manage API calls to Backend APIs.
+ */
 let restAPI = (function(window, jQuery) {
+
 	let _v1ApiBaseUrl = _mainHost + "api/v1/";
 	let _settings = {
 		"url": _v1ApiBaseUrl + "iSamples",
