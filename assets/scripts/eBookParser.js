@@ -3,19 +3,19 @@ let EBookParser = (() => {
         _detail = {};
 
     let comPatterns = {
-        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength):\s(\d+)\spages/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     };
     let caPatterns = {
-        pagesPattern: /Paperback:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength):\s(\d+)\spages/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let auPatterns = {
-        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength):\s(\d+)\spages/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let ukPatterns = {
-        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
@@ -23,11 +23,11 @@ let EBookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let esPatterns = {
-        pagesPattern: /blanda:\s(\d+)\s/g,
+        pagesPattern: /(blanda|impresión):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let frPatterns = {
-        pagesPattern: /Broché:\s(\d+)\s/g,
+        pagesPattern: /(Broché|Poche|imprimée)(\s*):\s(\d+)\s/g,
         // pagesPattern:/Relié:\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
@@ -36,7 +36,7 @@ let EBookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let itPatterns = {
-        pagesPattern: /flessibile:\s(\d+)\s/g,
+        pagesPattern: /(flessibile|stampa)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let jpPatterns = {
@@ -69,7 +69,7 @@ let EBookParser = (() => {
         return url;
     };
 
-    const extractInfo = (text) => {
+    const extractInfo = (text, pattern) => {
         let $page = $(text);
         let title = $page.find("#ebooksProductTitle").text().trim();
         let tmpImgObj = JSON.parse($page.find("#ebooks-img-canvas img").eq(0).attr("data-a-dynamic-image"));
@@ -83,8 +83,10 @@ let EBookParser = (() => {
         let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
-        let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
-        let isbn = (bulletString.match(/ISBN:\s(\d+)/g) || ["a none"])[0].split(" ")[1];
+        // let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
+        let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
+        // let isbn = (bulletString.match(/ISBN:\s(\d+)/g) || ["a none"])[0].split(" ")[1];
+        let isbn = "";
         let asin = $page.find("input[name='ASIN.0']").val();
         // let bsr = $page.find("#SalesRank").text().trim().match(/(\d+)\s/g)[0].match(/\d+/g)[0];
         // let reviewText = $page.find("#acrCustomerReviewText").text();
@@ -103,12 +105,12 @@ let EBookParser = (() => {
         };
     };
 
-    const parseDetail = (url, bsr, reviews) => {
+    const parseDetail = (url, bsr, reviews, domain) => {
         $.ajax({
             url: url,
             method: "GET",
             success: (response) => {
-                let info = extractInfo(response);
+                let info = extractInfo(response, regPatterns[domain]);
                 info.url = url;
                 info.bsr = bsr;
                 info.reviews = reviews;
@@ -121,7 +123,7 @@ let EBookParser = (() => {
         });
     }
 
-    const parseSearchResult = (text) => {
+    const parseSearchResult = (text, domain) => {
         let $items = $(text);
         let urls = [];
 
@@ -135,8 +137,8 @@ let EBookParser = (() => {
             urls.push(anchor);
 
             if (anchor) {
-                parseDetail(anchor, bsr, reviews);
-                // break;
+                parseDetail(anchor, bsr, reviews, domain);
+                break;
             }
         }
     }
@@ -148,7 +150,7 @@ let EBookParser = (() => {
             url: searchUrl,
             method: "GET",
             success: (response) => {
-                parseSearchResult(response);
+                parseSearchResult(response, domain);
             }
         })
         console.log(searchUrl);

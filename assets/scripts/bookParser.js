@@ -3,19 +3,19 @@ let BookParser = (() => {
         _detail = {};
 
     let comPatterns = {
-        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     };
     let caPatterns = {
-        pagesPattern: /Paperback:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let auPatterns = {
-        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let ukPatterns = {
-        pagesPattern: /Hardcover:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
@@ -23,11 +23,11 @@ let BookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let esPatterns = {
-        pagesPattern: /blanda:\s(\d+)\s/g,
+        pagesPattern: /(blanda|impresión):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let frPatterns = {
-        pagesPattern: /Broché:\s(\d+)\s/g,
+        pagesPattern: /(Broché|Poche|imprimée)(\s*):\s(\d+)\s/g,
         // pagesPattern:/Relié:\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
@@ -36,7 +36,7 @@ let BookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let itPatterns = {
-        pagesPattern: /flessibile:\s(\d+)\s/g,
+        pagesPattern: /(flessibile|stampa)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let jpPatterns = {
