@@ -1,19 +1,16 @@
 'use strict';
-
+let _mainHost = null;
 let env = "dev";
 // let env = "product";
 
+if (env == "dev") {
+	_mainHost = "http://localhost:8000/";
+} else {
+	_mainHost = "http://54.175.85.52/";
+}
+
 let restAPI = (function(window, jQuery) {
-	let _mainHost = null,
-		_v1ApiBaseUrl = null;
-
-	if (env == "dev") {
-		_mainHost = "http://localhost:8000/";
-	} else {
-		_mainHost = "http://54.175.85.52/";
-	}
-
-	_v1ApiBaseUrl = _mainHost + "api/v1/";
+	let _v1ApiBaseUrl = _mainHost + "api/v1/";
 	let _settings = {
 		"url": _v1ApiBaseUrl + "iSamples",
 		"method": "POST",
