@@ -40,6 +40,10 @@ let restAPI = (function(window, jQuery) {
 					success(response);
 				}
 			} else {
+				if (response.message = "Your token was expired.") {
+					localStorage._token = JSON.stringify(null);
+					localStorage._user = JSON.stringify({});
+				}
 				if (typeof failure === "function") {
 					failure(response);
 				}
@@ -65,6 +69,25 @@ let restAPI = (function(window, jQuery) {
 	};
 
 	/**
+	 * Track a product.
+	 * @param {string} domain 
+	 * @param {string} category 
+	 * @param {object} product 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 * @return {void}
+	 */
+	const trackProduct = (domain, category, product, success, failure) => {
+		product.domain = domain;
+		product.category = category;
+		product.token = JSON.parse(localStorage._token);
+		product.est = product.estSale;
+		product.monthly_rev = parseInt(parseFloat(product.price) * product.est);
+
+		sendRequest(_v1ApiBaseUrl + "items/new", product, success, failure);
+	}
+
+	/**
 	 * Getting all of products being tracked by authenticated user for given domain and category.
 	 * @param {string} domain 
 	 * @param {string} category 
@@ -72,6 +95,7 @@ let restAPI = (function(window, jQuery) {
 	 * @param {function} failure 
 	 */
 	const getTrackingProducts = (domain, category, success, failure) => {
+		// console.log(localStorage);
 		let params = {
 			domain: domain,
 			category: category,
@@ -118,6 +142,7 @@ let restAPI = (function(window, jQuery) {
 		base: _mainHost,
 		apiBaseUrl: _v1ApiBaseUrl,
 		trackings: getTrackingProducts,
+		track: trackProduct,
 		samples: getInitialSamples,
 		register: register,
 		login: login

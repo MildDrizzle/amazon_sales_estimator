@@ -8,6 +8,8 @@ let Background = (() => {
 		products: []
 	};
 
+	let _trackedProducts = [];
+
 	let _restAPI = restAPI;
 	let _initialSamples = [];
 
@@ -102,6 +104,12 @@ let Background = (() => {
 			if (typeof callback === "function") {
 				callback(samples);
 			}
+
+			_restAPI.trackings(_data.domain, _data.category, (response) => {
+				if (response.status) {
+					_trackedProducts = response.items;
+				}
+			});
 		}, () => {
 			localStorage._token = JSON.stringify(null);
 			localStorage._user = JSON.stringify({});
@@ -200,16 +208,73 @@ let Background = (() => {
 		return _initialSamples;
 	}
 
+	/**
+	 * Login handler in background script. Once authenticated, the extension pulls product being tracked by the author.
+	 * @param {string} email 
+	 * @param {string} password 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 * @return {void}
+	 */
+	const login = (email, password, success, failure) => {
+		_restAPI.login(email, password, (response) => {
+			if (typeof success === "function") {
+				success(response);
+				//	Getting tracking products once 
+				_restAPI.trackings(_data.domain, _data.category, (response) => {
+					if (response.status) {
+						_trackedProducts = response.items;
+					}
+				});
+			}
+		}, failure)
+	};
+
+	/**
+	 * Functoin to track a product by using REST API to track. Every api call should be done in background side.
+	 * @param {object} product 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 * @return {void}
+	 */
+	const trackProduct = (product, success, failure) => {
+		_restAPI.track(_data.domain, _data.category, product, (response) => {
+			if (response.status) {
+				if (typeof success === "function") {
+					success(response);
+					let found = _trackedProducts.filter(item => item.product.id == response.product.id);
+
+					if (found.length == 0) {
+						_trackedProducts.push({
+							product: response.product,
+							histories: response.histories
+						});
+					}
+				}
+			}
+		})
+	}
+
+	/**
+	 * Getting products being tracked by author for the given domain and category.
+	 * @return {array}
+	 */
+	const getTrackingProducts = () => {
+		return _trackedProducts;
+	}
+
 	return {
 		init: init,
 		get: getData,
 		set: setData,
-		login: _restAPI.login,
+		login: login,
 		samples: getSamples,
 		register: _restAPI.register,
 		updateSamples: updateSamples,
 		url: getCurUrl,
-		estimation: calculate
+		estimation: calculate,
+		items: getTrackingProducts,
+		track: trackProduct
 	};
 })();
 
