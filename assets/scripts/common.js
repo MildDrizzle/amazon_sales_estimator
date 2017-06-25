@@ -1,12 +1,12 @@
 'use strict';
 let _mainHost = null;
-let env = "dev";
-// let env = "product";
+// let env = "dev";
+let env = "product";
 
 if (env == "dev") {
 	_mainHost = "http://localhost:8000/";
 } else {
-	_mainHost = "http://54.175.85.52/";
+	_mainHost = "http://54.210.141.168/";
 }
 
 /**
@@ -88,6 +88,22 @@ let restAPI = (function(window, jQuery) {
 	}
 
 	/**
+	 * Getting Histories for a product being tracked.
+	 * @param {number} id 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 * @return {void}
+	 */
+	const getHistories = (id, success, failure) => {
+		let params = {
+			token: JSON.parse(localStorage._token),
+			id: id
+		};
+
+		sendRequest(_v1ApiBaseUrl + "items/get", params, success, failure);
+	};
+
+	/**
 	 * Unwatch a product/Stop tracking a product.
 	 * @param {number} id 
 	 * @param {funtion} success 
@@ -160,6 +176,7 @@ let restAPI = (function(window, jQuery) {
 		trackings: getTrackingProducts,
 		track: trackProduct,
 		untrack: untrackProduct,
+		histories: getHistories,
 		samples: getInitialSamples,
 		register: register,
 		login: login

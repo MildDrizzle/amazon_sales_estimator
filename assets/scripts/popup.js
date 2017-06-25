@@ -25,13 +25,19 @@ let Popup = (function() {
 
     let drawTable = function() {
         let products = _background.get().products,
+            trackings = _background.items(),
             index = 1,
             $tbody = $("table#results tbody");
         
         $tbody.children().remove();
 
         for (let i = 0; i < products.length; i ++) {
+            let found = trackings.filter(item => item.product.asin == products[i].asin);
             let $record = $("<tr/>");
+
+            if (found.length > 0) {
+                $record.addClass("tracking").attr({"title": "Watching"});
+            }
             
             $record.append($("<td/>").text(i + 1));
             $record.append($("<td/>").text(products[i].title));
@@ -43,16 +49,46 @@ let Popup = (function() {
 
             $record.appendTo($tbody);
         }
-
-        $tbody.on("click", "a.track-link", (event => {
-            let index = event.target.getAttribute("data-index");
-            let product = _background.get().products[index];
-
-            selectedProduct = product;
-            renderTrackForm(product);
-            goTo("track");
-        }));
     };
+
+    const drawChart = (productID) => {
+        _background.histories(productID, (response) => {
+            let data = [];
+            let xAxisData = [];
+            let graphContainer = document.getElementById("graph-container");
+
+            for (let i = 0; i < response.histories.length; i ++) {
+                data.push([response.histories[i].updated_at, response.histories[i].monthly_rev]);
+                xAxisData.push(response.histories[i].updated_at);
+            }
+
+            Highcharts.chart('graph-container', {
+                chart: {
+                    zoomType: 'x'
+                },
+                xAxis: {
+                    type: 'datetime',
+                    categories: xAxisData
+                },
+                title: {
+                    text: "Monthly Revenue Chart"
+                },
+                yAxis: {
+                    title: "Monthly Revenue"
+                },
+                series: [{
+                    name: "Revenue",
+                    data: data
+                }],
+                tooltip: {
+                    valuePrefix: "$"
+                }
+
+            });
+        }, () => {
+            //  To do in failure.
+        })
+    }
 
     /**
      * Render Tracking product view with specific/selected product. In this view, user will be able to watch/unwatch a product or see chart of the product details.
@@ -64,13 +100,21 @@ let Popup = (function() {
             $graph = $("#graph-container"),
             $title = $("#product-title"),
             $bsr = $("#product-bsr"),
-            $estSales = $("#proudct-estSales"),
+            $estSales = $("#product-estSales"),
+            $isbn = $("#product-isbn"),
+            $reviews = $("#product-reviews"),
+            $revenue = $("#product-monthly-revenue"),
             $asin = $("#product-asin");
 
         $img[0].src = product.img;
         $title.text(product.title);
         $asin.text(product.asin);
+        $reviews.text(product.reviews);
         $bsr.text("#" + product.bsr);
+        $isbn.text(product.isbn);
+        $revenue.text(product.currency + parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1))));
+        
+        $estSales.text(product.estSale);
 
         let trackingProducts = _background.items().filter(item => item.product.asin == product.asin);
         let trackButton = document.getElementById("product-track");
@@ -79,11 +123,14 @@ let Popup = (function() {
             trackButton.setAttribute("data-action", "untrack");
             trackButton.textContent = "Untrack this product";
             trackButton.className = "btn btn-danger pull-right";
+
+            drawChart(trackingProducts[0].product.id);
         } else {
             trackButton.setAttribute("data-id", null);
             trackButton.setAttribute("data-action", "track");
             trackButton.textContent = "Track this product";
             trackButton.className = "btn btn-primary pull-right";
+            $("#graph-container").children().remove();
         }
     }
 
@@ -245,6 +292,10 @@ let Popup = (function() {
     const updateTable = () => {
         let curUrl = `https://www.${JSON.parse(localStorage._data || "{}").domain || "amazon.com"}/`;
         let products = _background.get().products;
+        let trackingProducts = _background.items();
+        let $trackingCount = $("#tracking-count");
+
+        $trackingCount.text(trackingProducts.length);
 
         if (products.length == 0) {
             chrome.tabs.query({url: curUrl + "*"}, (tabs) => {
@@ -289,6 +340,15 @@ let Popup = (function() {
                 drawTable();
             }, 1000);
         }
+
+        $("table#results").on("click", "a.track-link", (event => {
+            let index = event.target.getAttribute("data-index");
+            let product = _background.get().products[index];
+
+            selectedProduct = product;
+            renderTrackForm(product);
+            goTo("track");
+        }));
     };
 
     const getSelectedProduct = () => {

@@ -90,6 +90,9 @@ let EBookParser = (() => {
             break;
         }
         let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
+        if (!priceText.match(/(\d+.)\d+/g)) {
+            return false;
+        }
         let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
@@ -129,14 +132,16 @@ let EBookParser = (() => {
             method: "GET",
             success: (response) => {
                 let info = extractInfo(response, regPatterns[domain]);
-                info.url = url;
-                info.bsr = bsr;
-                info.reviews = reviews;
-                chrome.runtime.sendMessage({
-                    from: "amazon",
-                    action: "product-info",
-                    data: info
-                });
+                if (info) {
+                    info.url = url;
+                    info.bsr = bsr;
+                    info.reviews = reviews;
+                    chrome.runtime.sendMessage({
+                        from: "amazon",
+                        action: "product-info",
+                        data: info
+                    });
+                }
             }
         });
     }
@@ -163,7 +168,7 @@ let EBookParser = (() => {
 
             if (anchor) {
                 parseDetail(anchor, bsr, reviews, domain);
-                break;
+                // break;
             }
         }
     }

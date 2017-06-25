@@ -232,6 +232,17 @@ let Background = (() => {
 	};
 
 	/**
+	 * Funtion to call API for histories for a given product.
+	 * @param {number} id 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 * @return {void}
+	 */
+	const getHistories = (id, success, failure) => {
+		_restAPI.histories(id, success, failure);
+	}
+
+	/**
 	 * Functoin to track a product by using REST API to track. Every api call should be done in background side.
 	 * @param {object} product 
 	 * @param {function} success 
@@ -292,7 +303,8 @@ let Background = (() => {
 		estimation: calculate,
 		items: getTrackingProducts,
 		track: trackProduct,
-		untrack: untrackProduct
+		untrack: untrackProduct,
+		histories: getHistories
 	};
 })();
 

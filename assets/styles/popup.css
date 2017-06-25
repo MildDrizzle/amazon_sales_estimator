@@ -13,6 +13,8 @@ table#tbl-items td {
         text-align: center;}
     table#tbl-items tbody tr td:last-child {
         text-align: center;}
+    table#results tbody tr.tracking {
+        background: green;}
 
 #track #product-image {
     width: 100%;

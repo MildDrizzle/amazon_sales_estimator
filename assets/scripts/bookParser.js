@@ -91,6 +91,9 @@ let BookParser = (() => {
         }
         let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
         let price = priceText.match(/(\d+.)\d+/g)[0];
+        if (!priceText.match(/(\d+.)\d+/g)) {
+            return false;
+        }
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul") : $page.find("#detail_bullets_id .content ul")).text().trim();
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
@@ -124,14 +127,17 @@ let BookParser = (() => {
             method: "GET",
             success: (response) => {
                 let info = extractInfo(response, regPatterns[domain]);
-                info.url = url;
-                info.bsr = bsr;
-                info.reviews = reviews;
-                chrome.runtime.sendMessage({
-                    from: "amazon",
-                    action: "product-info",
-                    data: info
-                });
+
+                if (info) {
+                    info.url = url;
+                    info.bsr = bsr;
+                    info.reviews = reviews;
+                    chrome.runtime.sendMessage({
+                        from: "amazon",
+                        action: "product-info",
+                        data: info
+                    });
+                }
             }
         });
     }
@@ -154,12 +160,17 @@ let BookParser = (() => {
             let anchor = ($items.eq(i).find("a.a-link-normal")[0] || {}).href;
             let bsr = ($items.eq(i).find(".zg_rankNumber")[0] || {}).textContent.match(/\d+/g)[0];
             let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent;
-            reviews = reviews.replace(/,/g, '');
+            if (reviews) {
+                reviews = reviews.replace(/,/g, '');
+            } else {
+                reviews = 0;
+            }
+            
             urls.push(anchor);
 
             if (anchor) {
                 parseDetail(anchor, bsr, reviews, domain);
-                break;
+                // break;
             }
         }
     }
