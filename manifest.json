@@ -40,9 +40,6 @@
 				"*://www.amazon.it/*",
 				"*://www.amazon.co.jp/*"
 			],
-			"css": [
-				"assets/styles/content.css"
-			],
 			"js": [
 				"assets/scripts/jquery.js",
 				"assets/scripts/bookParser.js",
