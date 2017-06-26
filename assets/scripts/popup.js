@@ -136,11 +136,11 @@ let Popup = (function() {
 
 
     const getToken = () => {
-        return JSON.parse(localStorage._token);
+        return JSON.parse(localStorage._token || "null");
     };
 
     const getUser = () => {
-        return JSON.parse(localStorage._user);
+        return JSON.parse(localStorage._user || "{}");
     };
 
     const initializeComponents = () => {

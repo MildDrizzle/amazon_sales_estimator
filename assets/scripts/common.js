@@ -62,7 +62,7 @@ let restAPI = (function(window, jQuery) {
 		let params = {
 			domain: domain,
 			category: category,
-			token: JSON.parse(localStorage._token),
+			token: JSON.parse(localStorage._token || "null"),
 		}
 
 		sendRequest(_v1ApiBaseUrl + "iSamples", params, success, failure);
