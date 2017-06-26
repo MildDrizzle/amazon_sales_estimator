@@ -14,7 +14,7 @@ let Popup = (function() {
 
     let selectedProduct = null;
 
-    let _curStep = JSON.parse(localStorage._curStep || "null") || "step_1";
+    let _curStep = JSON.parse(localStorage._curStep || "null") || "results";
 
     let _background = chrome.extension.getBackgroundPage().Background;
 
@@ -147,29 +147,6 @@ let Popup = (function() {
         let settings = _background.get();
         $_category.val(settings.category || "Books");
         $_domain.val(settings.domain || "amazon.com");
-
-        $_category.change((event) => {
-            event.preventDefault();
-            _background.set({
-                category: event.target.value,
-                products: []
-            });
-
-            _background.updateSamples(() => {
-                updateTable();
-            });
-        });
-
-        $_domain.change((event) => {
-            event.preventDefault();
-            _background.set({
-                domain: event.target.value,
-                products: []
-            });
-            _background.updateSamples(() => {
-                updateTable();
-            });
-        });
     }
 
     /**
@@ -180,9 +157,7 @@ let Popup = (function() {
         _steps.forEach(function(val) {
             if (step == val) {
                 $("#" + val).show();
-                _background.set({
-                    _curStep: step
-                });
+                _background.step(step);
             } else {
                 $("#" + val).hide();
             }
@@ -287,6 +262,27 @@ let Popup = (function() {
         } else {
             initializeComponents();
         }
+
+        $(document).on("change", "#domain", (event) => {
+            event.preventDefault();
+            _background.set({
+                domain: event.target.value,
+                products: []
+            });
+
+            _background.updateSamples((samples) => {
+                updateTable();
+            });
+        }).on("change", "#category", (event) => {
+            event.preventDefault();
+            _background.set({
+                category: event.target.value,
+                products: []
+            });
+            _background.updateSamples((samples) => {
+                updateTable();
+            });
+        });
     };
 
     const updateTable = () => {

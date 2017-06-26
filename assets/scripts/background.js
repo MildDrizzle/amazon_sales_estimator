@@ -83,12 +83,25 @@ let Background = (() => {
 	 * @param {object} params 
 	 * @return {void}
 	 */
-	let setData = (params) => {
+	const setData = (params) => {
 		for (let p in params) {
 			_data[p] = params[p];
 		}
 		localStorage._data = JSON.stringify(_data);
 	};
+
+	/**
+	 * Set the current step with the given step.
+	 * @param {string} step 
+	 * @return {void}
+	 */
+	const setStep = (step) => {
+		if (step) {
+			localStorage._curStep = JSON.stringify(step);
+		} else {
+			return JSON.parse(localStorage._curStep || "null") || "login";
+		}
+	}
 
 	/**
 	 * Update initial Samples in order to compute coefficients according to given domain and category.
@@ -304,7 +317,8 @@ let Background = (() => {
 		items: getTrackingProducts,
 		track: trackProduct,
 		untrack: untrackProduct,
-		histories: getHistories
+		histories: getHistories,
+		step: setStep
 	};
 })();
 
