@@ -163,7 +163,9 @@ let EBookParser = (() => {
             let anchor = ($items.eq(i).find("a.a-link-normal")[0] || {}).href;
             let bsr = ($items.eq(i).find(".zg_rankNumber")[0] || {}).textContent.match(/\d+/g)[0];
             let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent;
-            reviews = reviews.replace(/,/g, '');
+            if (reviews) {
+                reviews = reviews.replace(/,/g, '');
+            }
             urls.push(anchor);
 
             if (anchor) {
