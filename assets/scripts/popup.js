@@ -31,6 +31,10 @@ let Popup = (function() {
         
         $tbody.children().remove();
 
+        products = products.sort((a, b) => {
+            return a.bsr - b.bsr;
+        });
+
         for (let i = 0; i < products.length; i ++) {
             let found = trackings.filter(item => item.product.asin == products[i].asin);
             let $record = $("<tr/>");
