@@ -23,6 +23,26 @@ let Popup = (function() {
 
     let _globalTimer = null;
 
+    const bsrPagesPath = {
+        "Books": "/best-sellers-books-Amazon/zgbs/books/",
+        "eBooks": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/"
+    };
+
+    /**
+     * Get the BSR based search result page for the given/selected domain and category.
+     * @return {string}
+     */
+    const getSearchUrl = () => {
+        let state = _background.get();
+        let bsrPath = bsrPagesPath[state.category];
+
+        return `https://www.${state.domain}${bsrPath}`;
+    }
+
+    /**
+     * Draw Table with products scraped from Amazon across domains and categories considered in the chrome extension.
+     * @return {void}
+     */
     let drawTable = function() {
         let products = _background.get().products,
             trackings = _background.items(),
@@ -55,6 +75,11 @@ let Popup = (function() {
         }
     };
 
+    /**
+     * Draw change history chart for a given product being tracked by user.
+     * @param {number} productID 
+     * @return {void}
+     */
     const drawChart = (productID) => {
         _background.histories(productID, (response) => {
             let data = [];
@@ -290,7 +315,7 @@ let Popup = (function() {
     };
 
     const updateTable = () => {
-        let curUrl = `https://www.${JSON.parse(localStorage._data || "{}").domain || "amazon.com"}/`;
+        let curUrl = getSearchUrl();
         let products = _background.get().products;
         let trackingProducts = _background.items();
         let $trackingCount = $("#tracking-count");
@@ -298,21 +323,23 @@ let Popup = (function() {
         $trackingCount.text(trackingProducts.length);
 
         if (products.length == 0) {
-            chrome.tabs.query({url: curUrl + "*"}, (tabs) => {
+            chrome.tabs.query({url: curUrl}, (tabs) => {
                 if (tabs.length > 0) {
                     _background.set({
                         curTab: tabs[0].id
                     });
 
-                    let status = _background.get();
-                    initEvents();
+                    chrome.tabs.update(tabs[0].id, {active:true}, () => {
+                        let status = _background.get();
+                        initEvents();
 
-                    chrome.tabs.sendMessage(tabs[0].id, {
-                        from: "popup",
-                        action: "get_data",
-                        domain: status.domain,
-                        category: status.category,
-                        page: status.page || 1
+                        chrome.tabs.sendMessage(tabs[0].id, {
+                            from: "popup",
+                            action: "get_data",
+                            domain: status.domain,
+                            category: status.category,
+                            page: status.page || 1
+                        });
                     });
                 } else {
                     chrome.tabs.create({
