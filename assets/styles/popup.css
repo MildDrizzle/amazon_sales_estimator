@@ -3,6 +3,10 @@
     width: 768px;
 }
 
+#results,
+#track {
+    padding-top: 35px;
+}
 table#tbl-items td {
     vertical-align: middle;}
     table td a.track-link {
