@@ -91,7 +91,10 @@ let EBookParser = (() => {
         }
         let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
         if (!priceText.match(/(\d+.)\d+/g)) {
-            return false;
+            priceText = $page.find("#tmmSwatches .swatchElement span.a-color-secondary").eq(0).text().trim();
+            if (!priceText.match(/(\d+.)\d+/g)) {
+                return false;
+            }
         }
         let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
