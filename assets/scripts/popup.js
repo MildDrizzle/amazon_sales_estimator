@@ -12,7 +12,7 @@ let Popup = (function() {
 
     let _itemsTable = null;
 
-    let selectedProduct = null;
+    let _selectedProduct = null;
 
     let _curStep = JSON.parse(localStorage._curStep || "null") || "results";
 
@@ -261,7 +261,7 @@ let Popup = (function() {
             event.preventDefault();
             switch (event.target.getAttribute('data-action')) {
                 case "track":
-                    _background.track(selectedProduct, (response) => {
+                    _background.track(_selectedProduct, (response) => {
                         console.log(response);
                         event.target.setAttribute("data-action", "untrack");
                         event.target.setAttribute("data-id", response.product.id);
@@ -390,7 +390,7 @@ let Popup = (function() {
             let index = event.target.getAttribute("data-index");
             let product = _background.get().products[index];
 
-            selectedProduct = product;
+            _selectedProduct = product;
             renderTrackForm(product);
             goTo("track");
         }));
@@ -403,7 +403,7 @@ let Popup = (function() {
     };
 
     const getSelectedProduct = () => {
-        return selectedProduct;
+        return _selectedProduct;
     }
 
     return {
