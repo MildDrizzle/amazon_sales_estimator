@@ -292,7 +292,13 @@ let Popup = (function() {
             initializeComponents();
         }
 
-        $(document).on("change", "#domain", (event) => {
+        $(document)
+        .on("click", "span.logout", (event) => {
+            _background.logout(() => {
+                goTo("login");
+            });
+        })
+        .on("change", "#domain", (event) => {
             event.preventDefault();
             _background.set({
                 domain: event.target.value,
@@ -302,7 +308,8 @@ let Popup = (function() {
             _background.updateSamples((samples) => {
                 updateTable();
             });
-        }).on("change", "#category", (event) => {
+        })
+        .on("change", "#category", (event) => {
             event.preventDefault();
             _background.set({
                 category: event.target.value,
@@ -376,6 +383,12 @@ let Popup = (function() {
             renderTrackForm(product);
             goTo("track");
         }));
+
+        if (JSON.parse(localStorage._token)) {
+            let userInfo = JSON.parse(localStorage._user);
+
+            $("span.user-name").text(userInfo.name);
+        }
     };
 
     const getSelectedProduct = () => {

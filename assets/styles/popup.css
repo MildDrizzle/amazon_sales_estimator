@@ -3,10 +3,6 @@
     width: 768px;
 }
 
-#results,
-#track {
-    padding-top: 35px;
-}
 table#tbl-items td {
     vertical-align: middle;}
     table td a.track-link {
@@ -23,3 +19,8 @@ table#tbl-items td {
 #track #product-image {
     width: 100%;
     height: 327px;}
+
+.logout {
+    cursor: pointer;}
+    .logout i {
+        margin-left: 5px;}

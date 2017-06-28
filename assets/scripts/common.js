@@ -52,6 +52,21 @@ let restAPI = (function(window, jQuery) {
 	}
 
 	/**
+	 * Logout and go to login panel
+	 * @param {function} callback 
+	 * @return {void}
+	 */
+	const logout = (callback) => {
+		localStorage._token = JSON.stringify(null);
+		localStorage._user = JSON.stringify({});
+		localStorage._curStep = JSON.stringify("login");
+
+		if (typeof callback === "function") {
+			callback();
+		}
+	}
+
+	/**
 	 * Getting initial sample parameters to compute estimation of unit sales.
 	 * @param {string} domain 
 	 * @param {string} category 
@@ -179,7 +194,8 @@ let restAPI = (function(window, jQuery) {
 		histories: getHistories,
 		samples: getInitialSamples,
 		register: register,
-		login: login
+		login: login,
+		logout: logout
 	};
 	
 })(window, $)

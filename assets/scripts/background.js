@@ -245,6 +245,19 @@ let Background = (() => {
 	};
 
 	/**
+	 * Logout function via Rest API.
+	 * @param {function} callback 
+	 * @return {void}
+	 */
+	const logout = (callback) => {
+		_restAPI.logout(() => {
+			if (typeof callback === "function") {
+				callback();
+			}
+		})
+	};
+
+	/**
 	 * Funtion to call API for histories for a given product.
 	 * @param {number} id 
 	 * @param {function} success 
@@ -309,6 +322,7 @@ let Background = (() => {
 		get: getData,
 		set: setData,
 		login: login,
+		logout: logout,
 		samples: getSamples,
 		register: _restAPI.register,
 		updateSamples: updateSamples,
