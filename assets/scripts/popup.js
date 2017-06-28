@@ -78,9 +78,9 @@ let Popup = (function() {
             $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
             $record.append($("<td/>").text(products[i].pages));
             $record.append($("<td/>").text(products[i].currency + products[i].price));
-            $record.append($("<td/>").text(products[i].estSale));
-            $record.append($("<td/>").text(products[i].currency + parseInt(_background.estimation(products[i].bsr) * products[i].price)));
-            $record.append($("<td/>").text(products[i].reviews));
+            $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString()));
+            $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price)).toLocaleString()));
+            $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
 
             $record.appendTo($tbody);
         }
@@ -142,6 +142,7 @@ let Popup = (function() {
             $bsr = $("#product-bsr"),
             $estSales = $("#product-estSales"),
             $isbn = $("#product-isbn"),
+            $price = $("#product-price"),
             $reviews = $("#product-reviews"),
             $revenue = $("#product-monthly-revenue"),
             $asin = $("#product-asin");
@@ -149,12 +150,14 @@ let Popup = (function() {
         $img[0].src = product.img;
         $title.text(product.title);
         $asin.text(product.asin);
-        $reviews.text(product.reviews);
+        $price.text(product.currency + product.price);
+        $reviews.text(Number(product.reviews).toLocaleString());
         $bsr.text("#" + product.bsr);
         $isbn.text(product.isbn);
-        $revenue.text(product.currency + parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1))));
+        product.estSale = parseInt(_background.estimation(product.bsr));
+        $revenue.text(product.currency + Number(parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
         
-        $estSales.text(product.estSale);
+        $estSales.text(Number(product.estSale).toLocaleString());
 
         let trackingProducts = _background.items().filter(item => item.product.asin == product.asin);
         let trackButton = document.getElementById("product-track");
@@ -197,7 +200,9 @@ let Popup = (function() {
         _steps.forEach(function(val) {
             if (step == val) {
                 $("#" + val).show();
-                _background.step(step);
+                if (step != "track") {
+                    _background.step(step);
+                }
             } else {
                 $("#" + val).hide();
             }
