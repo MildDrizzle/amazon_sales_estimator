@@ -40,6 +40,16 @@ let Popup = (function() {
     }
 
     /**
+     * Truncate string with a specific length. In case of longer than the length, truncate with suffix "..."
+     * @param {string} str 
+     * @param {number} length 
+     * @return {string}
+     */
+    const truncateString = (str, length) => {
+        return (str.length > length) ? str.substr(0, length - 3) + "..." : str;
+    }
+
+    /**
      * Draw Table with products scraped from Amazon across domains and categories considered in the chrome extension.
      * @return {void}
      */
@@ -63,13 +73,12 @@ let Popup = (function() {
                 $record.addClass("tracking").attr({"title": "Watching"});
             }
             
-            $record.append($("<td/>").text(i + 1));
-            $record.append($("<td/>").text(products[i].title));
+            $record.append($("<td/>").text(products[i].bsr));
+            $record.append($("<td/>").text(truncateString(products[i].title, 30))).attr({title: products[i].title});
             $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
             $record.append($("<td/>").text(products[i].pages));
             $record.append($("<td/>").text(products[i].price));
             $record.append($("<td/>").text(products[i].estSale));
-            $record.append($("<td/>").text(products[i].bsr));
 
             $record.appendTo($tbody);
         }
