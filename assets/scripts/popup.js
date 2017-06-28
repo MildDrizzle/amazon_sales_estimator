@@ -77,8 +77,10 @@ let Popup = (function() {
             $record.append($("<td/>").text(truncateString(products[i].title, 30))).attr({title: products[i].title});
             $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
             $record.append($("<td/>").text(products[i].pages));
-            $record.append($("<td/>").text(products[i].price));
+            $record.append($("<td/>").text(products[i].currency + products[i].price));
             $record.append($("<td/>").text(products[i].estSale));
+            $record.append($("<td/>").text(products[i].currency + parseInt(_background.estimation(products[i].bsr) * products[i].price)));
+            $record.append($("<td/>").text(products[i].reviews));
 
             $record.appendTo($tbody);
         }
