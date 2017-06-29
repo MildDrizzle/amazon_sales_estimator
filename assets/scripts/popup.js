@@ -202,6 +202,10 @@ let Popup = (function() {
                 $("#" + val).show();
                 if (step != "track") {
                     _background.step(step);
+                } else if (step == "login") {
+                    let credential = _background.credentials();
+                    $("#login-email").text(credential.email);
+                    $("#login-password").text(credential.email);
                 }
             } else {
                 $("#" + val).hide();

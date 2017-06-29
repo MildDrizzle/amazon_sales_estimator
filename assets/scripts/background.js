@@ -8,6 +8,11 @@ let Background = (() => {
 		products: []
 	};
 
+	let _credentials = {
+		email: "",
+		password: ""
+	};
+
 	let _trackedProducts = [];
 
 	let _restAPI = restAPI;
@@ -37,6 +42,23 @@ let Background = (() => {
 			return (domain && category) ? urls[category]["others"] : null;
 		}
 	};
+
+	/**
+	 * Save credentials when a user logs in.
+	 * @param {string} email 
+	 * @param {password} password 
+	 * @return {void}
+	 */
+	const setCredentials = (email, password) => {
+		_credentials = {email, password};
+	}
+
+	/**
+	 * Function to get username and password.
+	 */
+	const getCredentials = () => {
+		return _credentials;
+	}
 
 	/**
 	 * Getting a correct amazon best seller ranking eBooks/Books url.
@@ -233,13 +255,9 @@ let Background = (() => {
 		_restAPI.login(email, password, (response) => {
 			if (typeof success === "function") {
 				success(response);
+				setCredentials(email, password);
 				//	Getting tracking products once 
 				updateSamples();
-				// _restAPI.trackings(_data.domain, _data.category, (response) => {
-				// 	if (response.status) {
-				// 		_trackedProducts = response.items;
-				// 	}
-				// });
 			}
 		}, failure)
 	};
@@ -332,7 +350,8 @@ let Background = (() => {
 		track: trackProduct,
 		untrack: untrackProduct,
 		histories: getHistories,
-		step: setStep
+		step: setStep,
+		credentials: getCredentials
 	};
 })();
 
