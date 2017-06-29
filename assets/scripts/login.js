@@ -22,6 +22,12 @@ let Login = (function() {
             if (step == val) {
                 $("#" + val).show();
                 localStorage._curStep = JSON.stringify(step);
+
+                if (step == "login") {
+                    let credential = _background.credentials();
+                    $("#login-email").val(credential.email);
+                    $("#login-password").val(credential.email);
+                }
             } else {
                 $("#" + val).hide();
             }
