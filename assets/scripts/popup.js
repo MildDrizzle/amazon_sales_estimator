@@ -409,6 +409,22 @@ let Popup = (function() {
 
             $("span.user-name").text(userInfo.name);
         }
+
+        $(document)
+        .on("keypress", "#login-email", (event) => {
+            if (event.which == 13 || event.keyCode == 13) {
+                if (event.target.value.trim() !== "") {
+                    $("#login-password").focus();
+                }
+            }
+        })
+        .on("keypress", "#login-password", (event) => {
+            if (event.which == 13 || event.keyCode == 13) {
+                if ($("#login-email").val().trim() !== "" && $("#login-password").val().trim() != "") {
+                    $("#login-submit").click();
+                }
+            }
+        })
     };
 
     const getSelectedProduct = () => {

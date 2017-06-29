@@ -26,7 +26,7 @@ let Login = (function() {
                 if (step == "login") {
                     let credential = _background.credentials();
                     $("#login-email").val(credential.email);
-                    $("#login-password").val(credential.email);
+                    $("#login-password").val(credential.password);
                 }
             } else {
                 $("#" + val).hide();
@@ -90,6 +90,22 @@ let Login = (function() {
     const init = function() {
             $("button.step-control-button").click(controlButtonHandler);
             goTo(_curStep);
+
+            $(document)
+            .on("keypress", "#login-email", (event) => {
+                if (event.which == 13 || event.keyCode == 13) {
+                    if (event.target.value.trim() !== "") {
+                        $("#login-password").focus();
+                    }
+                }
+            })
+            .on("keypress", "#login-password", (event) => {
+                if (event.which == 13 || event.keyCode == 13) {
+                    if ($("#login-email").val().trim() !== "" && $("#login-password").val().trim() != "") {
+                        $("#login-submit").click();
+                    }
+                }
+            })
         };
 
     return {
