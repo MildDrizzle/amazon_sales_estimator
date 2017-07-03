@@ -11,6 +11,7 @@ let Popup = (function() {
         ];
 
     let _itemsTable = null;
+    let _productsTable = null;
 
     let _selectedProduct = null;
 
@@ -20,6 +21,9 @@ let Popup = (function() {
 
     let $_category = $("#category");
     let $_domain = $("#domain");
+
+    let _curSortColumn = "bsr";
+    let _sortOption = "asc";
 
     let _globalTimer = null;
 
@@ -50,6 +54,27 @@ let Popup = (function() {
     }
 
     /**
+     * Get the corresponding value for selected column in products table.
+     * @param {object} obj 
+     * @param {string} colName 
+     */
+    const getCompareValue = (obj, colName) => {
+        switch(colName) {
+            case "bsr":
+            case "title":
+            case "pages":
+            case "price":
+            case "est":
+            case "reviews":
+                return obj[colName];
+            case "monthly_rev":
+                return Number(parseInt(_background.estimation(products[i].bsr) * products[i].price));
+            default:
+                return 1;
+        }
+    }
+
+    /**
      * Draw Table with products scraped from Amazon across domains and categories considered in the chrome extension.
      * @return {void}
      */
@@ -57,17 +82,39 @@ let Popup = (function() {
         let products = _background.get().products,
             trackings = _background.items(),
             index = 1,
-            $tbody = $("table#results tbody");
+            $tbody = $("table#results-table tbody");
         
         $tbody.children().remove();
 
         products = products.sort((a, b) => {
-            return a.bsr - b.bsr;
+            let aV = getCompareValue(a, _curSortColumn);
+            let bV = getCompareValue(b, _curSortColumn);
+            
+            return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
         });
+
+        // if (!_productsTable) {
+        //     _productsTable = $("#results-table").DataTable({
+        //         "autoWidth": false
+        //     });
+        // }
+
+        // _productsTable.clear().draw();
 
         for (let i = 0; i < products.length; i ++) {
             let found = trackings.filter(item => item.product.asin == products[i].asin);
             let $record = $("<tr/>");
+            // let row = [
+            //     products[i].bsr,
+            //     truncateString(products[i].title, 30),
+            //     `<a class='track-link' data-index='${i}'>Track</a>`,
+            //     products[i].pages,
+            //     products[i].currency + products[i].price,
+            //     Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString(),
+            //     products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price)).toLocaleString(),
+            //     Number(products[i].reviews).toLocaleString()
+            // ];
+
 
             if (found.length > 0) {
                 $record.addClass("tracking").attr({"title": "Watching"});
@@ -83,6 +130,7 @@ let Popup = (function() {
             $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
 
             $record.appendTo($tbody);
+            // _productsTable.row.add(row).draw();
         }
     };
 
@@ -295,10 +343,6 @@ let Popup = (function() {
             // restAPI.
         });
 
-        _itemsTable = $("table#tbl-items").DataTable({
-            "autoWidth": false
-        });
-
         if (!getToken() || !(getUser() || {}).id) {
             _curStep = "login";
         }
@@ -392,10 +436,14 @@ let Popup = (function() {
         if (!_globalTimer) {
             _globalTimer = window.setInterval(() => {
                 drawTable();
-            }, 1000);
+            }, 3000);
         }
 
-        $("table#results").on("click", "a.track-link", (event => {
+        // _productsTable = $("#results-table").DataTable({
+        //     "autoWidth": false
+        // });
+
+        $("table#results-table").on("click", "a.track-link", (event => {
             let index = event.target.getAttribute("data-index");
             let product = _background.get().products[index];
 
