@@ -64,11 +64,11 @@ let Popup = (function() {
             case "title":
             case "pages":
             case "price":
-            case "est":
+            case "estSale":
             case "reviews":
                 return obj[colName];
             case "monthly_rev":
-                return Number(parseInt(_background.estimation(products[i].bsr) * products[i].price));
+                return Number(parseInt(_background.estimation(obj.bsr) * obj.price));
             default:
                 return 1;
         }
@@ -90,7 +90,19 @@ let Popup = (function() {
             let aV = getCompareValue(a, _curSortColumn);
             let bV = getCompareValue(b, _curSortColumn);
             
-            return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
+            if (typeof aV == "string") {
+                let flag = (_sortOption === "asc") ? 1 : -1;
+
+                if (aV > bV) {
+                    return -1 * flag;
+                } else if (aV < bV) {
+                    return 1 * flag;
+                } else {
+                    return 0;
+                }
+            } else {
+                return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
+            }
         });
 
         // if (!_productsTable) {
@@ -382,7 +394,21 @@ let Popup = (function() {
             _background.updateSamples((samples) => {
                 updateTable();
             });
-        });
+        })
+        .on("click","#results-table th", (event) => {
+            let sortTarget = event.target.getAttribute("sort-target");
+
+            if (!sortTarget) {
+                return false;
+            }
+
+            _curSortColumn = sortTarget;
+            let curOption = event.target.getAttribute("sort-option") || "asc";
+            _sortOption = ["asc", "desc"].filter(option => option != curOption)[0];
+            event.target.setAttribute("sort-option", _sortOption);
+
+            drawTable();
+        })
     };
 
     const updateTable = () => {
