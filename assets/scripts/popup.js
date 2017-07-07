@@ -12,7 +12,7 @@ let Popup = (function() {
 
     let _itemsTable = null;
     let _productsTable = null;
-
+    let _products = [];
     let _selectedProduct = null;
 
     let _curStep = JSON.parse(localStorage._curStep || "null") || "results";
@@ -83,66 +83,73 @@ let Popup = (function() {
             trackings = _background.items(),
             index = 1,
             $tbody = $("table#results-table tbody");
-        
-        $tbody.children().remove();
 
-        products = products.sort((a, b) => {
-            let aV = getCompareValue(a, _curSortColumn);
-            let bV = getCompareValue(b, _curSortColumn);
-            
-            if (typeof aV == "string") {
-                let flag = (_sortOption === "asc") ? 1 : -1;
+        if (products.length == _products.length) {
+            return false;
+        } else {
+            $tbody.children().remove();
 
-                if (aV > bV) {
-                    return -1 * flag;
-                } else if (aV < bV) {
-                    return 1 * flag;
+            products = products.sort((a, b) => {
+                let aV = getCompareValue(a, _curSortColumn);
+                let bV = getCompareValue(b, _curSortColumn);
+
+                aV = (parseInt(aV) == NaN) ? aV : parseInt(aV);
+                bV = (parseInt(bV) == NaN) ? bV : parseInt(bV);
+                
+                if (typeof aV == "string") {
+                    let flag = (_sortOption === "asc") ? 1 : -1;
+
+                    if (aV > bV) {
+                        return -1 * flag;
+                    } else if (aV < bV) {
+                        return 1 * flag;
+                    } else {
+                        return 0;
+                    }
                 } else {
-                    return 0;
+                    return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
                 }
-            } else {
-                return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
+            });
+
+            // if (!_productsTable) {
+            //     _productsTable = $("#results-table").DataTable({
+            //         "autoWidth": false
+            //     });
+            // }
+
+            // _productsTable.clear().draw();
+
+            for (let i = 0; i < products.length; i ++) {
+                let found = trackings.filter(item => item.product.asin == products[i].asin);
+                let $record = $("<tr/>");
+                // let row = [
+                //     products[i].bsr,
+                //     truncateString(products[i].title, 30),
+                //     `<a class='track-link' data-index='${i}'>Track</a>`,
+                //     products[i].pages,
+                //     products[i].currency + products[i].price,
+                //     Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString(),
+                //     products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price)).toLocaleString(),
+                //     Number(products[i].reviews).toLocaleString()
+                // ];
+
+
+                if (found.length > 0) {
+                    $record.addClass("tracking").attr({"title": "Watching"});
+                }
+                
+                $record.append($("<td/>").text(products[i].bsr));
+                $record.append($("<td/>").text(truncateString(products[i].title, 30))).attr({title: products[i].title});
+                $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
+                $record.append($("<td/>").text(products[i].pages));
+                $record.append($("<td/>").text(products[i].currency + products[i].price));
+                $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString()));
+                $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price)).toLocaleString()));
+                $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
+
+                $record.appendTo($tbody);
+                // _productsTable.row.add(row).draw();
             }
-        });
-
-        // if (!_productsTable) {
-        //     _productsTable = $("#results-table").DataTable({
-        //         "autoWidth": false
-        //     });
-        // }
-
-        // _productsTable.clear().draw();
-
-        for (let i = 0; i < products.length; i ++) {
-            let found = trackings.filter(item => item.product.asin == products[i].asin);
-            let $record = $("<tr/>");
-            // let row = [
-            //     products[i].bsr,
-            //     truncateString(products[i].title, 30),
-            //     `<a class='track-link' data-index='${i}'>Track</a>`,
-            //     products[i].pages,
-            //     products[i].currency + products[i].price,
-            //     Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString(),
-            //     products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price)).toLocaleString(),
-            //     Number(products[i].reviews).toLocaleString()
-            // ];
-
-
-            if (found.length > 0) {
-                $record.addClass("tracking").attr({"title": "Watching"});
-            }
-            
-            $record.append($("<td/>").text(products[i].bsr));
-            $record.append($("<td/>").text(truncateString(products[i].title, 30))).attr({title: products[i].title});
-            $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
-            $record.append($("<td/>").text(products[i].pages));
-            $record.append($("<td/>").text(products[i].currency + products[i].price));
-            $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString()));
-            $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price)).toLocaleString()));
-            $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
-
-            $record.appendTo($tbody);
-            // _productsTable.row.add(row).draw();
         }
     };
 
