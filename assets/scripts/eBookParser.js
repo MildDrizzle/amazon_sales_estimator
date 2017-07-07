@@ -6,19 +6,19 @@ let EBookParser = (() => {
     let _products = [];
 
     let comPatterns = {
-        pagesPattern: /(Hardcover|\sLength):\s(\d+)\spages/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     };
     let caPatterns = {
-        pagesPattern: /(Hardcover|\sLength):\s(\d+)\spages/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let auPatterns = {
-        pagesPattern: /(Hardcover|\sLength):\s(\d+)\spages/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let ukPatterns = {
-        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
@@ -104,6 +104,9 @@ let EBookParser = (() => {
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
         // let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
+        if (!pages) {
+            debugger;
+        }
         // let isbn = (bulletString.match(/ISBN:\s(\d+)/g) || ["a none"])[0].split(" ")[1];
         let isbn = "";
         let asin = $page.find("input[name='ASIN.0']").val();
@@ -119,8 +122,6 @@ let EBookParser = (() => {
             pages,
             asin,
             isbn
-            // bsr,
-            // reviews
         };
     };
 
@@ -185,7 +186,6 @@ let EBookParser = (() => {
             if (reviews) {
                 reviews = reviews.replace(/,/g, '');
             }
-            // urls.push(anchor);
 
             _products.push({
                 bsr,
@@ -193,11 +193,6 @@ let EBookParser = (() => {
                 domain,
                 url: anchor
             });
-
-            // if (anchor) {
-            //     parseDetail(anchor, bsr, reviews, domain);
-            //     // break;
-            // }
         }
     }
 
@@ -208,7 +203,6 @@ let EBookParser = (() => {
      * @return {void}
      */
     const extractProducts = (domain, page) => {
-        // let searchUrl = getSearchPageUrl(domain, page);
         let searchUrl = _searchPages.shift();
 
         if (searchUrl) {

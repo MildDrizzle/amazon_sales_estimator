@@ -93,8 +93,8 @@ let Popup = (function() {
                 let aV = getCompareValue(a, _curSortColumn);
                 let bV = getCompareValue(b, _curSortColumn);
 
-                aV = (parseInt(aV) == NaN) ? aV : parseInt(aV);
-                bV = (parseInt(bV) == NaN) ? bV : parseInt(bV);
+                aV = (parseInt(aV) == NaN) ? (aV ? aV: -1) : parseInt(aV);
+                bV = (parseInt(bV) == NaN) ? (bV ? bV: -1) : parseInt(bV);
                 
                 if (typeof aV == "string") {
                     let flag = (_sortOption === "asc") ? 1 : -1;
@@ -111,28 +111,9 @@ let Popup = (function() {
                 }
             });
 
-            // if (!_productsTable) {
-            //     _productsTable = $("#results-table").DataTable({
-            //         "autoWidth": false
-            //     });
-            // }
-
-            // _productsTable.clear().draw();
-
             for (let i = 0; i < products.length; i ++) {
                 let found = trackings.filter(item => item.product.asin == products[i].asin);
                 let $record = $("<tr/>");
-                // let row = [
-                //     products[i].bsr,
-                //     truncateString(products[i].title, 30),
-                //     `<a class='track-link' data-index='${i}'>Track</a>`,
-                //     products[i].pages,
-                //     products[i].currency + products[i].price,
-                //     Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString(),
-                //     products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price)).toLocaleString(),
-                //     Number(products[i].reviews).toLocaleString()
-                // ];
-
 
                 if (found.length > 0) {
                     $record.addClass("tracking").attr({"title": "Watching"});
@@ -148,7 +129,6 @@ let Popup = (function() {
                 $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
 
                 $record.appendTo($tbody);
-                // _productsTable.row.add(row).draw();
             }
         }
     };

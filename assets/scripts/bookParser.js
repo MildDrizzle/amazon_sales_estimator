@@ -6,19 +6,19 @@ let BookParser = (() => {
     let _products = [];
 
     let comPatterns = {
-        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     };
     let caPatterns = {
-        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let auPatterns = {
-        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let ukPatterns = {
-        pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
@@ -99,9 +99,13 @@ let BookParser = (() => {
                 return false;
             }
         }
+        let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul") : $page.find("#detail_bullets_id .content ul")).text().trim();
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
+        if (pages == "") {
+            debugger;
+        }
         let isbn = (bulletString.match(pattern.isbnPattern) || [""])[0].split(" ")[1];
         let asin = $page.find("#ASIN").val();
         // let bsr = $page.find("#SalesRank").text().trim().match(/(\d+)\s/g)[0].match(/\d+/g)[0];
@@ -188,11 +192,6 @@ let BookParser = (() => {
                 domain,
                 url: anchor
             });
-
-            // if (anchor) {
-            //     parseDetail(anchor, bsr, reviews, domain);
-            //     // break;
-            // }
         }
     }
 
