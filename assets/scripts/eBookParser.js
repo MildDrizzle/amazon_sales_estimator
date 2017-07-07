@@ -1,6 +1,9 @@
 let EBookParser = (() => {
     let _urls = [],
         _detail = {};
+    
+    let _searchPages = [];
+    let _products = [];
 
     let comPatterns = {
         pagesPattern: /(Hardcover|\sLength):\s(\d+)\spages/g,
@@ -130,23 +133,36 @@ let EBookParser = (() => {
      * @return {void}
      */
     const parseDetail = (url, bsr, reviews, domain) => {
-        $.ajax({
-            url: url,
-            method: "GET",
-            success: (response) => {
-                let info = extractInfo(response, regPatterns[domain]);
-                if (info) {
-                    info.url = url;
-                    info.bsr = bsr;
-                    info.reviews = reviews;
-                    chrome.runtime.sendMessage({
-                        from: "amazon",
-                        action: "product-info",
-                        data: info
-                    });
+        let curProduct = _products.shift();
+
+        if (curProduct) {
+            url = curProduct.url;
+            bsr = curProduct.bsr;
+            reviews = curProduct.reviews;
+            domain = curProduct.domain;
+
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: (response) => {
+                    let info = extractInfo(response, regPatterns[domain]);
+                    if (info) {
+                        info.url = url;
+                        info.bsr = bsr;
+                        info.reviews = reviews;
+                        chrome.runtime.sendMessage({
+                            from: "amazon",
+                            action: "product-info",
+                            data: info
+                        });
+                    }
+
+                    parseDetail();
                 }
-            }
-        });
+            });
+        } else {
+            //
+        }
     }
 
     /**
@@ -169,12 +185,19 @@ let EBookParser = (() => {
             if (reviews) {
                 reviews = reviews.replace(/,/g, '');
             }
-            urls.push(anchor);
+            // urls.push(anchor);
 
-            if (anchor) {
-                parseDetail(anchor, bsr, reviews, domain);
-                // break;
-            }
+            _products.push({
+                bsr,
+                reviews,
+                domain,
+                url: anchor
+            });
+
+            // if (anchor) {
+            //     parseDetail(anchor, bsr, reviews, domain);
+            //     // break;
+            // }
         }
     }
 
@@ -185,15 +208,22 @@ let EBookParser = (() => {
      * @return {void}
      */
     const extractProducts = (domain, page) => {
-        let searchUrl = getSearchPageUrl(domain, page);
+        // let searchUrl = getSearchPageUrl(domain, page);
+        let searchUrl = _searchPages.shift();
 
-        $.ajax({
-            url: searchUrl,
-            method: "GET",
-            success: (response) => {
-                parseSearchResult(response, domain);
-            }
-        });
+        if (searchUrl) {
+            $.ajax({
+                url: searchUrl,
+                method: "GET",
+                success: (response) => {
+                    parseSearchResult(response, domain);
+                    extractProducts(domain);
+                }
+            });
+        } else {
+            //
+            parseDetail();
+        }
     };
 
     /**
@@ -205,6 +235,11 @@ let EBookParser = (() => {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             let page = (request.page) ? request.page : 1;
             if (request.category === "eBooks") {
+                _searchPages = [];
+                _products = [];
+                for (let i = 1; i < 6; i ++) {
+                    _searchPages.push(getSearchPageUrl(domain, i))
+                }
                 extractProducts(domain, page);
             }
         })

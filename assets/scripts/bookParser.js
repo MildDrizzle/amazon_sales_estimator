@@ -2,6 +2,9 @@ let BookParser = (() => {
     let _urls = [],
         _detail = {};
 
+    let _searchPages = [];
+    let _products = [];
+
     let comPatterns = {
         pagesPattern: /(Hardcover|\sLength):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
@@ -83,16 +86,18 @@ let BookParser = (() => {
     const extractInfo = (text, pattern) => {
         let $page = $(text);
         let title = $page.find("#productTitle").text().trim();
-        let tmpImgObj = JSON.parse($page.find("#img-canvas img#imgBlkFront").eq(0).attr("data-a-dynamic-image"));
+        let tmpImgObj = JSON.parse($page.find("#imgBlkFront").eq(0).attr("data-a-dynamic-image"));
         let img = null;
         for (p in tmpImgObj) {
             img = p;
             break;
         }
         let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
-        let price = priceText.match(/(\d+.)\d+/g)[0];
         if (!priceText.match(/(\d+.)\d+/g)) {
-            return false;
+            priceText = $page.find("#tmmSwatches .swatchElement span.a-color-secondary").eq(0).text().trim();
+            if (!priceText.match(/(\d+.)\d+/g)) {
+                return false;
+            }
         }
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul") : $page.find("#detail_bullets_id .content ul")).text().trim();
@@ -122,24 +127,35 @@ let BookParser = (() => {
      * @param {string} domain 
      */
     const parseDetail = (url, bsr, reviews, domain) => {
-        $.ajax({
-            url: url,
-            method: "GET",
-            success: (response) => {
-                let info = extractInfo(response, regPatterns[domain]);
+        let curProduct = _products.shift();
 
-                if (info) {
-                    info.url = url;
-                    info.bsr = bsr;
-                    info.reviews = reviews;
-                    chrome.runtime.sendMessage({
-                        from: "amazon",
-                        action: "product-info",
-                        data: info
-                    });
+        if (curProduct) {
+            url = curProduct.url;
+            bsr = curProduct.bsr;
+            reviews = curProduct.reviews;
+            domain = curProduct.domain;
+
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: (response) => {
+                    let info = extractInfo(response, regPatterns[domain]);
+
+                    if (info) {
+                        info.url = url;
+                        info.bsr = bsr;
+                        info.reviews = reviews;
+                        chrome.runtime.sendMessage({
+                            from: "amazon",
+                            action: "product-info",
+                            data: info
+                        });
+                    }
+
+                    parseDetail();
                 }
-            }
-        });
+            });
+        }
     }
 
     /**
@@ -166,12 +182,17 @@ let BookParser = (() => {
                 reviews = 0;
             }
             
-            urls.push(anchor);
+            _products.push({
+                bsr,
+                reviews,
+                domain,
+                url: anchor
+            });
 
-            if (anchor) {
-                parseDetail(anchor, bsr, reviews, domain);
-                // break;
-            }
+            // if (anchor) {
+            //     parseDetail(anchor, bsr, reviews, domain);
+            //     // break;
+            // }
         }
     }
 
@@ -182,15 +203,22 @@ let BookParser = (() => {
      * @return {void}
      */
     const extractProducts = (domain, page) => {
-        let searchUrl = getSearchPageUrl(domain, page);
+        // let searchUrl = getSearchPageUrl(domain, page);
+        let searchPageUrl = _searchPages.shift();
 
-        $.ajax({
-            url: searchUrl,
-            method: "GET",
-            success: (response) => {
-                parseSearchResult(response, domain);
-            }
-        })
+        if (searchPageUrl) {
+            $.ajax({
+                url: searchPageUrl,
+                method: "GET",
+                success: (response) => {
+                    parseSearchResult(response, domain);
+                    extractProducts(domain);
+                }
+            })
+        } else {
+            //  To do start parsing detail product.
+            parseDetail();
+        }
     };
 
     /**
@@ -204,6 +232,11 @@ let BookParser = (() => {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             let page = (request.page) ? request.page : 1;
             if (request.category == "Books") {
+                _searchPages = [];
+                _products = [];
+                for (let i = 1; i < 6; i ++) {
+                    _searchPages.push(getSearchPageUrl(domain, i));
+                }
                 extractProducts(domain, page);
             }
         })
