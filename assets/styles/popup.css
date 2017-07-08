@@ -26,3 +26,11 @@ table#tbl-items td {
     cursor: pointer;}
     .logout i {
         margin-left: 5px;}
+
+#results .footer {
+    top: 60px;
+    position: fixed;
+    width: 100%;
+    background: rgba(255,255,255,0.8);}
+#results .content {
+    margin-top: 60px;}

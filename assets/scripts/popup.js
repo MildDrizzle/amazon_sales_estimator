@@ -6,6 +6,7 @@ let Popup = (function() {
             "step_2",
             "step_3",
             "results",
+            "niche-hunters",
             "track",
             "login"
         ];
@@ -16,6 +17,14 @@ let Popup = (function() {
     let _revenueOptionvalue = {
         "monthly": 1,
         "daily": 30
+    };
+    let _nicheSearchOptions = {
+        bsr: null,
+        title: null,
+        pages: null,
+        price: null,
+        revenue: null,
+        reviews: null
     };
     let _products = [];
     let _selectedProduct = null;
@@ -129,7 +138,7 @@ let Popup = (function() {
                 $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
                 $record.append($("<td/>").text(products[i].pages));
                 $record.append($("<td/>").text(products[i].currency + products[i].price));
-                $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString()));
+                // $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString()));
                 $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                 $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
 
@@ -365,6 +374,12 @@ let Popup = (function() {
             _background.logout(() => {
                 goTo("login");
             });
+        })
+        .on("click", "#link-niche-hanters", (event) => {
+            goTo("niche-hunters")
+        })
+        .on("click", "#link-rank-tracking", (event) => {
+            goTo("results")
         })
         .on("change", "#domain", (event) => {
             event.preventDefault();
