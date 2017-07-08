@@ -12,6 +12,11 @@ let Popup = (function() {
 
     let _itemsTable = null;
     let _productsTable = null;
+    let _revenueOption = JSON.parse(localStorage._revenue_option || "null") || "monthly";
+    let _revenueOptionvalue = {
+        "monthly": 1,
+        "daily": 30
+    };
     let _products = [];
     let _selectedProduct = null;
 
@@ -125,7 +130,7 @@ let Popup = (function() {
                 $record.append($("<td/>").text(products[i].pages));
                 $record.append($("<td/>").text(products[i].currency + products[i].price));
                 $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString()));
-                $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price)).toLocaleString()));
+                $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                 $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
 
                 $record.appendTo($tbody);
@@ -382,6 +387,11 @@ let Popup = (function() {
                 updateTable();
             });
         })
+        .on("change", "#revenue_option", (event) => {
+            _revenueOption = event.target.value;
+            localStorage._revenue_option = JSON.stringify(_revenueOption);
+            drawTable();
+        })
         .on("click","#results-table th", (event) => {
             let sortTarget = event.target.getAttribute("sort-target");
 
@@ -470,6 +480,8 @@ let Popup = (function() {
 
             $("span.user-name").text(userInfo.name);
         }
+
+        $("#revenue_option").val(_revenueOption);
 
         $(document)
         .on("keypress", "#login-email", (event) => {
