@@ -192,6 +192,41 @@ let Popup = (function() {
         })
     }
 
+    let downloadPlaintext = function(data, filename) {
+        let blob = new Blob([data], { type: "text/plain" })
+
+        let el = document.createElement("a")
+        el.href = URL.createObjectURL(blob)
+        el.download = filename
+        document.body.appendChild(el)
+        el.click()
+        document.body.removeChild(el)
+    }
+
+    /**
+     * Exporting products to CSV file.
+     */
+    const downloadCSV = () => {
+        let toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
+        let header = ["#BSR", "title", "pages", "price", "reviews", "est.Sales", "Revenue"];
+        let category = $_category.val();
+        let products = _background.get().products;
+        let data = products.map(p => toLine([
+                p.bsr,
+                p.title,
+                p.pages,
+                p.currency + p.price,
+                p.reviews,
+                Number(p.reviews).toLocaleString(),
+                Number(parseInt(_background.estimation(p.bsr))).toLocaleString(),
+                p.currency + Number(parseInt(_background.estimation(p.bsr) * p.price)).toLocaleString()
+        ]));
+        
+        data.unshift(toLine(header))
+
+        downloadPlaintext(data.join("\n"), `${category}-${new Date().toISOString()}.csv`)
+    }
+
     /**
      * Render Tracking product view with specific/selected product. In this view, user will be able to watch/unwatch a product or see chart of the product details.
      * @param {object} product 
@@ -387,6 +422,9 @@ let Popup = (function() {
             let targetId = event.target.getAttribute("data-target");
             updateTrackingProductsTable();
             goTo(targetId);
+        })
+        .on("click", "#export", (event) => {
+            downloadCSV();
         })
         .on("click", "table button.view-track", (event) => {
             let index = event.target.getAttribute("data-index");
