@@ -151,6 +151,15 @@ let restAPI = (function(window, jQuery) {
 		sendRequest(_v1ApiBaseUrl + "items", params, success, failure);
 	}
 
+	const findTrackingProduct = (productId, success, failure) => {
+		let params = {
+			token: JSON.parse(localStorage._token),
+			id: productId
+		}
+
+		sendRequest(_v1ApiBaseUrl + "items/get", params, success, failure);
+	}
+
 	/**
 	 * Register user with name, email address and password.
 	 * @param {string} name 
@@ -189,6 +198,7 @@ let restAPI = (function(window, jQuery) {
 		base: _mainHost,
 		apiBaseUrl: _v1ApiBaseUrl,
 		trackings: getTrackingProducts,
+		findTrack: findTrackingProduct,
 		track: trackProduct,
 		untrack: untrackProduct,
 		histories: getHistories,

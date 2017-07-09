@@ -327,6 +327,20 @@ let Background = (() => {
 		})
 	}
 
+	const findTrackingProduct = (id, success, failure) => {
+		_restAPI.findTrack(id, (response) => {
+			if (response.status) {
+				if (typeof success == "function") {
+					success(response);
+				}
+			} else {
+				if (typeof failure == "function") {
+					failure(response);
+				}
+			}
+		})
+	}
+
 	/**
 	 * Getting products being tracked by author for the given domain and category.
 	 * @return {array}
@@ -347,6 +361,7 @@ let Background = (() => {
 		url: getCurUrl,
 		estimation: calculate,
 		items: getTrackingProducts,
+		item: findTrackingProduct,
 		track: trackProduct,
 		untrack: untrackProduct,
 		histories: getHistories,

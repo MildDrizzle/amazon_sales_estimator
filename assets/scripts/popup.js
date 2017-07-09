@@ -197,7 +197,7 @@ let Popup = (function() {
      * @param {object} product 
      * @return {void}
      */
-    const renderTrackForm = (product) => {
+    const renderTrackForm = (product, flag) => {
         let $img = $("#product-image"),
             $graph = $("#graph-container"),
             $title = $("#product-title"),
@@ -209,6 +209,13 @@ let Popup = (function() {
             $revenue = $("#product-monthly-revenue"),
             $asin = $("#product-asin");
 
+        if (flag) {
+            let lastHistory = product.histories[product.histories.length - 1];
+            product.price = lastHistory.price;
+            product.reviews = lastHistory.reviews;
+            product.bsr = lastHistory.bsr;
+            product.currency = lastHistory.currency;
+        }
         $img[0].src = product.img;
         $title.text(product.title);
         $asin.text(product.asin);
@@ -385,8 +392,13 @@ let Popup = (function() {
             let index = event.target.getAttribute("data-index");
             let items = _background.items();
             let product = items[index];
-            renderTrackForm(product);
-            goTo("track");
+            
+            _background.item(product.product.id, (response) => {
+                debugger;
+                product = response.product;
+                renderTrackForm(product, true);
+                goTo("track");
+            })
         })
         .on("change", "#domain", (event) => {
             event.preventDefault();
