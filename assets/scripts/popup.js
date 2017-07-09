@@ -7,6 +7,7 @@ let Popup = (function() {
             "step_3",
             "results",
             "niche-hunters",
+            "tracking-products",
             "track",
             "login"
         ];
@@ -261,7 +262,7 @@ let Popup = (function() {
         _steps.forEach(function(val) {
             if (step == val) {
                 $("#" + val).show();
-                if (step != "track") {
+                if (["track", "tracking-products", "niche-hunters"].indexOf(step) == -1) {
                     _background.step(step);
                 } else if (step == "login") {
                     let credential = _background.credentials();
@@ -375,11 +376,10 @@ let Popup = (function() {
                 goTo("login");
             });
         })
-        .on("click", "#link-niche-hanters", (event) => {
-            goTo("niche-hunters")
-        })
-        .on("click", "#link-rank-tracking", (event) => {
-            goTo("results")
+        .on("click", "span.main-nav-link", (event) => {
+            let targetId = event.target.getAttribute("data-target");
+            updateTrackingProductsTable();
+            goTo(targetId);
         })
         .on("change", "#domain", (event) => {
             event.preventDefault();
@@ -423,6 +423,30 @@ let Popup = (function() {
         })
     };
 
+    /**
+     * Update tracking products table.
+     */
+    const updateTrackingProductsTable = () => {
+        let items = _background.items();
+        let $tableBody = $("table#tracking-products-table tbody");
+        $tableBody.children().remove();
+
+        for (let i = 0; i < items.length; i ++) {
+            $tableBody.append(
+                $("<tr/>").append(
+                    $("<td/>").text(i + 1),
+                    $("<td/>").text(items[i].product.title),
+                    $("<td/>").html(
+                        "<div><button class='btn form-control'>View</button></div>"
+                    )
+                )
+            )
+        }
+    }
+
+    /**
+     * Update products table.
+     */
     const updateTable = () => {
         let curUrl = getSearchUrl();
         let products = _background.get().products;
