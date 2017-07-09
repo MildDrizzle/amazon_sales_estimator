@@ -381,6 +381,13 @@ let Popup = (function() {
             updateTrackingProductsTable();
             goTo(targetId);
         })
+        .on("click", "table button.view-track", (event) => {
+            let index = event.target.getAttribute("data-index");
+            let items = _background.items();
+            let product = items[index];
+            renderTrackForm(product);
+            goTo("track");
+        })
         .on("change", "#domain", (event) => {
             event.preventDefault();
             _background.set({
@@ -437,7 +444,7 @@ let Popup = (function() {
                     $("<td/>").text(i + 1),
                     $("<td/>").text(items[i].product.title),
                     $("<td/>").html(
-                        "<div><button class='btn form-control'>View</button></div>"
+                        `<div><button class='btn form-control view-track' data-index='${i}'>View</button></div>`
                     )
                 )
             )
