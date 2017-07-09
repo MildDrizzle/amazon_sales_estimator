@@ -135,11 +135,11 @@ let Popup = (function() {
                 }
                 
                 $record.append($("<td/>").text(products[i].bsr));
-                $record.append($("<td/>").text(truncateString(products[i].title, 30))).attr({title: products[i].title});
-                $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text("Track")));
+                $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
+                $record.append($("<td/>").append());
                 $record.append($("<td/>").text(products[i].pages));
                 $record.append($("<td/>").text(products[i].currency + products[i].price));
-                // $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr))).toLocaleString()));
+                $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                 $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                 $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
 
