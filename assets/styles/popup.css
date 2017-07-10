@@ -17,6 +17,10 @@ table#tbl-items td {
         text-align: center;}
     table#results-table tbody tr.tracking {
         background: green;}
+        table#results-table tbody tr.tracking a {
+            color: black;}
+    table#results-table tbody tr a {
+        cursor: pointer;}
 
 #track #product-image {
     width: 100%;

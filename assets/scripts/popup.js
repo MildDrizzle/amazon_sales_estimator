@@ -93,15 +93,16 @@ let Popup = (function() {
      * Draw Table with products scraped from Amazon across domains and categories considered in the chrome extension.
      * @return {void}
      */
-    let drawTable = function() {
+    let drawTable = function(forceFlag) {
         let products = _background.get().products,
             trackings = _background.items(),
             index = 1,
             $tbody = $("table#results-table tbody");
 
-        if (products.length == _products.length) {
+        if (products.length == _products.length && !forceFlag) {
             return false;
         } else {
+            _products = products;
             $tbody.children().remove();
 
             products = products.sort((a, b) => {
@@ -136,7 +137,15 @@ let Popup = (function() {
                 
                 $record.append($("<td/>").text(products[i].bsr));
                 $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
-                $record.append($("<td/>").append());
+                if (found.length > 0) {
+                    $record.append($("<td/>").append(
+                        $(`<a class='untrack-product' title='Untrack this product' data-id='${found[0].id}'>UnTrack</a>`)
+                    ));
+                } else {
+                    $record.append($("<td/>").append(
+                        $(`<a class='track-product' title='Track this product' data-index='${i}'>Track</a>`)
+                    ));
+                }
                 $record.append($("<td/>").text(products[i].pages));
                 $record.append($("<td/>").text(products[i].currency + products[i].price));
                 $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
@@ -426,6 +435,21 @@ let Popup = (function() {
         .on("click", "#export", (event) => {
             downloadCSV();
         })
+        .on("click", "a.track-product", (event) => {
+            let index = event.target.getAttribute("data-index");
+            let $record = $(event.target).parent("tr");
+            let product = _products[index];
+            _background.track(product, (response) => {
+                console.log(response);
+            });
+        })
+        .on("click", "a.untrack-product", (event) => {
+            let id = event.target.getAttribute("data-id");
+            
+            _background.untrack(id, (response) => {
+                console.log(response);
+            });
+        })
         .on("click", "table button.view-track", (event) => {
             let index = event.target.getAttribute("data-index");
             let items = _background.items();
@@ -462,7 +486,7 @@ let Popup = (function() {
         .on("change", "#revenue_option", (event) => {
             _revenueOption = event.target.value;
             localStorage._revenue_option = JSON.stringify(_revenueOption);
-            drawTable();
+            drawTable(true);
         })
         .on("click","#results-table th", (event) => {
             let sortTarget = event.target.getAttribute("sort-target");
