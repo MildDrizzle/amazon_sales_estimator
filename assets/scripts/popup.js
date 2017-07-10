@@ -139,7 +139,7 @@ let Popup = (function() {
                 $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
                 if (found.length > 0) {
                     $record.append($("<td/>").append(
-                        $(`<a class='untrack-product' title='Untrack this product' data-id='${found[0].id}'>UnTrack</a>`)
+                        $(`<a class='untrack-product' title='Untrack this product' data-index='${i}' data-id='${found[0].product.id}'>UnTrack</a>`)
                     ));
                 } else {
                     $record.append($("<td/>").append(
@@ -437,17 +437,34 @@ let Popup = (function() {
         })
         .on("click", "a.track-product", (event) => {
             let index = event.target.getAttribute("data-index");
-            let $record = $(event.target).parent("tr");
+            let $record = $(event.target).parents("tr");
             let product = _products[index];
             _background.track(product, (response) => {
                 console.log(response);
+                $record.addClass("tracking");
+                $(event.target)
+                .attr({
+                    "data-id": product.id,
+                    "title": "Untrack this title."
+                })
+                .text("UnTrack")
+                .removeClass("track-product")
+                .addClass("untrack-product")
             });
         })
         .on("click", "a.untrack-product", (event) => {
             let id = event.target.getAttribute("data-id");
+            let $record = $(event.target).parents("tr");
             
             _background.untrack(id, (response) => {
-                console.log(response);
+                $record.removeClass("tracking");
+                $(event.target)
+                .attr({
+                    "title": "Track this title."
+                })
+                .text("Track")
+                .addClass("track-product")
+                .removeClass("untrack-product")
             });
         })
         .on("click", "table button.view-track", (event) => {
