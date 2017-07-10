@@ -107,6 +107,13 @@ let EBookParser = (() => {
         if (!pages) {
             debugger;
         }
+        let prefix = '<meta name="keywords" content="';
+        let suffix = '" />';
+        let pos = text.indexOf(prefix) + prefix.length;
+        let tmp = text.substr(pos);
+        pos = tmp.indexOf(suffix);
+        let keywords = tmp.substr(0, pos).trim();
+
         // let isbn = (bulletString.match(/ISBN:\s(\d+)/g) || ["a none"])[0].split(" ")[1];
         let isbn = "";
         let asin = $page.find("input[name='ASIN.0']").val();
@@ -120,6 +127,7 @@ let EBookParser = (() => {
             img,
             currency,
             pages,
+            keywords,
             asin,
             isbn
         };

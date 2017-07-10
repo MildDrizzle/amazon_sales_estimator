@@ -106,6 +106,13 @@ let BookParser = (() => {
         if (pages == "") {
             debugger;
         }
+        let prefix = '<meta name="keywords" content="';
+        let suffix = '" />';
+        let pos = text.indexOf(prefix) + prefix.length;
+        let tmp = text.substr(pos);
+        pos = tmp.indexOf(suffix);
+        let keywords = tmp.substr(0, pos).trim();
+
         let isbn = (bulletString.match(pattern.isbnPattern) || [""])[0].split(" ")[1];
         let asin = $page.find("#ASIN").val();
         // let bsr = $page.find("#SalesRank").text().trim().match(/(\d+)\s/g)[0].match(/\d+/g)[0];
@@ -119,6 +126,7 @@ let BookParser = (() => {
             currency,
             pages,
             asin,
+            keywords,
             isbn
         };
     };

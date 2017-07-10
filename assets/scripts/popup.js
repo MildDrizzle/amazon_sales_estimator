@@ -276,7 +276,7 @@ let Popup = (function() {
                     let flag = false;
                     let keywords = (product.keywords || "something new").split(",");
                     for (let j = 0; j < keywords.length; j ++) {
-                        if (keywords[j].indexOf(value) > -1) {
+                        if (keywords[j].toLowerCase().indexOf(value.toLowerCase()) > -1) {
                             flag = true;
                             break;
                         }
