@@ -342,13 +342,15 @@ let Popup = (function() {
      */
     const drawChart = (productID) => {
         _background.histories(productID, (response) => {
-            let data = [];
+            let revenueData = [];
+            let bsrData = [];
             let xAxisData = [];
             let graphContainer = document.getElementById("graph-container");
 
             for (let i = 0; i < response.histories.length; i ++) {
-                data.push([response.histories[i].updated_at, response.histories[i].monthly_rev]);
-                xAxisData.push(response.histories[i].updated_at);
+                revenueData.push([response.histories[i].updated_at, response.histories[i].monthly_rev]);
+                bsrData.push([response.histories[i].updated_at, parseInt(response.histories[i].bsr)]);
+                xAxisData.push(new Date(response.histories[i].updated_at).toLocaleDateString());
             }
 
             Highcharts.chart('graph-container', {
@@ -357,21 +359,34 @@ let Popup = (function() {
                 },
                 xAxis: {
                     type: 'datetime',
+                    dateTimeLabelFormats: {
+                        day: '%b %e'    //ex- 01 Jan 2016
+                    },
                     categories: xAxisData
                 },
                 title: {
                     text: "Monthly Revenue Chart"
                 },
                 yAxis: {
-                    title: "Monthly Revenue"
+                    title: "Monthly Revenue & BSR"
                 },
-                series: [{
-                    name: "Revenue",
-                    data: data
-                }],
-                tooltip: {
-                    valuePrefix: "$"
-                }
+                series: [
+                    {
+                        name: "Revenue",
+                        data: revenueData,
+                        tooltip: {
+                            valuePrefix: "$"
+                        }
+                    },
+                    {
+                        name: "BSR",
+                        data: bsrData,
+                        tooltip: {
+                            valuePrefix: "#"
+                        }
+                    }
+                ],
+                    
 
             });
         }, () => {
