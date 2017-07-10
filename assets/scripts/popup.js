@@ -40,6 +40,8 @@ let Popup = (function() {
     let _curSortColumn = "bsr";
     let _sortOption = "asc";
 
+    let _nicheHuntersTable = $("table#niche-hunders-table");
+
     let _globalTimer = null;
 
     const bsrPagesPath = {
@@ -91,6 +93,7 @@ let Popup = (function() {
 
     /**
      * Draw Table with products scraped from Amazon across domains and categories considered in the chrome extension.
+     * @param {boolean} forceFlag
      * @return {void}
      */
     let drawTable = function(forceFlag) {
@@ -156,6 +159,181 @@ let Popup = (function() {
             }
         }
     };
+
+    /**
+     * Check a op b;
+     * @param {number} a 
+     * @param {number} op 
+     * @param {string} b 
+     * @return {boolean}
+     */
+    const check = (a, op, b) => {
+        a = parseInt(a);
+        b = parseInt(b);
+        if (a == NaN || b == NaN) {
+            return false;
+        }
+
+        switch(op) {
+            case "=":
+                return a == b;
+                
+            case ">":
+                return a > b;
+
+            case "<":
+                return a < b;
+        }
+    }
+
+    /**
+     * Filter function for niche hunter search.
+     * @param {object} product 
+     * @param {array} options 
+     * @return {boolean}
+     */
+    const checkNicheHunterSearchOptions = (product, options) => {
+        for (let i = 0; i < options.length; i ++) {
+            let opIndex = null;
+            let operators = ["=", ">", "<"];
+            let key, op, value = null;
+            for (let j = 0; j < operators.length; j ++) {
+                if (options[i].indexOf(operators[j]) > -1) {
+                    opIndex = j;
+                    op = operators[opIndex];
+                    break;
+                }
+            }
+
+            if (!op) {
+                return false;
+            }
+
+            [key, value] = options[i].split(op);
+
+            switch(key) {
+                case "t":
+                case "title":
+                    if (product.title.toLowerCase().indexOf(value.toLowerCase()) == -1) {
+                        return false;
+                    }
+                    break;
+                
+                case "p":
+                case "price":
+                    if (!check(product.price, op, value)) {
+                        return false;
+                    }
+                    break;
+
+                case "pg":
+                case "pages":
+                case "page":
+                    if (!check(product.pages, op, value)) {
+                        return false;
+                    }
+                    break;
+
+                case "r":
+                case "reviews":
+                case "review":
+                    if (!check(product.reviews, op, value)) {
+                        return false;
+                    }
+                    break;
+
+                case "ms":
+                case "monthly est.Sales":
+                    if (!check(parseInt(_background.estimation(product.bsr)), op, value)) {
+                        return false;
+                    }
+                    break;
+
+                case "ds":
+                case "daily est.Sales":
+                    if (!check(parseInt(_background.estimation(product.bsr) / 30), op, value)) {
+                        return false;
+                    }
+                    break;
+
+                case "mr":
+                case "monthly revenue":
+                    if (!check(parseInt(_background.estimation(product.bsr) * product.price), op, value)) {
+                        return false;
+                    }
+                    break;
+
+                case "dr":
+                case "daily revenue":
+                    if (!check(parseInt(_background.estimation(product.bsr) * product.price / 30), op, value)) {
+                        return false;
+                    }
+                    break;
+                    
+                case "k":
+                case "keyword":
+                case "keywords":
+                    let flag = false;
+                    let keywords = (product.keywords || "something new").split(",");
+                    for (let j = 0; j < keywords.length; j ++) {
+                        if (keywords[j].indexOf(value) > -1) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag) {
+                        return false;
+                    }
+                    break;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Render Niche Hunter Products table whenever parameter string changes.
+     * @param {string} paramString 
+     * @return {void}
+     */
+    let drawNicheHunterTable = (paramString) => {
+        let products = _background.get().products;
+        let searchOptions = null;
+        let trackings = _background.items();
+        let $tbody = _nicheHuntersTable.find("tbody");
+        let params = paramString ? paramString.split("&") : [];
+
+        products = products.filter((product) => {
+            if (!paramString) {
+                return true;
+            } else {
+                return checkNicheHunterSearchOptions(product, params);
+            }
+        });
+        products = products.sort((a, b) => {
+            return a.bsr - b.bsr;
+        });
+
+        $tbody.children().remove();
+
+        for (let i = 0; i < products.length; i ++) {
+            let found = trackings.filter(item => item.product.asin == products[i].asin);
+            let $record = $("<tr/>");
+
+            if (found.length > 0) {
+                $record.addClass("tracking").attr({"title": "Watching"});
+            }
+            
+            $record.append($("<td/>").text(products[i].bsr));
+            $record.append($("<td/>").append($("<span/>").text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
+            $record.append($("<td/>").text(products[i].pages));
+            $record.append($("<td/>").text(products[i].currency + products[i].price));
+            $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+            $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+            $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
+
+            $record.appendTo($tbody);
+        }
+    }
 
     /**
      * Draw change history chart for a given product being tracked by user.
@@ -519,6 +697,10 @@ let Popup = (function() {
 
             drawTable();
         })
+        .on("change", "#niche-hunters-search-param", (event) => {
+            let paramString = event.target.value;
+            drawNicheHunterTable(paramString);
+        })
     };
 
     /**
@@ -598,6 +780,7 @@ let Popup = (function() {
                 drawTable();
             }, 3000);
         }
+        drawNicheHunterTable();
 
         // _productsTable = $("#results-table").DataTable({
         //     "autoWidth": false
