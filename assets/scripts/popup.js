@@ -348,7 +348,7 @@ let Popup = (function() {
             let graphContainer = document.getElementById("graph-container");
 
             for (let i = 0; i < response.histories.length; i ++) {
-                revenueData.push([response.histories[i].updated_at, response.histories[i].monthly_rev]);
+                revenueData.push([response.histories[i].updated_at, parseInt(response.histories[i].monthly_rev / 30)]);
                 bsrData.push([response.histories[i].updated_at, parseInt(response.histories[i].bsr)]);
                 xAxisData.push(new Date(response.histories[i].updated_at).toLocaleDateString());
             }
