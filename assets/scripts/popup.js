@@ -695,7 +695,7 @@ let Popup = (function() {
             _sortOption = ["asc", "desc"].filter(option => option != curOption)[0];
             event.target.setAttribute("sort-option", _sortOption);
 
-            drawTable();
+            drawTable(true);
         })
         .on("change", "#niche-hunters-search-param", (event) => {
             let paramString = event.target.value;
