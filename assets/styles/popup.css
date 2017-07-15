@@ -29,6 +29,17 @@
             font-size: 42px;
             padding-top: 3px;}
 
+    .wrapper #lading-mask {
+        margin-left: 15px;
+        z-index: 99;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background: rgba(255,255,255, 0.7);}
+        .wrapper #lading-mask img {
+            width: 100px;
+            margin: 230px 0 0 330px;}
+
 #logo {
     margin-top: 10px;
     margin-bottom: 10px;

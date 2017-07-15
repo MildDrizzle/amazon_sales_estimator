@@ -2,9 +2,9 @@
 
 let Popup = (function() {
     let _steps = [
-            "step_1",
-            "step_2",
-            "step_3",
+            // "step_1",
+            // "step_2",
+            // "step_3",
             "results",
             "niche-hunters",
             "tracking-products",
@@ -567,6 +567,14 @@ let Popup = (function() {
             }
         }
     };
+
+    const showLoading = () => {
+        $("#lading-mask").show();
+    }
+
+    const hideLoading = () => {
+        $("#lading-mask").hide();
+    }
 
     /**
      * Initialize Events for components.
