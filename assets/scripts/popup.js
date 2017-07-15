@@ -106,7 +106,7 @@ let Popup = (function() {
         if (products.length == _products.length && !forceFlag) {
             return false;
         } else {
-            _products = products;
+            _products = products.concat();
             $tbody.children().remove();
 
             products = products.sort((a, b) => {
@@ -158,6 +158,12 @@ let Popup = (function() {
 
                 $record.appendTo($tbody);
             }
+        }
+
+        if (_background.started()) {
+            showLoading();
+        } else {
+            hideLoading();
         }
     };
 
@@ -759,7 +765,7 @@ let Popup = (function() {
 
         $trackingCount.text(trackingProducts.length);
 
-        if (products.length == 0) {
+        if (products.length == 0 && !_background.started()) {
             chrome.tabs.query({url: curUrl}, (tabs) => {
                 if (tabs.length > 0) {
                     _background.set({
@@ -776,6 +782,8 @@ let Popup = (function() {
                             domain: status.domain,
                             category: status.category,
                             page: status.page || 1
+                        }, (response) => {
+                            _background.started(response.started);
                         });
                     });
                 } else {

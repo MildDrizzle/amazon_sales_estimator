@@ -167,6 +167,11 @@ let BookParser = (() => {
                     parseDetail();
                 }
             });
+        } else {
+            chrome.runtime.sendMessage({
+                from: "amazon",
+                action: "get_data_completed"
+            });
         }
     }
 
@@ -238,13 +243,16 @@ let BookParser = (() => {
         domain = window.location.host.substr("www.".length);
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             let page = (request.page) ? request.page : 1;
-            if (request.category == "Books") {
+            if (request.category == "Books" && request.action == "get_data") {
                 _searchPages = [];
                 _products = [];
                 for (let i = 1; i < 6; i ++) {
                     _searchPages.push(getSearchPageUrl(domain, i));
                 }
                 extractProducts(domain, page);
+                sendResponse({
+                    started: true
+                });
             }
         })
     };

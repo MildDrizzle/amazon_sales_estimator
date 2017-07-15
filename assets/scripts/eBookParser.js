@@ -170,7 +170,10 @@ let EBookParser = (() => {
                 }
             });
         } else {
-            //
+            chrome.runtime.sendMessage({
+                from: "amazon",
+                action: "get_data_completed"
+            });
         }
     }
 
@@ -236,13 +239,16 @@ let EBookParser = (() => {
     const init = (domain) => {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             let page = (request.page) ? request.page : 1;
-            if (request.category === "eBooks") {
+            if (request.category === "eBooks" && request.action == "get_data") {
                 _searchPages = [];
                 _products = [];
                 for (let i = 1; i < 6; i ++) {
                     _searchPages.push(getSearchPageUrl(domain, i))
                 }
                 extractProducts(domain, page);
+                sendResponse({
+                    started: true
+                });
             }
         })
     };

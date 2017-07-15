@@ -18,6 +18,8 @@ let Background = (() => {
 	let _restAPI = restAPI;
 	let _initialSamples = [];
 
+	let _started = false;
+
 	/**
 	 * Getting a proper amazon best seller ranking url according to given domain and category.
 	 * @param {string} domain 
@@ -198,7 +200,20 @@ let Background = (() => {
         }
         
         return _estimation;
-    }
+	}
+	
+	/**
+	 * Getter or Setter of started flag variable of background script.
+	 * @param {boolean} started 
+	 * @return {boolean}
+	 */
+	const started = (started) => {
+		if (started == undefined) {
+			return _started;
+		} else {
+			_started = started;
+		}
+	}
 
 	let init = () => {
 			chrome.runtime.onInstalled.addListener(function (details) {
@@ -219,6 +234,8 @@ let Background = (() => {
 								info.estSale = parseInt(calculate(info.bsr));
 							}
 							_data.products.push(info);
+						} else if (request.action == "get_data_completed") {
+							_started = false;
 						}
 						break;
 
@@ -366,7 +383,8 @@ let Background = (() => {
 		untrack: untrackProduct,
 		histories: getHistories,
 		step: setStep,
-		credentials: getCredentials
+		credentials: getCredentials,
+		started: started
 	};
 })();
 
