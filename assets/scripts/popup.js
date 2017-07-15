@@ -2,9 +2,6 @@
 
 let Popup = (function() {
     let _steps = [
-            // "step_1",
-            // "step_2",
-            // "step_3",
             "results",
             "niche-hunters",
             "tracking-products",
@@ -556,11 +553,16 @@ let Popup = (function() {
                     }
                 });
             } else if (event.target.getAttribute('data-action') === "login") {
-                _background.login($("#login-email").val(), $("#login-password").val(), function(response) {
+                _background.login($("#login-email").val(), $("#login-password").val(), (response) => {
                     if (response.status) {
                         setToken(response.token, response.user);
+                        $(".login-error-msg").hide();
                         goTo(event.target.getAttribute('data-target'));
+                    } else {
+                        $(".login-error-msg").show();
                     }
+                }, (response) => {
+                    $(".login-error-msg").show();
                 });
             } else if (event.target.getAttribute('data-action') === "logout") {
                 localStorage._token = JSON.stringify(null);
