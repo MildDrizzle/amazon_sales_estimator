@@ -9,6 +9,7 @@ let Popup = (function() {
             "niche-hunters",
             "tracking-products",
             "track",
+            "initial",
             "login"
         ];
 
@@ -602,7 +603,7 @@ let Popup = (function() {
         });
 
         if (!getToken() || !(getUser() || {}).id) {
-            _curStep = "login";
+            _curStep = "initial";
         }
         
         goTo(_curStep);
@@ -810,7 +811,7 @@ let Popup = (function() {
             goTo("track");
         }));
 
-        if (JSON.parse(localStorage._token)) {
+        if (JSON.parse(localStorage._token || "null")) {
             let userInfo = JSON.parse(localStorage._user);
 
             $("span.user-name").text(userInfo.name);
