@@ -632,7 +632,7 @@ let Popup = (function() {
         }
 
         $(document)
-        .on("click", "span.logout", (event) => {
+        .on("click", ".logout", (event) => {
             _background.logout(() => {
                 goTo("login");
             });
@@ -832,7 +832,7 @@ let Popup = (function() {
         if (JSON.parse(localStorage._token || "null")) {
             let userInfo = JSON.parse(localStorage._user);
 
-            $("span.user-name").text(userInfo.name);
+            $(".user-name").text(userInfo.name);
         }
 
         $("#revenue_option").val(_revenueOption);

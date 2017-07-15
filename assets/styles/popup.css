@@ -39,7 +39,38 @@
         .wrapper #lading-mask img {
             width: 100px;
             margin: 230px 0 0 330px;}
-
+    .user-info-container {
+        width:90px;
+        float: left;
+        border-right:solid 1px grey;
+        height:85px;}
+        .user-info-container > div {
+            clear: both;}
+            .user-info-container > div i {
+                cursor: pointer;
+                margin: 5px 0 0 39px;}
+            .user-info-container > div h5 {
+                margin:0;
+                text-align:center;}
+    .results-header-center-container {
+        height: 85px;
+        width: 590px;
+        float: left;
+        border-right: solid 1px grey;}
+    .results-header-right-container {
+        width: 86px;
+        float: left;
+        height: 85px;}
+        .results-header-right-container > div {
+            clear: both;}
+            .results-header-right-container > div i {
+                cursor: pointer;
+                margin: 5px 0 0 39px;}
+            .results-header-right-container > div select {
+                margin: 4px 0 0 20px;}
+            .results-header-right-container > div h5 {
+                margin:0;
+                text-align:center;}
 #logo {
     margin-top: 10px;
     margin-bottom: 10px;

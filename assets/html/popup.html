@@ -28,14 +28,99 @@
 				</div>
 			</div>
 
-			<div class="" style="display:none;padding-left:20px;padding-right:20px;" id="results">
+			<div class="" style="display:none;padding-left:15px;padding-right:15px;" id="results">
+				<div style="border-bottom:solid 1px grey;height:85px;">
+					<div class="user-info-container">
+						<div>
+							<i class="glyphicon glyphicon-user"></i>
+							<h5 class="user-name"></h5>
+						</div>
+						<div>
+							<i class="glyphicon glyphicon-log-out logout"></i>
+							<h5 class="logout">Sign Out</h5>
+						</div>
+					</div>
+					<div class="results-header-center-container">
+						<div class="" style="padding-left:195px;">
+							<span class="main-nav-link" data-target="tracking-products">Title Tracking(<span id="tracking-count">0</span>)</span>
+							&nbsp;|&nbsp;<span class="main-nav-link" data-target="niche-hunters" >Niche Hunder</span>
+						</div>
+						<div>
+							<h5 style="margin:4px 0 1px 0;">Average Values:</h5>
+							<div>
+								<table id="resutls-average-table" style="width:100%;">
+									<thead>
+										<tr>
+											<th>BSR</th>
+											<th>Pages</th>
+											<th>Reviews</th>
+											<th>Price</th>
+											<th>Units Sold</th>
+											<th>Revenue</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td data-prop="bsr">0</td>
+											<td data-prop="pages">0</td>
+											<td data-prop="reviews">0</td>
+											<td data-prop="price">0</td>
+											<td data-prop="estSales">0</td>
+											<td data-prop="revenue">0</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							
+						</div>
+					</div>
+					<div class="results-header-right-container">
+						<div>
+							<i class="glyphicon glyphicon-save" title="Download CSV" id="export"></i>
+							<h5>Export</h5>
+						</div>
+						<div>
+							<select name="domain" id="domain">
+								<option value="amazon.com.au">AU</option>
+								<option value="amazon.ca">CA</option>
+								<option value="amazon.com">US</option>
+								<option value="amazon.co.uk">UK</option>
+								<option value="amazon.de">DE</option>
+								<option value="amazon.es">ES</option>
+								<option value="amazon.fr">FR</option>
+								<option value="amazon.in">IN</option>
+								<option value="amazon.it">IT</option>
+								<!--<option value="amazon.co.jp">amazon.co.jp</option>-->
+							</select>
+							<h5>Region</h5>
+						</div>
+					</div>
+				</div>
+				<div class="switcher form-group row">
+					<div class="col-xs-2">
+						<select name="category" class="form-control" id="category">
+							<option value="Books">Books</option>
+							<option value="eBooks">eBooks</option>
+						</select>
+					</div>
+					<div class="col-xs-2">
+						<select name="revenue_option" id="revenue_option" class="form-control">
+							<option value="monthly">Monthly</option>
+							<option value="daily">Daily</option>
+						</select>
+					</div>
+					<div class="col-xs-1">
+						<span class="glyphicon glyphicon-question-sign btn form-control" title="Help" id="help"></span>
+					</div>
+				</div>
 				<div class="user-info">
 					<div class="row">
 						<div class="col-xs-4">
 							<span>Signed as&nbsp;</span><span class="user-name"></span>
 						</div>
 						<div class="col-xs-4 col-xs-offset-4">
-							<span class="logout pull-right">Sign Out<i class="glyphicon glyphicon-log-out"></i></span>
+							<i class="glyphicon glyphicon-log-out"></i>
+							<span class="logout pull-right">Sign Out</span>
 						</div>
 					</div>
 				</div>
@@ -63,40 +148,6 @@
 
 						</tbody>
 					</table>
-				</div>
-				<div class="switcher form-group row">
-					<div class="col-xs-2">
-						<select name="domain" id="domain" class="form-control">
-							<option value="amazon.com.au">Australia</option>
-							<option value="amazon.ca">Canada</option>
-							<option value="amazon.com">USA</option>
-							<option value="amazon.co.uk">UK</option>
-							<option value="amazon.de">Denmark</option>
-							<option value="amazon.es">Spain</option>
-							<option value="amazon.fr">France</option>
-							<option value="amazon.in">India</option>
-							<option value="amazon.it">Italy</option>
-							<!--<option value="amazon.co.jp">amazon.co.jp</option>-->
-						</select>
-					</div>
-					<div class="col-xs-2">
-						<select name="category" class="form-control" id="category">
-							<option value="Books">Books</option>
-							<option value="eBooks">eBooks</option>
-						</select>
-					</div>
-					<div class="col-xs-2">
-						<select name="revenue_option" id="revenue_option" class="form-control">
-							<option value="monthly">Monthly</option>
-							<option value="daily">Daily</option>
-						</select>
-					</div>
-					<div class="col-xs-1">
-						<span class="glyphicon glyphicon-save btn form-control" title="Download CSV" id="export"></span>
-					</div>
-					<div class="col-xs-1">
-						<span class="glyphicon glyphicon-question-sign btn form-control" title="Help" id="help"></span>
-					</div>
 				</div>
 			</div>
 
