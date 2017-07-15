@@ -21,36 +21,11 @@
 			<div id="initial" style="display:none;">
 				<div style="padding-top: 200px;padding-bottom:170px;" class="row">
 					<a href="http://privatelabelmastery.com/signup" class="col-xs-2 col-xs-offset-3 btn btn-default">Sign up</a>
-					<button class="col-xs-2 col-xs-offset-2 btn btn-default">Log in</button>
+					<button class="col-xs-2 col-xs-offset-2 btn btn-default step-control-button" data-target="login">Log in</button>
 				</div>
 			</div>
 
-			<div class="footer">
-				<div class="" style="position:absolute;width:70px;height:69px;border-right: solid 1px grey;">
-					<a href="http://privatelabelmastery.com/">
-						<img src="../images/profile.png" style="height:100%;" alt="">
-					</a>
-				</div>
-				<div class="footer-center">
-					<div class="social-icons-container">
-						<a href="https://www.twitter.com/">
-							<img src="../images/twitter.svg" alt="">
-						</a>
-						<a href="https://www.facebook.com/">
-							<img src="../images/facebook.svg" alt="">
-						</a>
-						<a href="https://www.youtube.com/">
-							<img src="../images/youtube.png" alt="">
-						</a>
-					</div>
-					<h5 style="text-align:center;margin-bottom:0;">Join us on Social Media to Learn more</h5>
-				</div>
-				<div class="help-container">
-					<a href="http://privatelabelmastery.com/help">
-						<span class="glyphicon glyphicon-question-sign btn form-control" title="Help"></span>
-					</a>
-				</div>
-			</div>
+			
 			<div class="panel panel-default" style="display:none;" id="step_1">
 				<div class="panel-heading">
 					<h3>Registration Wizard</h3>
@@ -323,35 +298,59 @@
 				</div>
 			</div>
 
-			<div class="panel panel-default" style="display:none;" id="login">
-				<div class="panel-heading">
-					<h3>Registration Wizard</h3>
-				</div>
-				<div class="panel-body">
-					<h4>Please enter your email and password.</h4>
-					<div class="form-group">
+			<div class="" style="display:none;padding-top:100px;padding-bottom:70px;" id="login">
+				<div class="form-group row">
+					<div class="col-xs-2 col-xs-offset-3">
+						<label for="login-email">User</label>
+					</div>
+					<div class="col-xs-4">
 						<input type="text" name="email" id="login-email" class="form-control" placeholder="Email Address">
 					</div>
-					<div class="form-group">
+				</div>
+				<div class="form-group row">
+					<div class="col-xs-2 col-xs-offset-3">
+						<label for="login-password">User</label>
+					</div>
+					<div class="col-xs-4">
 						<input type="password" name="password" id="login-password" class="form-control" placeholder="Password">
 					</div>
-					<div class="form-group">
-						<p>By registering I accept your [terms of use] and [privacy policy]. I can unsubscribe or update my preferences by contacting info@estsales.com</p>
+					<div class="col-xs-3">
+						<a href="http://privatelabelmastery.com/forgot_password">Forgot Password?</a>
 					</div>
 				</div>
-				<div class="panel-footer">
-					<div class="row">
-						<div class="col-xs-4">
-							<button class="btn btn-default step-control-button form-control" data-target="step_1">Register</button>
-						</div>
-						<div class="col-xs-4 col-xs-offset-4">
-							<button class="btn btn-primary step-control-button form-control" id="login-submit" data-action="login" data-target="results">Login</button>
-						</div>
+				<div class="form-group row">
+					<div class="col-xs-4 col-xs-offset-5">
+						<button class="btn btn-primary step-control-button form-control" id="login-submit" data-action="login" data-target="results">Login</button>
 					</div>
 				</div>
 			</div>
 
-
+			<div class="footer">
+				<div class="" style="position:absolute;width:70px;height:69px;border-right: solid 1px grey;">
+					<a href="http://privatelabelmastery.com/">
+						<img src="../images/profile.png" style="height:100%;" alt="">
+					</a>
+				</div>
+				<div class="footer-center">
+					<div class="social-icons-container">
+						<a href="https://www.twitter.com/">
+							<img src="../images/twitter.svg" alt="">
+						</a>
+						<a href="https://www.facebook.com/">
+							<img src="../images/facebook.svg" alt="">
+						</a>
+						<a href="https://www.youtube.com/">
+							<img src="../images/youtube.png" alt="">
+						</a>
+					</div>
+					<h5 style="text-align:center;margin-bottom:0;">Join us on Social Media to Learn more</h5>
+				</div>
+				<div class="help-container">
+					<a href="http://privatelabelmastery.com/help">
+						<span class="glyphicon glyphicon-question-sign btn form-control" title="Help"></span>
+					</a>
+				</div>
+			</div>
 		</div>
 	</div>
 	<script src="../scripts/jquery.js"></script>
