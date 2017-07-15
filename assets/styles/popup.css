@@ -1,7 +1,10 @@
 .wrapper {
     padding-top: 15px;
-    width: 768px;
-}
+    width: 768px;}
+
+#logo {
+    width: 240px;
+    margin-bottom: 10px;}
 
 table#results-table th {
     cursor: pointer;}
@@ -32,12 +35,13 @@ table#tbl-items td {
         margin-left: 5px;}
 
 #results .footer {
-    top: 60px;
+    /* top: 60px;
     position: fixed;
-    width: 100%;
+    width: 100%; */
     background: rgba(255,255,255,0.8);}
 #results .content {
-    margin-top: 60px;}
+    /* margin-top: 60px; */
+}
 span.main-nav-link {
     padding-left:5px;
     cursor:pointer;}
