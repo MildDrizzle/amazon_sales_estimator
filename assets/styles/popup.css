@@ -8,10 +8,16 @@
         margin-left: 15px;
         border-top: solid 1px grey;}
         .footer>div {
-            float: left;
-            border-right: solid 1px grey;}
-            .footer>div:last-child {
-                border-right: none;}
+            float: left;}
+        .footer .footer-center {
+            width: 620px;
+            padding-top: 10px;
+            margin-left:71px;}
+        .footer .social-icons-container {
+            margin-left: 215px;}
+            .footer .social-icons-container img {
+                height: 33px;
+                margin: 0 15px;}
     .wrapper .help-container {
         position: absolute;
         right: 4px;
