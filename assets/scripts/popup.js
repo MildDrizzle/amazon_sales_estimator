@@ -157,7 +157,7 @@ let Popup = (function() {
             }
         }
 
-        if (_background.started()) {
+        if (_background.started() && ["login"].indexOf(_curSortColumn) == -1) {
             showLoading();
         } else {
             hideLoading();
