@@ -525,6 +525,21 @@ let Popup = (function() {
         if (step == "results") {
             drawTable();
         }
+
+        switch(step) {
+            case "login":
+            case "initial":
+                $(".mode-3").hide();
+                $(".mode-2").hide();
+                $(".mode-1").show();
+                break;
+
+            case "results":
+            case "niche-hunters":
+                $(".mode-3").hide();
+                $(".mode-1").hide();
+                $(".mode-2").show();
+        }
     };
 
     /**
