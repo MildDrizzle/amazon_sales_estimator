@@ -10,10 +10,29 @@
         .footer>div {
             float: left;}
         .footer .footer-center {
-            width: 620px;
             padding-top: 10px;
             margin-left:71px;}
-        .footer .social-icons-container {
+            .footer .footer-center.mode-1 {
+                width: 620px;}
+            .footer .footer-center-switcher.mode-2 {
+                margin-left: 70px;
+                height: 69px;
+                border-right: solid 1px grey;
+                padding-top: 20px;
+                width: 310px;}
+                .footer .footer-center-switcher.mode-2 > div {
+                    padding: 0 34px;
+                    float: left;}
+                    .footer .footer-center-switcher.mode-2 > div select {
+                        font-size: 18px;
+                        padding: 3px 0;}
+            .footer .footer-center-socials.mode-2 {
+                width: 310px;
+                margin-top: 10px;}
+                .footer .footer-center-socials.mode-2 .social-icons-container {
+                    margin-left: 60px;
+                }
+        .footer .social-icons-container.mode-1 {
             margin-left: 215px;}
             .footer .social-icons-container img {
                 height: 33px;
