@@ -218,7 +218,7 @@ let Background = (() => {
 	let init = () => {
 			chrome.runtime.onInstalled.addListener(function (details) {
 				console.log('previousVersion', details.previousVersion);
-				checkAuth();
+				// checkAuth();
 			});
 
 			chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
