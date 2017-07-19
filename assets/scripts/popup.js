@@ -537,6 +537,9 @@ let Popup = (function() {
         });
 
         if (step == "results") {
+            if (_background.started()) {
+                showLoading();
+            }
             drawTable();
         }
 

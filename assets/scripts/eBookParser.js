@@ -101,6 +101,8 @@ let EBookParser = (() => {
         }
         let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
+        let tempTags = currency.split(" ");
+        currency = (tempTags.length > 0) ? tempTags[tempTags.length - 1] : currency;
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
         // let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
