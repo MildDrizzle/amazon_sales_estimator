@@ -31,7 +31,8 @@
                 margin-top: 10px;}
                 .footer .footer-center-socials.mode-2 .social-icons-container {
                     margin-left: 60px;}
-        .footer .statistics-container {
+        .footer .statistics-container,
+        .footer .niche-statistics-container {
             height: 70px;
             margin-left: 70px;
             width: 310px;
@@ -47,7 +48,9 @@
                 float: left;
                 padding-left: 10px;}
             .footer .statistics-container h4,
-            .footer .statistics-container h5 {
+            .footer .statistics-container h5,
+            .footer .niche-statistics-container h4,
+            .footer .niche-statistics-container h5  {
                 text-align: center;}
         .footer .mode-1 .social-icons-container {
             margin-left: 215px;}
@@ -177,5 +180,13 @@ span.main-nav-link {
 #tracking-products {
     padding: 0 15px;}
     #tracking-products table a {
-        cursor: pointer;
-    }
+        cursor: pointer;}
+
+#niche-hunters {
+    padding: 0 13px;}
+    #niche-hunters > div:first-child {
+        height: 75px;
+        border-left: solid 1px grey;
+        border-right: solid 1px grey;
+        border-bottom: solid 1px grey;
+        margin-bottom: 5px;}

@@ -119,22 +119,44 @@
 			</div>
 
 			<div class="panel panel-default" style="display:none;" id="niche-hunters">
-				<div class="search-options-container">
-					<div class="form-group">
-						<input type="text" class="form-control" id="niche-hunters-search-param" placeholder="Enter params in a proper format." />
+				<div>
+					<div class="search-options-container" style="width: 694px;float: left;border-right: solid 1px grey;">
+						<div style="text-align: center;padding: 10px 0;border-bottom: solid 1px grey;">
+							<span class="main-nav-link" data-target="results">Home</span>
+							&nbsp;|&nbsp;<span class="main-nav-link" data-target="tracking-products" >Title Tracking</span>
+						</div>
+						<div class="form-group" style="margin-bottom:0;">
+							<input type="text" class="form-control" id="niche-hunters-search-param" placeholder="Type your search query bellow." />
+						</div>
+					</div>
+					<div style="float: left;width: 70px;height: 75px;text-align: center;padding-top: 15px;">
+						<div>
+							<i class="glyphicon glyphicon-save" title="Download CSV" id="export"></i>
+							<h5>Export</h5>
+						</div>
 					</div>
 				</div>
+				
 				<div>
 					<table id="niche-hunders-table"  style="width:100%;" class="table table-striped table-bordered">
 						<thead>
 							<tr>
-								<th>#BSR</th>
+								<!-- <th>#BSR</th>
 								<th>Title</th>
 								<th>Pages</th>
 								<th>Price</th>
 								<th>Est.Sales</th>
 								<th>Revenue</th>
+								<th>Reviews</th> -->
+								<th>No.</th>
+								<th>Book Title</th>
+								<!-- <th>Action</th> -->
+								<th>BSR</th>
+								<th>Pages</th>
 								<th>Reviews</th>
+								<th>Price</th>
+								<th>Units Sold</th>
+								<th>Revenue</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -284,7 +306,11 @@
 						<h4 class="footer-avg-bsr">5</h4>
 					</div>
 				</div>
-				<div class="footer-center-socials mode-2 mode-3">
+				<div class="niche-statistics-container mode-4">
+					<h5>Avg. Monthly Revenue</h5>
+					<h4 class="footer-avg-monthly-revenu">$2,654</h4>
+				</div>
+				<div class="footer-center-socials mode-2 mode-3 mode-4">
 					<div class="social-icons-container">
 						<a href="https://www.twitter.com/">
 							<img src="../images/twitter.svg" alt="">

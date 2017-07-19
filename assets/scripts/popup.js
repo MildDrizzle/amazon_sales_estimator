@@ -326,6 +326,8 @@ let Popup = (function() {
         let trackings = _background.items();
         let $tbody = _nicheHuntersTable.find("tbody");
         let params = paramString ? paramString.split("&") : [];
+        let nicheHunterAvgMonthlyRevenue = $(".footer-avg-monthly-revenu");
+        let monthlyRevenueSum = 0;
 
         products = products.filter((product) => {
             if (!paramString) {
@@ -348,16 +350,42 @@ let Popup = (function() {
                 $record.addClass("tracking").attr({"title": "Watching"});
             }
             
-            $record.append($("<td/>").text(products[i].bsr));
-            $record.append($("<td/>").append($("<span/>").text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
-            $record.append($("<td/>").text(products[i].pages));
-            $record.append($("<td/>").text(products[i].currency + products[i].price));
-            $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
-            $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
-            $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
+            // $record.append($("<td/>").text(products[i].bsr));
+            // $record.append($("<td/>").append($("<span/>").text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
+            // $record.append($("<td/>").text(products[i].pages));
+            // $record.append($("<td/>").text(products[i].currency + products[i].price));
+            // $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+            // $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+            // $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
+
+            $record.append(
+                $("<td/>").text(i + 1),
+                $("<td/>").text(truncateString(products[i].title, 15))
+            );
+            
+            // if (found.length > 0) {
+            //     $record.append(
+            //         $("<td/>").html(
+            //             `<a class="track-product" data-index="${products[i].id}">View</a>`
+            //         )
+            //     )
+            // }
+            let estSale = parseInt(_background.estimation(products[i].bsr));
+            $record.append(
+                $("<td/>").text(products[i].bsr),
+                $("<td/>").text(products[i].pages),
+                $("<td/>").text(products[i].reviews),
+                $("<td/>").text(products[i].currency + products[i].price),
+                $("<td/>").text(Number(estSale).toLocaleString()),
+                $("<td/>").text(products[i].currency + Number(parseInt(estSale * products[i].price)).toLocaleString())
+            );
+
+            monthlyRevenueSum += parseInt(estSale * products[i].price);
 
             $record.appendTo($tbody);
         }
+
+        nicheHunterAvgMonthlyRevenue.text(products[0].currency + Number(parseInt(monthlyRevenueSum / products.length)).toLocaleString());
     }
 
     /**
@@ -577,19 +605,28 @@ let Popup = (function() {
             case "initial":
                 $(".mode-3").hide();
                 $(".mode-2").hide();
+                $(".mode-4").hide();
                 $(".mode-1").show();
                 break;
 
             case "results":
+                $(".mode-3").hide();
+                $(".mode-1").hide();
+                $(".mode-4").hide();
+                $(".mode-2").show();
+                break;
+
             case "niche-hunters":
                 $(".mode-3").hide();
                 $(".mode-1").hide();
-                $(".mode-2").show();
+                $(".mode-2").hide();
+                $(".mode-4").show();
                 break;
 
             case "track":
                 $(".mode-1").hide();
                 $(".mode-2").hide();
+                $(".mode-4").hide();
                 $(".mode-3").show();
                 break;
         }
