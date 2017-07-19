@@ -556,6 +556,13 @@ let Popup = (function() {
                 $(".mode-3").hide();
                 $(".mode-1").hide();
                 $(".mode-2").show();
+                break;
+
+            case "track":
+                $(".mode-1").hide();
+                $(".mode-2").hide();
+                $(".mode-3").show();
+                break;
         }
     };
 
