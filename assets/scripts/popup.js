@@ -593,7 +593,7 @@ let Popup = (function() {
 
     const initializeComponents = () => {
         let settings = _background.get();
-        $_category.val(settings.category || "Books");
+        $_category.val(settings.category || "eBooks");
         $_domain.val(settings.domain || "amazon.com");
     }
 

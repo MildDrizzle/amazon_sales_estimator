@@ -86,6 +86,11 @@ let EBookParser = (() => {
     const extractInfo = (text, pattern) => {
         let $page = $(text);
         let title = $page.find("#ebooksProductTitle").text().trim();
+
+        if (!$page.find("#ebooks-img-canvas img").eq(0).attr("data-a-dynamic-image")) {
+            return false;
+        }
+        
         let tmpImgObj = JSON.parse($page.find("#ebooks-img-canvas img").eq(0).attr("data-a-dynamic-image"));
         let img = null;
         for (p in tmpImgObj) {
