@@ -173,3 +173,9 @@ table#tbl-items td {
 span.main-nav-link {
     padding-left:5px;
     cursor:pointer;}
+
+#tracking-products {
+    padding: 0 15px;}
+    #tracking-products table a {
+        cursor: pointer;
+    }

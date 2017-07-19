@@ -732,20 +732,25 @@ let Popup = (function() {
         })
         .on("click", "a.untrack-product", (event) => {
             let id = event.target.getAttribute("data-id");
+            let option = event.target.getAttribute("data-from");
             let $record = $(event.target).parents("tr");
             
             _background.untrack(id, (response) => {
-                $record.removeClass("tracking");
-                $(event.target)
-                .attr({
-                    "title": "Track this title."
-                })
-                .text("Track")
-                .addClass("track-product")
-                .removeClass("untrack-product")
+                if (option == "tracking-list") {
+                    $record.remove();
+                } else {
+                    $record.removeClass("tracking");
+                    $(event.target)
+                    .attr({
+                        "title": "Track this title."
+                    })
+                    .text("Track")
+                    .addClass("track-product")
+                    .removeClass("untrack-product")
+                }
             });
         })
-        .on("click", "table button.view-track", (event) => {
+        .on("click", "table .view-track", (event) => {
             let index = event.target.getAttribute("data-index");
             let items = _background.items();
             let product = items[index];
@@ -812,12 +817,29 @@ let Popup = (function() {
         $tableBody.children().remove();
 
         for (let i = 0; i < items.length; i ++) {
+            let daysTracking = 1;
+            let curProduct = items[i].product;
+            if (curProduct.created_at != curProduct.updated_at) {
+                let first = curProduct.created_at;
+                let last = curProduct.updated_at;
+                let tmp = parseInt((new Date(last) - new Date(first)) / (24 * 3600 * 1000));
+
+                if (tmp > 1) {
+                    daysTracking = tmp;
+                }
+            }
             $tableBody.append(
                 $("<tr/>").append(
                     $("<td/>").text(i + 1),
-                    $("<td/>").text(items[i].product.title),
                     $("<td/>").html(
-                        `<div><button class='btn form-control view-track' data-index='${i}'>View</button></div>`
+                        `<a href="${items[i].product.url}">${truncateString(items[i].product.title, 40)}</a>`
+                    ),
+                    $("<td/>").text(daysTracking),
+                    $("<td/>").html(
+                        `<a class='view-track' data-index='${i}'>View</a>`
+                    ),
+                    $("<td/>").html(
+                        `<a class="untrack-product" data-from="tracking-list" data-id="${items[i].product.id}">UnTrack</a>`
                     )
                 )
             )
