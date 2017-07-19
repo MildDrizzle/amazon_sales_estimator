@@ -157,7 +157,7 @@ let Popup = (function() {
             }
         }
 
-        if (_background.started() && ["login"].indexOf(_curSortColumn) == -1) {
+        if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1) {
             showLoading();
         } else {
             hideLoading();
@@ -511,6 +511,7 @@ let Popup = (function() {
             if (step == val) {
                 $("#" + val).show();
                 if (["track", "tracking-products", "niche-hunters"].indexOf(step) == -1) {
+                    _curStep = step;
                     _background.step(step);
                 } else if (step == "login") {
                     let credential = _background.credentials();
