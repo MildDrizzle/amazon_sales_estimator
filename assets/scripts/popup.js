@@ -389,7 +389,9 @@ let Popup = (function() {
 
         _nicheHunters = products;
 
-        nicheHunterAvgMonthlyRevenue.text(products[0].currency + Number(parseInt(monthlyRevenueSum / products.length)).toLocaleString());
+        nicheHunterAvgMonthlyRevenue.text((products.length > 0)
+            ? products[0].currency + Number(parseInt(monthlyRevenueSum / products.length)).toLocaleString()
+            : 0);
     }
 
     /**
@@ -505,7 +507,7 @@ let Popup = (function() {
     const downloadProduct = (p) => {
         const toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
         let category = $_category.val();
-        
+
         let data = [
             toLine([ "BSR", p.bsr ]),
             toLine([ "Title", p.title ]),
