@@ -350,12 +350,19 @@ let Popup = (function() {
             let bsrData = [];
             let xAxisData = [];
             let graphContainer = document.getElementById("graph-container");
+            let daysTracking = 0;
+            let dailyRevenueSum = 0;
+            let $avgDailyRevenue = $(".avg-daily-revinue-estimation");
 
             for (let i = 0; i < response.histories.length; i ++) {
                 revenueData.push([response.histories[i].updated_at, parseInt(response.histories[i].monthly_rev / 30)]);
                 bsrData.push([response.histories[i].updated_at, parseInt(response.histories[i].bsr)]);
                 xAxisData.push(new Date(response.histories[i].updated_at).toLocaleDateString());
+                daysTracking++;
+                dailyRevenueSum += parseInt(response.histories[i].monthly_rev / 30);
             }
+
+            $avgDailyRevenue.text(product.currency + Number(parseInt(dailyRevenueSum / daysTracking)).toLocaleString());
 
             Highcharts.chart('graph-container', {
                 chart: {
@@ -448,6 +455,7 @@ let Popup = (function() {
             $price = $("#product-price"),
             $reviews = $("#product-reviews"),
             $revenue = $("#product-monthly-revenue"),
+            $pages = $("#product-pages"),
             $asin = $("#product-asin");
 
         if (flag) {
@@ -457,6 +465,7 @@ let Popup = (function() {
             product.bsr = lastHistory.bsr;
             product.currency = lastHistory.currency;
         }
+        
         $img[0].src = product.img;
         $title.text(product.title);
         $asin.text(product.asin);
@@ -464,6 +473,7 @@ let Popup = (function() {
         $reviews.text(Number(product.reviews).toLocaleString());
         $bsr.text("#" + product.bsr);
         $isbn.text(product.isbn);
+        $pages.text(product.pages);
         product.estSale = parseInt(_background.estimation(product.bsr));
         $revenue.text(product.currency + Number(parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
         
@@ -475,15 +485,18 @@ let Popup = (function() {
             trackButton.setAttribute("data-id", trackingProducts[0].product.id);
             trackButton.setAttribute("data-action", "untrack");
             trackButton.textContent = "Untrack this product";
-            trackButton.className = "btn btn-danger pull-right";
+            trackButton.className = "btn btn-danger";
+            $(".track-detail-info").show();
 
             drawChart(trackingProducts[0].product.id);
         } else {
             trackButton.setAttribute("data-id", null);
             trackButton.setAttribute("data-action", "track");
             trackButton.textContent = "Track this product";
-            trackButton.className = "btn btn-primary pull-right";
+            trackButton.className = "btn btn-primary";
+            $(".track-detail-info").hide();
             $("#graph-container").children().remove();
+            $("#graph-container").append($(`<h4 style="text-align:center;padding-top:140px;">Tracking is not enabled for this title yet.</h4>`));
         }
     }
 
@@ -614,7 +627,7 @@ let Popup = (function() {
                         event.target.setAttribute("data-action", "untrack");
                         event.target.setAttribute("data-id", response.product.id);
                         event.target.textContent = "Untrack this product";
-                        event.target.className = "btn btn-danger pull-right";
+                        event.target.className = "btn btn-danger";
                     })
                     break;
 
@@ -624,7 +637,7 @@ let Popup = (function() {
                         event.target.setAttribute("data-action", "track");
                         event.target.setAttribute("data-id", null);
                         event.target.textContent = "Track this product";
-                        event.target.className = "btn btn-primary pull-right";
+                        event.target.className = "btn btn-primary";
                     })
                     break;
 

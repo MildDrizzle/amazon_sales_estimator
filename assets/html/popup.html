@@ -161,54 +161,57 @@
 				</div>
 			</div>
 
-			<div class="panel panel-default" style="display:none;" id="track">
-				<div class="panel-heading">
-					<h3>Tracking a product</h3>
+			<div class="" style="display:none;padding:0 15px;" id="track">
+				<div class="track-header">
+					<div class="">
+						<div>
+							<span class="main-nav-link" data-target="results">Home</span>
+							&nbsp;|&nbsp;<span class="main-nav-link" data-target="niche-hunters" >Niche Hunder</span>
+						</div>
+						<div>
+							<strong id="product-title"></strong>
+						</div>
+					</div>
+					<div>
+						<i class="glyphicon glyphicon-save" title="Download CSV" id="export"></i>
+						<h5>Export</h5>
+					</div>
 				</div>
-				<div class="panel-body">
-					<div class="row">
+				<div class="track-content">
+					<div class="" style="height:410px;">
 						<div class="col-xs-8">
-							<div id="graph-container" style="height:327px;"></div>
+							<div id="graph-container" style="height:327px;">
+								<h4 style="text-align:center;padding-top:140px;">Tracking is not enabled for this title yet.</h4>
+							</div>
+							<table width="100%" style="margin-top: 35px;" class="bordered">
+								<thead>
+									<tr>
+										<th>BSR</th>
+										<th>Pages</th>
+										<th>Reviews</th>
+										<th>Price</th>
+										<th>Units Sold</th>
+										<th>Revenue</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td id="product-bsr"></td>
+										<td id="product-pages"></td>
+										<td id="product-reviews"></td>
+										<td id="product-price"></td>
+										<td id="product-estSales"></td>
+										<td id="product-monthly-revenue"></td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 						<div class="col-xs-4">
 							<img src="" id="product-image">
+							<button class="btn btn-primary" id="product-track" data-action="track">Track this product</button>
+							<h5 style="text-align:center;display:none;" class="track-detail-info">Avg. Daily Revenue (estimated)</h5>
+							<h4 style="text-align:center;display:none;" class="avg-daily-revinue-estimation track-detail-info">$56.76</h4>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							Product title: <strong id="product-title"></strong>
-						</div>
-						<div class="col-xs-6">
-							ASIN: <strong id="product-asin"></strong>
-						</div>
-						<div class="col-xs-6">
-							ISBN: <strong id="product-isbn"></strong>
-						</div>
-						<div class="col-xs-6">
-							Price: <strong id="product-price"></strong>
-						</div>
-						<div class="col-xs-6">
-							Best Seller Rank: <strong id="product-bsr"></strong>
-						</div>
-						<div class="col-xs-6">
-							Reviews: <strong id="product-reviews"></strong>
-						</div>
-						<div class="col-xs-6">
-							Sales Estimation: <strong id="product-estSales"></strong>
-						</div>
-						<div class="col-xs-6">
-							Monthly Revenue: <strong id="product-monthly-revenue"></strong>
-						</div>
-					</div>
-				</div>
-				<div class="panel-footer">
-					<div class="row">
-						<!--<div class="col-xs-4">-->
-							<button class="btn btn-default step-control-button pull-left" data-target="results">Back to Products</button>
-						<!--</div>-->
-						<!--<div class="col-xs-4 col-xs-offset-4">-->
-							<button class="btn btn-primary pull-right" id="product-track" data-action="track">Track this product</button>
-						<!--</div>-->
 					</div>
 				</div>
 			</div>
