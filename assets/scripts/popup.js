@@ -26,6 +26,8 @@ let Popup = (function() {
         reviews: null
     };
     let _products = [];
+    let _nicheHunters = [];
+    
     let _selectedProduct = null;
 
     let _curStep = JSON.parse(localStorage._curStep || "null") || "results";
@@ -385,6 +387,8 @@ let Popup = (function() {
             $record.appendTo($tbody);
         }
 
+        _nicheHunters = products;
+
         nicheHunterAvgMonthlyRevenue.text(products[0].currency + Number(parseInt(monthlyRevenueSum / products.length)).toLocaleString());
     }
 
@@ -475,26 +479,45 @@ let Popup = (function() {
 
     /**
      * Exporting products to CSV file.
+     * @param {array} products
      */
-    const downloadCSV = () => {
+    const downloadProductsToCSV = (products) => {
         let toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
-        let header = ["#BSR", "title", "pages", "price", "reviews", "est.Sales", "Revenue"];
+        let header = ["#BSR", "title", "pages", "price", "reviews", "est.Sales", "Revenue", "url"];
         let category = $_category.val();
-        let products = _background.get().products;
+        // let products = _background.get().products;
         let data = products.map(p => toLine([
                 p.bsr,
                 p.title,
                 p.pages,
                 p.currency + p.price,
-                p.reviews,
                 Number(p.reviews).toLocaleString(),
                 Number(parseInt(_background.estimation(p.bsr))).toLocaleString(),
-                p.currency + Number(parseInt(_background.estimation(p.bsr) * p.price)).toLocaleString()
+                p.currency + Number(parseInt(_background.estimation(p.bsr) * p.price)).toLocaleString(),
+                p.url
         ]));
         
         data.unshift(toLine(header))
 
         downloadPlaintext(data.join("\n"), `${category}-${new Date().toISOString()}.csv`)
+    }
+
+    const downloadProduct = (p) => {
+        const toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
+        let category = $_category.val();
+        
+        let data = [
+            toLine([ "BSR", p.bsr ]),
+            toLine([ "Title", p.title ]),
+            toLine([ "Pages", p.pages ]),
+            toLine([ "Price", p.currency + p.price ]),
+            toLine([ "Reviews", Number(p.reviews).toLocaleString() ]),
+            toLine([ "Est. Sales", Number(parseInt(_background.estimation(p.bsr))).toLocaleString() ]),
+            toLine([ "Est. Revenue", p.currency + Number(parseInt(_background.estimation(p.bsr) * p.price)).toLocaleString() ]),
+            toLine([ "URL", p.url ])
+        ]
+
+        downloadPlaintext(data.join("\n"), `${category}-detail-${new Date().toISOString()}.csv`)
     }
 
     /**
@@ -748,7 +771,18 @@ let Popup = (function() {
             goTo(targetId);
         })
         .on("click", "#export", (event) => {
-            downloadCSV();
+            let from = event.target.getAttribute("data-from");
+            let products = null;
+
+            if (from == "results") {
+                products = _background.get().products;
+                downloadProductsToCSV(products);
+            } else if (from == "niche-hunter") {
+                products = _nicheHunters;
+                downloadProductsToCSV(products);
+            } else if (from == "track") {
+                downloadProduct(_selectedProduct);
+            }
         })
         .on("click", "a.track-product", (event) => {
             let index = event.target.getAttribute("data-index");
