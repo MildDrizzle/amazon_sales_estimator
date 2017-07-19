@@ -128,7 +128,15 @@ let Popup = (function() {
                 }
             });
 
-            for (let i = 0; i < products.length; i ++) {
+            let bsrSum = 0,
+                pageSum = 0,
+                reviewSum = 0,
+                priceSum = 0,
+                estSaleSum = 0,
+                revenueSum = 0,
+                productsCount = products.length;
+
+            for (let i = 0; i < productsCount; i ++) {
                 let found = trackings.filter(item => item.product.asin == products[i].asin);
                 let $record = $("<tr/>");
 
@@ -137,6 +145,7 @@ let Popup = (function() {
                 }
                 
                 $record.append($("<td/>").text(products[i].bsr));
+                bsrSum += (parseInt(products[i].bsr) | 0);
                 $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
                 if (found.length > 0) {
                     $record.append($("<td/>").append(
@@ -148,13 +157,25 @@ let Popup = (function() {
                     ));
                 }
                 $record.append($("<td/>").text(products[i].pages));
+                pageSum += (parseInt(products[i].pages) | 0);
                 $record.append($("<td/>").text(products[i].currency + products[i].price));
+                priceSum += (parseInt(products[i].price) | 0);
                 $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+                estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
                 $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+                revenueSum += (parseInt(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])) | 0);
                 $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
+                reviewSum += (parseInt(products[i].reviews) | 0);
 
                 $record.appendTo($tbody);
             }
+
+            $("table td[data-prop='bsr']").text(parseInt(bsrSum / productsCount));
+            $("table td[data-prop='pages']").text(parseInt(pageSum / productsCount));
+            $("table td[data-prop='reviews']").text(Number(parseInt(reviewSum / productsCount)).toLocaleString());
+            $("table td[data-prop='price']").text(products[0].currency + Math.round(priceSum / productsCount * 100) / 100);
+            $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount)).toLocaleString());
+            $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
         }
 
         if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1) {
@@ -353,16 +374,24 @@ let Popup = (function() {
             let daysTracking = 0;
             let dailyRevenueSum = 0;
             let $avgDailyRevenue = $(".avg-daily-revinue-estimation");
+            let avgBSR = 0;
 
             for (let i = 0; i < response.histories.length; i ++) {
-                revenueData.push([response.histories[i].updated_at, parseInt(response.histories[i].monthly_rev / 30)]);
+                revenueData.push([response.histories[i].updated_at, parseInt(response.histories[i].monthly_rev/* / 30*/)]);
                 bsrData.push([response.histories[i].updated_at, parseInt(response.histories[i].bsr)]);
                 xAxisData.push(new Date(response.histories[i].updated_at).toLocaleDateString());
                 daysTracking++;
                 dailyRevenueSum += parseInt(response.histories[i].monthly_rev / 30);
+                avgBSR += parseInt(response.histories[i].bsr);
             }
 
-            $avgDailyRevenue.text(product.currency + Number(parseInt(dailyRevenueSum / daysTracking)).toLocaleString());
+            let lastHistory = response.product.histories[response.product.histories.length - 1];
+            let first = response.histories[0].updated_at;
+            let last = lastHistory.updated_at;
+            let tmp = Math.round((new Date(last) - new Date(first)) / (24 * 3600 * 1000));
+            $avgDailyRevenue.text(lastHistory.currency + Number(parseInt(dailyRevenueSum / daysTracking)).toLocaleString());
+            $(".footer-tracking-days").text((tmp) ? tmp : daysTracking);
+            $(".footer-avg-bsr").text(parseInt(avgBSR / daysTracking));
 
             Highcharts.chart('graph-container', {
                 chart: {
@@ -475,7 +504,7 @@ let Popup = (function() {
         $isbn.text(product.isbn);
         $pages.text(product.pages);
         product.estSale = parseInt(_background.estimation(product.bsr));
-        $revenue.text(product.currency + Number(parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
+        $revenue.text(product.currency + Number(parseInt((parseInt(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
         
         $estSales.text(Number(product.estSale).toLocaleString());
 
