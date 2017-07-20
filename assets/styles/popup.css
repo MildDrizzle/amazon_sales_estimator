@@ -3,6 +3,7 @@
     width: 768px;}
     .wrapper .header {
         border-bottom: solid 1px grey;}
+        
     .wrapper .footer {
         height: 70px;
         margin-left: 15px;
@@ -57,7 +58,8 @@
             .footer .social-icons-container img {
                 height: 33px;
                 margin: 0 15px;}
-    .wrapper .help-container {
+   
+        .wrapper .help-container {
         position: absolute;
         right: 4px;
         height: 70px;
@@ -67,6 +69,10 @@
             height: 62px;
             font-size: 42px;
             padding-top: 3px;}
+
+        .wrapper .content {
+            height: 350px;
+            overflow-y: auto;}
 
     .wrapper #lading-mask {
         margin-left: 15px;
@@ -190,3 +196,4 @@ span.main-nav-link {
         border-right: solid 1px grey;
         border-bottom: solid 1px grey;
         margin-bottom: 5px;}
+

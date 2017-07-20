@@ -180,7 +180,7 @@ let Popup = (function() {
             $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
         }
 
-        if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1) {
+        if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1 && products.length < 20) {
             showLoading();
         } else {
             hideLoading();
