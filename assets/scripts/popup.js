@@ -362,7 +362,9 @@ let Popup = (function() {
 
             $record.append(
                 $("<td/>").text(i + 1),
-                $("<td/>").text(truncateString(products[i].title, 15))
+                $("<td/>").append(
+                    $(`<a href="${products[i].url}" title="${products[i].title}">${truncateString(products[i].title, 15)}</a>`)
+                )
             );
             
             // if (found.length > 0) {
