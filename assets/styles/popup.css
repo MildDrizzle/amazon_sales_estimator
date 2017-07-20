@@ -141,8 +141,8 @@ table#tbl-items td {
         cursor: pointer;}
 
 #track #product-image {
-    width: 100%;
-    height: 327px;}
+    margin-left: 22px;
+    height: 275px;}
     #track .track-header {
         border-bottom: solid 1px grey;
         height: 70px;}
@@ -162,7 +162,7 @@ table#tbl-items td {
             float: left;}
     #track .track-content {
         padding-top: 15px;
-        height: 470px;}
+        height: 397px;}
         #track .track-content #product-track {
             width: 154px;
             margin: 5px 0 0 35px;
