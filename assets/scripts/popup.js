@@ -331,6 +331,10 @@ let Popup = (function() {
         let nicheHunterAvgMonthlyRevenue = $(".footer-avg-monthly-revenu");
         let monthlyRevenueSum = 0;
 
+        for (let i = 0; i < products.length; i ++) {
+            products[i].index = i;
+        }
+
         products = products.filter((product) => {
             if (!paramString) {
                 return true;
@@ -367,13 +371,19 @@ let Popup = (function() {
                 )
             );
             
-            // if (found.length > 0) {
-            //     $record.append(
-            //         $("<td/>").html(
-            //             `<a class="track-product" data-index="${products[i].id}">View</a>`
-            //         )
-            //     )
-            // }
+            if (found.length > 0) {
+                $record.append(
+                    $("<td/>").html(
+                        `<a class="untrack-product" data-index="${products[i].id}">UnTrack</a>`
+                    )
+                )
+            } else {
+                $record.append(
+                    $("<td/>").html(
+                        `<a class="track-product" data-index="${products[i].index}">Track</a>`
+                    )
+                )
+            }
             let estSale = parseInt(_background.estimation(products[i].bsr));
             $record.append(
                 $("<td/>").text(products[i].bsr),
