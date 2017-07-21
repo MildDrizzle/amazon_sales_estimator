@@ -641,7 +641,7 @@ let Popup = (function() {
             if (_background.started()) {
                 showLoading();
             }
-            drawTable();
+            drawTable(true);
         }
 
         switch(step) {
@@ -778,7 +778,11 @@ let Popup = (function() {
         });
 
         if (!getToken() || !(getUser() || {}).id) {
-            _curStep = "initial";
+            if (!JSON.parse(localStorage._curStep || "null")) {
+                _curStep = "initial";
+            } else {
+                _curStep = "login";
+            }
         }
         
         goTo(_curStep);
