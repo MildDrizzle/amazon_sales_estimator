@@ -175,9 +175,15 @@ let Popup = (function() {
             $("table td[data-prop='bsr']").text(parseInt(bsrSum / productsCount));
             $("table td[data-prop='pages']").text(parseInt(pageSum / productsCount));
             $("table td[data-prop='reviews']").text(Number(parseInt(reviewSum / productsCount)).toLocaleString());
-            $("table td[data-prop='price']").text(products[0].currency + Math.round(priceSum / productsCount * 100) / 100);
+            if (products.length > 0) {
+                $("table td[data-prop='price']").text(products[0].currency + Math.round(priceSum / productsCount * 100) / 100);
+                $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
+            } else {
+                $("table td[data-prop='price']").text(0);
+                $("table td[data-prop='revenue']").text(0);
+            }
+            
             $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount)).toLocaleString());
-            $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
         }
 
         if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1 && products.length < 20) {
