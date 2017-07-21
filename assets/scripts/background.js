@@ -342,6 +342,8 @@ let Background = (() => {
 				if (typeof success === "function") {
 					success(response);
 				}
+			} else {
+				failure(response);
 			}
 		}, failure)
 	}

@@ -819,18 +819,24 @@ let Popup = (function() {
         .on("click", "a.track-product", (event) => {
             let index = event.target.getAttribute("data-index");
             let $record = $(event.target).parents("tr");
+            let option = event.target.getAttribute("data-from");
             let product = _products[index];
+
             _background.track(product, (response) => {
                 console.log(response);
                 $record.addClass("tracking");
                 $(event.target)
                 .attr({
-                    "data-id": product.id,
+                    "data-id": response.product.id,
                     "title": "Untrack this title."
                 })
                 .text("UnTrack")
                 .removeClass("track-product")
-                .addClass("untrack-product")
+                .addClass("untrack-product");
+
+                let curCount = JSON.parse($("#tracking-count").text()) || 0;
+                curCount++;
+                $("#tracking-count").text(curCount);
             }, (response) => {
                 //  To do in failure.
                 if (response.status == false && response.message == "Your token was expired.") {
@@ -856,6 +862,10 @@ let Popup = (function() {
                     .addClass("track-product")
                     .removeClass("untrack-product")
                 }
+
+                let curCount = JSON.parse($("#tracking-count").text()) || 0;
+                curCount--;
+                $("#tracking-count").text(Math.max(curCount, 0));
             }, (response) => {
                 //  To do in failure.
                 if (response.status == false && response.message == "Your token was expired.") {
@@ -1003,7 +1013,11 @@ let Popup = (function() {
                             category: status.category,
                             page: status.page || 1
                         }, (response) => {
-                            _background.started(response.started);
+                            if (response == undefined) {
+                                _background.started(false);
+                            } else {
+                                _background.started(response.started);
+                            }
                         });
                     });
                 } else {
