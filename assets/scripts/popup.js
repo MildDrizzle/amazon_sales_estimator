@@ -371,7 +371,7 @@ let Popup = (function() {
             $record.append(
                 $("<td/>").text(i + 1),
                 $("<td/>").append(
-                    $(`<a href="${products[i].url}" title="${products[i].title}">${truncateString(products[i].title, 15)}</a>`)
+                    $(`<a href="${products[i].url}" target="_newTab" title="${products[i].title}">${truncateString(products[i].title, 15)}</a>`)
                 )
             );
             
@@ -974,7 +974,7 @@ let Popup = (function() {
                 $("<tr/>").append(
                     $("<td/>").text(i + 1),
                     $("<td/>").html(
-                        `<a href="${items[i].product.url}">${truncateString(items[i].product.title, 40)}</a>`
+                        `<a href="${items[i].product.url}" target="_newTab">${truncateString(items[i].product.title, 40)}</a>`
                     ),
                     $("<td/>").text(daysTracking),
                     $("<td/>").html(
