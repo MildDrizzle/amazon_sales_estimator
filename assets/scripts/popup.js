@@ -331,6 +331,10 @@ let Popup = (function() {
         let nicheHunterAvgMonthlyRevenue = $(".footer-avg-monthly-revenu");
         let monthlyRevenueSum = 0;
 
+        if (paramString == undefined) {
+            paramString = $("#niche-hunters-search-param").val();
+        }
+
         for (let i = 0; i < products.length; i ++) {
             products[i].index = i;
         }
@@ -374,13 +378,13 @@ let Popup = (function() {
             if (found.length > 0) {
                 $record.append(
                     $("<td/>").html(
-                        `<a class="untrack-product" data-index="${products[i].id}">UnTrack</a>`
+                        `<a data-from="niche" class="untrack-product" data-id="${products[i].id}">UnTrack</a>`
                     )
                 )
             } else {
                 $record.append(
                     $("<td/>").html(
-                        `<a class="track-product" data-index="${products[i].index}">Track</a>`
+                        `<a data-from="niche" class="track-product" data-index="${products[i].index}">Track</a>`
                     )
                 )
             }
@@ -800,6 +804,7 @@ let Popup = (function() {
         .on("click", "span.main-nav-link", (event) => {
             let targetId = event.target.getAttribute("data-target");
             updateTrackingProductsTable();
+            drawNicheHunterTable()
             goTo(targetId);
         })
         .on("click", "#export", (event) => {
@@ -823,7 +828,6 @@ let Popup = (function() {
             let product = _products[index];
 
             _background.track(product, (response) => {
-                console.log(response);
                 $record.addClass("tracking");
                 $(event.target)
                 .attr({
@@ -834,9 +838,9 @@ let Popup = (function() {
                 .removeClass("track-product")
                 .addClass("untrack-product");
 
-                let curCount = JSON.parse($("#tracking-count").text()) || 0;
+                let curCount = parseInt(JSON.parse($(".tracking-count").eq(0).text() || "0"));
                 curCount++;
-                $("#tracking-count").text(curCount);
+                $(".tracking-count").text(curCount);
             }, (response) => {
                 //  To do in failure.
                 if (response.status == false && response.message == "Your token was expired.") {
@@ -863,9 +867,9 @@ let Popup = (function() {
                     .removeClass("untrack-product")
                 }
 
-                let curCount = JSON.parse($("#tracking-count").text()) || 0;
+                let curCount = parseInt(JSON.parse($(".tracking-count").eq(0).text() || "0"));
                 curCount--;
-                $("#tracking-count").text(Math.max(curCount, 0));
+                $(".tracking-count").text(Math.max(curCount, 0));
             }, (response) => {
                 //  To do in failure.
                 if (response.status == false && response.message == "Your token was expired.") {
@@ -991,7 +995,7 @@ let Popup = (function() {
         let curUrl = getSearchUrl();
         let products = _background.get().products;
         let trackingProducts = _background.items();
-        let $trackingCount = $("#tracking-count");
+        let $trackingCount = $(".tracking-count");
 
         $trackingCount.text(trackingProducts.length);
 

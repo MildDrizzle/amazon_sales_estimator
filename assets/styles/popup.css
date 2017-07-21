@@ -133,9 +133,9 @@ table#tbl-items td {
         text-align: center;}
     table#tbl-items tbody tr td:last-child {
         text-align: center;}
-    table#results-table tbody tr.tracking {
-        background: green;}
-        table#results-table tbody tr.tracking a {
+    table tbody tr.tracking {
+        background: green !important;}
+        table tbody tr.tracking a {
             color: black;}
     table#results-table tbody tr a {
         cursor: pointer;}
