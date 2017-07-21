@@ -129,27 +129,29 @@ let Background = (() => {
 
 	/**
 	 * Update initial Samples in order to compute coefficients according to given domain and category.
-	 * @param {function} callback 
+	 * @param {function} success 
+	 * @param {function} failure
 	 * @return {void}
 	 */
-	const updateSamples = (callback) => {
+	const updateSamples = (success, failure) => {
 		let domain = JSON.parse(localStorage._data || "{}")._domain || "amazon.com",
 			category = JSON.parse(localStorage._data || "{}")._category || "eBooks";
 		_restAPI.samples(domain, category, (response) => {
 			let samples = response.samples;
 			_initialSamples = samples || [];
-			if (typeof callback === "function") {
-				callback(samples);
+			if (typeof success === "function") {
+				success(samples);
 			}
 
-			_restAPI.trackings(_data.domain, _data.category, (response) => {
-				if (response.status) {
-					_trackedProducts = response.items;
+			_restAPI.trackings(_data.domain, _data.category, (res) => {
+				if (res.status) {
+					_trackedProducts = res.items;
 				}
 			});
-		}, () => {
+		}, (response) => {
 			localStorage._token = JSON.stringify(null);
 			localStorage._user = JSON.stringify({});
+			failure(response);
 		})
 	};
 
@@ -322,7 +324,7 @@ let Background = (() => {
 					}
 				}
 			}
-		})
+		}, failure)
 	}
 
 	/**
@@ -341,7 +343,7 @@ let Background = (() => {
 					success(response);
 				}
 			}
-		})
+		}, failure)
 	}
 
 	const findTrackingProduct = (id, success, failure) => {
@@ -355,7 +357,7 @@ let Background = (() => {
 					failure(response);
 				}
 			}
-		})
+		}, failure)
 	}
 
 	/**

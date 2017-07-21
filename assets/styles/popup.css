@@ -188,6 +188,9 @@ span.main-nav-link {
     #tracking-products table a {
         cursor: pointer;}
 
+table a {
+    cursor: pointer;}
+
 #niche-hunters {
     padding: 0 13px;}
     #niche-hunters > div:first-child {

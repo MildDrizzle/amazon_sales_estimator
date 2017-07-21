@@ -475,8 +475,11 @@ let Popup = (function() {
                     
 
             });
-        }, () => {
+        }, (response) => {
             //  To do in failure.
+            if (response.status == false && response.message == "Your token was expired.") {
+                goTo("login");
+            }
         })
     }
 
@@ -741,6 +744,11 @@ let Popup = (function() {
                         event.target.setAttribute("data-id", response.product.id);
                         event.target.textContent = "Untrack this product";
                         event.target.className = "btn btn-danger";
+                    }, (response) => {
+                        //  To do in failure.
+                        if (response.status == false && response.message == "Your token was expired.") {
+                            goTo("login");
+                        }
                     })
                     break;
 
@@ -751,6 +759,11 @@ let Popup = (function() {
                         event.target.setAttribute("data-id", null);
                         event.target.textContent = "Track this product";
                         event.target.className = "btn btn-primary";
+                    }, (response) => {
+                        //  To do in failure.
+                        if (response.status == false && response.message == "Your token was expired.") {
+                            goTo("login");
+                        }
                     })
                     break;
 
@@ -768,6 +781,11 @@ let Popup = (function() {
         if (_background.samples().length == 0) {
             _background.updateSamples(() => {
                 initializeComponents();
+            }, (response) => {
+                //  To do in failure.
+                if (response.status == false && response.message == "Your token was expired.") {
+                    goTo("login");
+                }
             });
         } else {
             initializeComponents();
@@ -813,6 +831,11 @@ let Popup = (function() {
                 .text("UnTrack")
                 .removeClass("track-product")
                 .addClass("untrack-product")
+            }, (response) => {
+                //  To do in failure.
+                if (response.status == false && response.message == "Your token was expired.") {
+                    goTo("login");
+                }
             });
         })
         .on("click", "a.untrack-product", (event) => {
@@ -833,6 +856,11 @@ let Popup = (function() {
                     .addClass("track-product")
                     .removeClass("untrack-product")
                 }
+            }, (response) => {
+                //  To do in failure.
+                if (response.status == false && response.message == "Your token was expired.") {
+                    goTo("login");
+                }
             });
         })
         .on("click", "table .view-track", (event) => {
@@ -845,6 +873,11 @@ let Popup = (function() {
                 product = response.product;
                 renderTrackForm(product, true);
                 goTo("track");
+            }, (response) => {
+                //  To do in failure.
+                if (response.status == false && response.message == "Your token was expired.") {
+                    goTo("login");
+                }
             })
         })
         .on("change", "#domain", (event) => {
@@ -856,6 +889,11 @@ let Popup = (function() {
 
             _background.updateSamples((samples) => {
                 updateTable();
+            }, (response) => {
+                //  To do in failure.
+                if (response.status == false && response.message == "Your token was expired.") {
+                    goTo("login");
+                }
             });
         })
         .on("change", "#category", (event) => {
@@ -866,6 +904,11 @@ let Popup = (function() {
             });
             _background.updateSamples((samples) => {
                 updateTable();
+            }, (response) => {
+                //  To do in failure.
+                if (response.status == false && response.message == "Your token was expired.") {
+                    goTo("login");
+                }
             });
         })
         .on("change", "#revenue_option", (event) => {
