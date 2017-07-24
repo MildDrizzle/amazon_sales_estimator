@@ -5,6 +5,8 @@ let EBookParser = (() => {
     let _searchPages = [];
     let _products = [];
 
+    let _started = false;
+
     let comPatterns = {
         pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
@@ -250,6 +252,8 @@ let EBookParser = (() => {
             if (request.category === "eBooks" && request.action == "get_data") {
                 _searchPages = [];
                 _products = [];
+                _started = true;
+
                 for (let i = 1; i < 6; i ++) {
                     _searchPages.push(getSearchPageUrl(domain, i))
                 }
@@ -257,6 +261,8 @@ let EBookParser = (() => {
                 sendResponse({
                     started: true
                 });
+            } else if (request.category == "eBooks" && request.action == "stop") {
+                _started = false;
             }
         })
     };

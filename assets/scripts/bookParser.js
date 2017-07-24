@@ -5,6 +5,8 @@ let BookParser = (() => {
     let _searchPages = [];
     let _products = [];
 
+    let _started = false;
+
     let comPatterns = {
         pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
@@ -249,6 +251,8 @@ let BookParser = (() => {
             if (request.category == "Books" && request.action == "get_data") {
                 _searchPages = [];
                 _products = [];
+                _started = true;
+
                 for (let i = 1; i < 6; i ++) {
                     _searchPages.push(getSearchPageUrl(domain, i));
                 }
@@ -256,6 +260,8 @@ let BookParser = (() => {
                 sendResponse({
                     started: true
                 });
+            } else if (request.category == "Books" && request.action == "stop") {
+                _started = false;
             }
         })
     };

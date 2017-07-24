@@ -58,14 +58,14 @@ let Popup = (function() {
         },
         "eBooks": {
             "amazon.com.au": "/gp/bestsellers/digital-text/",
-            "amazon.ca": "gp/bestsellers/digital-text/",
+            "amazon.ca": "/gp/bestsellers/digital-text/",
             "amazon.com": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/",
             "amazon.co.uk": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/",
-            "amazon.de": "gp/bestsellers/digital-text/",
-            "amazon.es": "gp/bestsellers/digital-text/",
-            "amazon.fr": "gp/bestsellers/digital-text/",
-            "amazon.in": "gp/bestsellers/digital-text/",
-            "amazon.it": "gp/bestsellers/digital-text/"
+            "amazon.de": "/gp/bestsellers/digital-text/",
+            "amazon.es": "/gp/bestsellers/digital-text/",
+            "amazon.fr": "/gp/bestsellers/digital-text/",
+            "amazon.in": "/gp/bestsellers/digital-text/",
+            "amazon.it": "/gp/bestsellers/digital-text/"
         }
     };
 
@@ -926,12 +926,13 @@ let Popup = (function() {
         })
         .on("change", "#domain", (event) => {
             event.preventDefault();
-            _background.set({
-                domain: event.target.value,
-                products: []
-            });
 
             _background.updateSamples((samples) => {
+                _background.set({
+                    domain: event.target.value,
+                    products: []
+                });
+                _background.started(false);
                 updateTable();
             }, (response) => {
                 //  To do in failure.
@@ -942,11 +943,14 @@ let Popup = (function() {
         })
         .on("change", "#category", (event) => {
             event.preventDefault();
-            _background.set({
-                category: event.target.value,
-                products: []
-            });
+
             _background.updateSamples((samples) => {
+                _background.set({
+                    category: event.target.value,
+                    products: []
+                });
+                _background.started(false);
+
                 updateTable();
             }, (response) => {
                 //  To do in failure.

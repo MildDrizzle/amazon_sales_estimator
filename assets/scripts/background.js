@@ -232,12 +232,18 @@ let Background = (() => {
 							sendResponse(temp);
 						} else if (request.action == "product-info") {
 							let info = request.data;
+							let curTab = JSON.parse(localStorage._data).curTab;
 							if (parseInt(info.bsr) != NaN) {
 								info.estSale = parseInt(calculate(info.bsr));
 							}
-							_data.products.push(info);
+
+							if (curTab == sender.tab.id) {
+								_data.products.push(info);
+							}
 						} else if (request.action == "get_data_completed") {
-							_started = false;
+							if (curTab == sender.tab.id) {
+								_started = false;
+							}
 						}
 						break;
 
