@@ -50,11 +50,11 @@ let Popup = (function() {
             "amazon.ca": "/best-sellers-books-Amazon/zgbs/books/",
             "amazon.com": "/best-sellers-books-Amazon/zgbs/books/",
             "amazon.co.uk": "/best-sellers-books-Amazon/zgbs/books/",
-            "amazon.de": "/best-sellers-books-Amazon/zgbs/books/",
-            "amazon.es": "/best-sellers-books-Amazon/zgbs/books/",
-            "amazon.fr": "/best-sellers-books-Amazon/zgbs/books/",
-            "amazon.in": "/best-sellers-books-Amazon/zgbs/books/",
-            "amazon.it": "/best-sellers-books-Amazon/zgbs/books/"
+            "amazon.de": "/gp/bestsellers/books/",
+            "amazon.es": "/gp/bestsellers/books/",
+            "amazon.fr": "/gp/bestsellers/books/",
+            "amazon.in": "/gp/bestsellers/books/",
+            "amazon.it": "/gp/bestsellers/books/"
         },
         "eBooks": {
             "amazon.com.au": "/gp/bestsellers/digital-text/",
