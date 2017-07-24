@@ -43,10 +43,30 @@ let Popup = (function() {
     let _nicheHuntersTable = $("table#niche-hunders-table");
 
     let _globalTimer = null;
-
+    
     const bsrPagesPath = {
-        "Books": "/best-sellers-books-Amazon/zgbs/books/",
-        "eBooks": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/"
+        "Books": {
+            "amazon.com.au": "/best-sellers-books-Amazon/zgbs/books/",
+            "amazon.ca": "/best-sellers-books-Amazon/zgbs/books/",
+            "amazon.com": "/best-sellers-books-Amazon/zgbs/books/",
+            "amazon.co.uk": "/best-sellers-books-Amazon/zgbs/books/",
+            "amazon.de": "/best-sellers-books-Amazon/zgbs/books/",
+            "amazon.es": "/best-sellers-books-Amazon/zgbs/books/",
+            "amazon.fr": "/best-sellers-books-Amazon/zgbs/books/",
+            "amazon.in": "/best-sellers-books-Amazon/zgbs/books/",
+            "amazon.it": "/best-sellers-books-Amazon/zgbs/books/"
+        },
+        "eBooks": {
+            "amazon.com.au": "/gp/bestsellers/digital-text/",
+            "amazon.ca": "gp/bestsellers/digital-text/",
+            "amazon.com": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/",
+            "amazon.co.uk": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/",
+            "amazon.de": "gp/bestsellers/digital-text/",
+            "amazon.es": "gp/bestsellers/digital-text/",
+            "amazon.fr": "gp/bestsellers/digital-text/",
+            "amazon.in": "gp/bestsellers/digital-text/",
+            "amazon.it": "gp/bestsellers/digital-text/"
+        }
     };
 
     /**
@@ -55,7 +75,7 @@ let Popup = (function() {
      */
     const getSearchUrl = () => {
         let state = _background.get();
-        let bsrPath = bsrPagesPath[state.category];
+        let bsrPath = bsrPagesPath[state.category][state.domain];
 
         return `https://www.${state.domain}${bsrPath}`;
     }

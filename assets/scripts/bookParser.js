@@ -66,12 +66,13 @@ let BookParser = (() => {
      */
     const getSearchPageUrl = (domain, page) => {
         let url = null;
+        let protocol = window.location.protocol;
         page = parseInt(page);
 
         if (domain === "amazon.com") {
-            url = `https://www.amazon.com/best-sellers-books-Amazon/zgbs/books/ref=zg_bs_pg_${page}?_encoding=UTF8&pg=${page}&ajax=1`;
+            url = `${protocol}//www.amazon.com/best-sellers-books-Amazon/zgbs/books/ref=zg_bs_pg_${page}?_encoding=UTF8&pg=${page}&ajax=1`;
         } else {
-            url = `https://www.${domain}/gp/bestsellers/books/ref=zg_bs_pg_${page}?ie=UTF8&pg=${page}&ajax=1`;
+            url = `${protocol}//www.${domain}/gp/bestsellers/books/ref=zg_bs_pg_${page}?ie=UTF8&pg=${page}&ajax=1`;
         }
 
         return url;
