@@ -670,9 +670,6 @@ let Popup = (function() {
         });
 
         if (step == "results") {
-            if (_background.started()) {
-                showLoading();
-            }
             drawTable(true);
         }
 
@@ -690,7 +687,7 @@ let Popup = (function() {
                 $(".mode-1").hide();
                 $(".mode-4").hide();
                 $(".mode-2").show();
-                if (_background.started()) {
+                if (_background.started() && _background.get().products.length < 21) {
                     showLoading();
                 }
                 break;
@@ -850,6 +847,7 @@ let Popup = (function() {
             goTo(targetId);
         })
         .on("click", "#export", (event) => {
+            event.preventDefault();
             let from = event.target.getAttribute("data-from");
             let products = null;
 
