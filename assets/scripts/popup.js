@@ -54,7 +54,8 @@ let Popup = (function() {
             "amazon.es": "/gp/bestsellers/books/",
             "amazon.fr": "/gp/bestsellers/books/",
             "amazon.in": "/gp/bestsellers/books/",
-            "amazon.it": "/gp/bestsellers/books/"
+            "amazon.it": "/gp/bestsellers/books/",
+            "amazon.co.jp": "/gp/bestsellers/books/"
         },
         "eBooks": {
             "amazon.com.au": "/gp/bestsellers/digital-text/",
@@ -65,7 +66,8 @@ let Popup = (function() {
             "amazon.es": "/gp/bestsellers/digital-text/",
             "amazon.fr": "/gp/bestsellers/digital-text/",
             "amazon.in": "/gp/bestsellers/digital-text/",
-            "amazon.it": "/gp/bestsellers/digital-text/"
+            "amazon.it": "/gp/bestsellers/digital-text/",
+            "amazon.co.jp": "/gp/bestsellers/digital-text/"
         }
     };
 
