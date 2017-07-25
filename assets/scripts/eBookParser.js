@@ -24,7 +24,7 @@ let EBookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
-        pagesPattern: /(Ausgabe|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
+        pagesPattern: /(Geschenkartikel|Taschenbuch|Broschiert|Ausgabe|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let esPatterns = {
@@ -115,7 +115,7 @@ let EBookParser = (() => {
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
         // let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
-        if (!pages) {
+        if (pages == undefined) {
             debugger;
         }
         let prefix = '<meta name="keywords" content="';
