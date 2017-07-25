@@ -741,6 +741,7 @@ let Popup = (function() {
                     if (response.status) {
                         setToken(response.token, response.user);
                         $(".login-error-msg").hide();
+                        updateTable();
                         goTo(event.target.getAttribute('data-target'));
                     } else {
                         $(".login-error-msg").show();
@@ -827,7 +828,9 @@ let Popup = (function() {
             }, (response) => {
                 //  To do in failure.
                 if (response.status == false && response.message == "Your token was expired.") {
-                    goTo("login");
+                    if (JSON.parse(localStorage._token || "null")) {
+                        goTo("login");
+                    }
                 }
             });
         } else {
