@@ -143,6 +143,7 @@ table#tbl-items td {
 
 #track #product-image {
     margin-left: 22px;
+    width: 180px;
     height: 275px;}
     #track .track-header {
         border-bottom: solid 1px grey;
