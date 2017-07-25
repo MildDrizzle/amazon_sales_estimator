@@ -846,7 +846,7 @@ let Popup = (function() {
             drawNicheHunterTable()
             goTo(targetId);
         })
-        .on("click", "#export", (event) => {
+        .on("click", ".icon-export", (event) => {
             event.preventDefault();
             let from = event.target.getAttribute("data-from");
             let products = null;
