@@ -108,6 +108,7 @@ let EBookParser = (() => {
             }
         }
         let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
+        priceText = priceText.substr(0, priceText.indexOf(price));
         let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
         let tempTags = currency.split(" ");
         currency = (tempTags.length > 0) ? tempTags[tempTags.length - 1] : currency;
@@ -169,6 +170,9 @@ let EBookParser = (() => {
                         info.url = url;
                         info.bsr = bsr;
                         info.reviews = reviews;
+                        info.price = curProduct.price.replace(/,/g, ".");
+                        info.currency = curProduct.currency;
+
                         chrome.runtime.sendMessage({
                             from: "amazon",
                             action: "product-info",
@@ -204,6 +208,11 @@ let EBookParser = (() => {
             let anchor = ($items.eq(i).find("a.a-link-normal")[0] || {}).href;
             let bsr = ($items.eq(i).find(".zg_rankNumber")[0] || {}).textContent.match(/\d+/g)[0];
             let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent;
+            let priceText = ($items.eq(i).find(".p13n-sc-price")[0] || {}).textContent;
+            let price = (priceText.match(/\d+(.|,)\d+/g) || [""])[0];
+            priceText = priceText.substr(0, priceText.indexOf(price)).trim();
+            let tags = priceText.split(" ");
+            let currency = tags[tags.length - 1];
             if (reviews) {
                 reviews = reviews.replace(/,/g, '');
             }
@@ -212,6 +221,8 @@ let EBookParser = (() => {
                 bsr,
                 reviews,
                 domain,
+                price,
+                currency,
                 url: anchor
             });
         }

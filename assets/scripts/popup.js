@@ -179,22 +179,22 @@ let Popup = (function() {
                     ));
                 }
                 $record.append($("<td/>").text(products[i].pages));
-                pageSum += (parseInt(products[i].pages) | 0);
+                pageSum += (parseInt(products[i].pages) || 0);
                 $record.append($("<td/>").text(products[i].currency + products[i].price));
-                priceSum += (parseInt(products[i].price) | 0);
+                priceSum += (parseInt(products[i].price) || 0);
                 $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                 estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
                 $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                 revenueSum += (parseInt(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])) | 0);
-                $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
+                $record.append($("<td/>").text(Number(products[i].reviews || 0).toLocaleString()));
                 reviewSum += (parseInt(products[i].reviews) | 0);
 
                 $record.appendTo($tbody);
             }
 
-            $("table td[data-prop='bsr']").text(parseInt(bsrSum / productsCount));
-            $("table td[data-prop='pages']").text(parseInt(pageSum / productsCount));
-            $("table td[data-prop='reviews']").text(Number(parseInt(reviewSum / productsCount)).toLocaleString());
+            $("table td[data-prop='bsr']").text(parseInt(bsrSum / productsCount) || 0);
+            $("table td[data-prop='pages']").text(parseInt(pageSum / productsCount) || 0);
+            $("table td[data-prop='reviews']").text(Number(parseInt(reviewSum / productsCount) || 0).toLocaleString());
             if (products.length > 0) {
                 $("table td[data-prop='price']").text(products[0].currency + Math.round(priceSum / productsCount * 100) / 100);
                 $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
@@ -203,7 +203,7 @@ let Popup = (function() {
                 $("table td[data-prop='revenue']").text(0);
             }
             
-            $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount)).toLocaleString());
+            $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount) || 0).toLocaleString());
         }
 
         if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1 && products.length < 20) {
