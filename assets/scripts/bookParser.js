@@ -36,7 +36,7 @@ let BookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let inPatterns = {
-        pagesPattern: /Paperback:\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let itPatterns = {
@@ -202,8 +202,8 @@ let BookParser = (() => {
             let bsr = ($items.eq(i).find(".zg_rankNumber")[0] || {}).textContent.match(/\d+/g)[0];
             let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent;
 
-            let priceText = ($items.eq(i).find(".p13n-sc-price")[0] || {}).textContent;
-            let price = (priceText.match(/\d+(.|,)\d+/g) || [""])[0];
+            let priceText = ($items.eq(i).find(".p13n-sc-price")[0] || {}).textContent || "";
+            let price = (priceText.match(/\d+(.|,)\d+/g) || ["0"])[0];
             priceText = priceText.substr(0, priceText.indexOf(price)).trim();
             let tags = priceText.split(" ");
             let currency = tags[tags.length - 1];

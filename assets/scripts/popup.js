@@ -77,7 +77,11 @@ let Popup = (function() {
         let state = _background.get();
         let bsrPath = bsrPagesPath[state.category][state.domain];
 
-        return `https://www.${state.domain}${bsrPath}`;
+        return {
+            pattern: `*://www.${state.domain}${bsrPath}`,
+            https: `https://www.${state.domain}${bsrPath}`,
+            http: `http://www.${state.domain}${bsrPath}`
+        };
     }
 
     /**
@@ -1038,7 +1042,7 @@ let Popup = (function() {
      * Update products table.
      */
     const updateTable = () => {
-        let curUrl = getSearchUrl();
+        let {pattern, http, https} = getSearchUrl();
         let products = _background.get().products;
         let trackingProducts = _background.items();
         let $trackingCount = $(".tracking-count");
@@ -1046,7 +1050,7 @@ let Popup = (function() {
         $trackingCount.text(trackingProducts.length);
 
         if (products.length == 0 && !_background.started()) {
-            chrome.tabs.query({url: curUrl}, (tabs) => {
+            chrome.tabs.query({url: pattern}, (tabs) => {
                 if (tabs.length > 0) {
                     _background.set({
                         curTab: tabs[0].id
@@ -1072,7 +1076,7 @@ let Popup = (function() {
                     });
                 } else {
                     chrome.tabs.create({
-                        url: curUrl
+                        url: http
                     }, (tab) => {
                         _background.set({
                             curTab: tab.id

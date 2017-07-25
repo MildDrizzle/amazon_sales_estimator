@@ -24,11 +24,11 @@ let EBookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
-        pagesPattern: /Ausgabe:\s(\d+)\s/g,
+        pagesPattern: /(Ausgabe|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let esPatterns = {
-        pagesPattern: /(blanda|impresión):\s(\d+)\s/g,
+        pagesPattern: /(blanda|impresión|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let frPatterns = {
@@ -37,15 +37,15 @@ let EBookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let inPatterns = {
-        pagesPattern: /Paperback:\s(\d+)\s/g,
+        pagesPattern: /(Paperback|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let itPatterns = {
-        pagesPattern: /(flessibile|stampa)(\s*):\s(\d+)\s/g,
+        pagesPattern: /(flessibile|stampa|Hardcover|\sLength|Paperback)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let jpPatterns = {
-        pagesPattern: /大型本:\s(\d+)/g,
+        pagesPattern: /(大型本|Hardcover|\sLength|Paperback):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let regPatterns = {
@@ -207,9 +207,9 @@ let EBookParser = (() => {
             }
             let anchor = ($items.eq(i).find("a.a-link-normal")[0] || {}).href;
             let bsr = ($items.eq(i).find(".zg_rankNumber")[0] || {}).textContent.match(/\d+/g)[0];
-            let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent;
-            let priceText = ($items.eq(i).find(".p13n-sc-price")[0] || {}).textContent;
-            let price = (priceText.match(/\d+(.|,)\d+/g) || [""])[0];
+            let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent || 0;
+            let priceText = ($items.eq(i).find(".p13n-sc-price")[0] || {}).textContent || "";
+            let price = (priceText.match(/\d+(.|,)\d+/g) || ["0"])[0];
             priceText = priceText.substr(0, priceText.indexOf(price)).trim();
             let tags = priceText.split(" ");
             let currency = tags[tags.length - 1];
