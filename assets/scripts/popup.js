@@ -690,6 +690,9 @@ let Popup = (function() {
                 $(".mode-1").hide();
                 $(".mode-4").hide();
                 $(".mode-2").show();
+                if (_background.started()) {
+                    showLoading();
+                }
                 break;
 
             case "niche-hunters":
