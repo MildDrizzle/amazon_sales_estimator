@@ -927,6 +927,18 @@ let Popup = (function() {
         .on("change", "#domain", (event) => {
             event.preventDefault();
 
+            if (event.target.value == "amazon.com.au") {
+                $("#category").children("option.category-books").remove().val("eBooks");
+                _background.set({
+                    category: "eBooks"
+                });
+            } else if ($("#category").children("option.category-books").length == 0) {
+                $("#category").append($("<option/>").attr({
+                    class: "category-books",
+                    value: "Books"
+                }).text("Books"))
+            }
+
             _background.updateSamples((samples) => {
                 _background.set({
                     domain: event.target.value,
@@ -1077,6 +1089,13 @@ let Popup = (function() {
      * Initializer of this object. In this method, periodic bot to refresh table will be initialized.
      */
     const init = function() {
+        if (_background.get().domain == "amazon.com.au") {
+            $("#category").children("option.category-books").remove();
+            _background.set({
+                category: "eBooks"
+            });
+        }
+
         updateTable();
 
         if (!_globalTimer) {
