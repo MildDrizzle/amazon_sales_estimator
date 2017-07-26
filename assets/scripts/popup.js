@@ -222,7 +222,7 @@ let Popup = (function() {
                 $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount) || 0).toLocaleString());
             }
 
-            if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1 && products.length < 20) {
+            if (response.started && products.length == 0) {
                 showLoading();
             } else {
                 hideLoading();
@@ -1126,7 +1126,7 @@ let Popup = (function() {
         if (!_globalTimer) {
             _globalTimer = window.setInterval(() => {
                 drawTable();
-            }, 3000);
+            }, 500);
         }
         drawNicheHunterTable();
 
