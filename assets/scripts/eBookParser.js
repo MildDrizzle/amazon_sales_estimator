@@ -7,7 +7,7 @@ let EBookParser = (() => {
 
     let _started = false;
     let _domain = null;
-    let _cateogory = "eBooks";
+    let _category = "eBooks";
 
     let comPatterns = {
         pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
@@ -264,9 +264,6 @@ let EBookParser = (() => {
                         : $page.find("#detail_bullets_id .content ul")).text().trim();
 
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
-        if (pages == undefined) {
-            debugger;
-        }
 
         let priceText = ($page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text() || "");
         let price = (priceText.match(/\d+(.|,)\d+/g) || ["0"])[0];
@@ -282,6 +279,9 @@ let EBookParser = (() => {
         let keywords = tmp.substr(0, pos).trim();
         let isbn = "";
         let asin = $page.find("input[name='ASIN.0']").val();
+        if (asin == undefined) {
+            // debugger;
+        }
 
         return {
             pages,
@@ -353,7 +353,7 @@ let EBookParser = (() => {
                                 break;
 
                             default:
-                                info.currency = (currency == "") ? info.currency : "$";
+                                info.currency = (currency != "") ? currency : info.currency;
                                 break;
                         }
 
@@ -389,7 +389,7 @@ let EBookParser = (() => {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             switch(request.from) {
                 case "popup":
-                    if (request.action == "get_data") {
+                    if (request.action == "get_data" && request.category == _category) {
                         sendResponse({
                             started: _started,
                             products: _products

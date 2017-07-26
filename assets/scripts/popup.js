@@ -126,7 +126,8 @@ let Popup = (function() {
     let drawTable = function(forceFlag) {
         chrome.tabs.sendMessage(_curTabId, {
             from: "popup",
-            action: "get_data"
+            action: "get_data",
+            category: $_category.val()
         }, (response) => {
             let products = response.products,
                 trackings = _background.items(),
