@@ -480,8 +480,7 @@ let Popup = (function() {
 
             let lastHistory = response.product.histories[response.product.histories.length - 1];
             let first = response.histories[0].updated_at;
-            let last = lastHistory.updated_at;
-            let tmp = Math.round((new Date(last) - new Date(first)) / (24 * 3600 * 1000));
+            let tmp = Math.round((new Date() - new Date(first)) / (24 * 3600 * 1000));
             $avgDailyRevenue.text(lastHistory.currency + Number(parseInt(dailyRevenueSum / daysTracking)).toLocaleString());
             $(".footer-tracking-days").text((tmp) ? tmp : daysTracking);
             $(".footer-avg-bsr").text(parseInt(avgBSR / daysTracking));
@@ -1030,12 +1029,13 @@ let Popup = (function() {
             let curProduct = items[i].product;
             if (curProduct.created_at != curProduct.updated_at) {
                 let first = curProduct.created_at;
-                let last = curProduct.updated_at;
-                let tmp = parseInt((new Date(last) - new Date(first)) / (24 * 3600 * 1000));
+                let last = new Date();
+                let tmp = Math.round((last - new Date(first)) / (24 * 3600 * 1000));
 
                 if (tmp > 1) {
                     daysTracking = tmp;
                 }
+                tmp = Number(tmp).toLocaleString();
             }
             $tableBody.append(
                 $("<tr/>").append(
