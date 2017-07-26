@@ -174,6 +174,7 @@ let Popup = (function() {
                     productsCount = products.length;
 
                 for (let i = 0; i < productsCount; i ++) {
+                    _products[i].index = i;
                     let found = trackings.filter(item => item.product.asin == products[i].asin);
                     let $record = $("<tr/>");
 
@@ -376,10 +377,6 @@ let Popup = (function() {
 
         if (paramString == undefined) {
             paramString = $("#niche-hunters-search-param").val();
-        }
-
-        for (let i = 0; i < products.length; i ++) {
-            products[i].index = i;
         }
 
         products = products.filter((product) => {
@@ -1027,6 +1024,9 @@ let Popup = (function() {
         for (let i = 0; i < items.length; i ++) {
             let daysTracking = 1;
             let curProduct = items[i].product;
+            let parsedProduct = _products.filter(product => {
+                return (product.asin == curProduct.asin)
+            });
             if (curProduct.created_at != curProduct.updated_at) {
                 let first = curProduct.created_at;
                 let last = new Date();
@@ -1037,6 +1037,7 @@ let Popup = (function() {
                 }
                 tmp = Number(tmp).toLocaleString();
             }
+            let index = (parsedProduct.length > 0) ? parsedProduct[0].index : null;
             $tableBody.append(
                 $("<tr/>").append(
                     $("<td/>").text(i + 1),
@@ -1045,7 +1046,7 @@ let Popup = (function() {
                     ),
                     $("<td/>").text(daysTracking),
                     $("<td/>").html(
-                        `<a class='view-track' data-index='${i}'>View</a>`
+                        `<a class='view-track' data-global-index='${index}' data-index='${i}'>View</a>`
                     ),
                     $("<td/>").html(
                         `<a class="untrack-product" data-from="tracking-list" data-id="${items[i].product.id}">UnTrack</a>`
