@@ -122,6 +122,10 @@
     margin-bottom: 10px;
     width: 240px;}
 
+#resutls-average-table th,
+#resutls-average-table td {
+    text-align: center;}
+
 table#results-table th {
     cursor: pointer;}
 table#tbl-items td {
