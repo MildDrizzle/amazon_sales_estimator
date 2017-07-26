@@ -41,7 +41,7 @@ let Popup = (function() {
     let _curSortColumn = "bsr";
     let _sortOption = "asc";
 
-    let _nicheHuntersTable = $("table#niche-hunders-table");
+    let _nicheHuntersTable = $("table#niche-hunters-table");
 
     let _globalTimer = null;
     
@@ -238,8 +238,8 @@ let Popup = (function() {
      * @return {boolean}
      */
     const check = (a, op, b) => {
-        a = parseInt(a);
-        b = parseInt(b);
+        a = parseFloat(a);
+        b = parseFloat(b);
         if (a == NaN || b == NaN) {
             return false;
         }
