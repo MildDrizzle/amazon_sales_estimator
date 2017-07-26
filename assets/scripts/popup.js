@@ -17,6 +17,7 @@ let Popup = (function() {
         "monthly": 1,
         "daily": 30
     };
+    let _curTabId = null;
     let _nicheSearchOptions = {
         bsr: null,
         title: null,
@@ -123,100 +124,108 @@ let Popup = (function() {
      * @return {void}
      */
     let drawTable = function(forceFlag) {
-        let products = _background.get().products,
-            trackings = _background.items(),
-            index = 1,
-            $tbody = $("table#results-table tbody");
+        chrome.tabs.sendMessage(_curTabId, {
+            from: "popup",
+            action: "get_data"
+        }, (response) => {
+            let products = response.products,
+                trackings = _background.items(),
+                index = 1,
+                $tbody = $("table#results-table tbody");
 
-        if (products.length == _products.length && !forceFlag) {
-            return false;
-        } else {
-            _products = products.concat();
-            $tbody.children().remove();
+            $(".tracking-count").text(trackings.length);
 
-            products = products.sort((a, b) => {
-                let aV = getCompareValue(a, _curSortColumn);
-                let bV = getCompareValue(b, _curSortColumn);
-
-                aV = (parseInt(aV) == NaN) ? (aV ? aV: -1) : parseInt(aV);
-                bV = (parseInt(bV) == NaN) ? (bV ? bV: -1) : parseInt(bV);
-                
-                if (typeof aV == "string") {
-                    let flag = (_sortOption === "asc") ? 1 : -1;
-
-                    if (aV > bV) {
-                        return -1 * flag;
-                    } else if (aV < bV) {
-                        return 1 * flag;
-                    } else {
-                        return 0;
-                    }
-                } else {
-                    return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
-                }
-            });
-
-            let bsrSum = 0,
-                pageSum = 0,
-                reviewSum = 0,
-                priceSum = 0.0,
-                estSaleSum = 0,
-                revenueSum = 0,
-                productsCount = products.length;
-
-            for (let i = 0; i < productsCount; i ++) {
-                let found = trackings.filter(item => item.product.asin == products[i].asin);
-                let $record = $("<tr/>");
-
-                if (found.length > 0) {
-                    $record.addClass("tracking").attr({"title": "Watching"});
-                }
-                
-                $record.append($("<td/>").text(products[i].bsr));
-                bsrSum += (parseInt(products[i].bsr) | 0);
-                $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
-                if (found.length > 0) {
-                    $record.append($("<td/>").append(
-                        $(`<a class='untrack-product' title='Untrack this product' data-index='${i}' data-id='${found[0].product.id}'>UnTrack</a>`)
-                    ));
-                } else {
-                    $record.append($("<td/>").append(
-                        $(`<a class='track-product' title='Track this product' data-index='${i}'>Track</a>`)
-                    ));
-                }
-                $record.append($("<td/>").text(products[i].pages));
-                pageSum += (parseInt(products[i].pages) || 0);
-                $record.append($("<td/>").text(products[i].currency + products[i].price));
-                priceSum += (parseFloat(products[i].price) || 0.0);
-                $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
-                estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
-                $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
-                revenueSum += (parseInt(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])) | 0);
-                $record.append($("<td/>").text(Number(products[i].reviews || 0).toLocaleString()));
-                reviewSum += (parseInt(products[i].reviews) | 0);
-
-                $record.appendTo($tbody);
-            }
-
-            $("table td[data-prop='bsr']").text(parseInt(bsrSum / productsCount) || 0);
-            $("table td[data-prop='pages']").text(parseInt(pageSum / productsCount) || 0);
-            $("table td[data-prop='reviews']").text(Number(parseInt(reviewSum / productsCount) || 0).toLocaleString());
-            if (products.length > 0) {
-                $("table td[data-prop='price']").text(products[0].currency + Math.round(priceSum / productsCount * 100) / 100);
-                $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
+            if (products.length == _products.length && !forceFlag) {
+                return false;
             } else {
-                $("table td[data-prop='price']").text(0);
-                $("table td[data-prop='revenue']").text(0);
-            }
-            
-            $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount) || 0).toLocaleString());
-        }
+                $tbody.children().remove();
 
-        if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1 && products.length < 20) {
-            showLoading();
-        } else {
-            hideLoading();
-        }
+                products = products.sort((a, b) => {
+                    let aV = getCompareValue(a, _curSortColumn);
+                    let bV = getCompareValue(b, _curSortColumn);
+
+                    aV = (parseInt(aV) == NaN) ? (aV ? aV: -1) : parseInt(aV);
+                    bV = (parseInt(bV) == NaN) ? (bV ? bV: -1) : parseInt(bV);
+                    
+                    if (typeof aV == "string") {
+                        let flag = (_sortOption === "asc") ? 1 : -1;
+
+                        if (aV > bV) {
+                            return -1 * flag;
+                        } else if (aV < bV) {
+                            return 1 * flag;
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
+                    }
+                });
+
+                _products = products.concat();
+
+                let bsrSum = 0,
+                    pageSum = 0,
+                    reviewSum = 0,
+                    priceSum = 0.0,
+                    estSaleSum = 0,
+                    revenueSum = 0,
+                    productsCount = products.length;
+
+                for (let i = 0; i < productsCount; i ++) {
+                    let found = trackings.filter(item => item.product.asin == products[i].asin);
+                    let $record = $("<tr/>");
+
+                    if (found.length > 0) {
+                        $record.addClass("tracking").attr({"title": "Watching"});
+                    }
+                    
+                    $record.append($("<td/>").text(products[i].bsr));
+                    bsrSum += (parseInt(products[i].bsr) | 0);
+                    $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
+                    if (found.length > 0) {
+                        $record.append($("<td/>").append(
+                            $(`<a class='untrack-product' title='Untrack this product' data-index='${i}' data-id='${found[0].product.id}'>UnTrack</a>`)
+                        ));
+                    } else {
+                        $record.append($("<td/>").append(
+                            $(`<a class='track-product' title='Track this product' data-index='${i}'>Track</a>`)
+                        ));
+                    }
+                    $record.append($("<td/>").text(products[i].pages));
+                    pageSum += (parseInt(products[i].pages) || 0);
+                    $record.append($("<td/>").text(products[i].currency + products[i].price));
+                    priceSum += (parseFloat(products[i].price) || 0.0);
+                    $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+                    estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
+                    $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+                    revenueSum += (parseInt(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])) | 0);
+                    $record.append($("<td/>").text(Number(products[i].reviews || 0).toLocaleString()));
+                    reviewSum += (parseInt(products[i].reviews) | 0);
+
+                    $record.appendTo($tbody);
+                }
+
+                $("table td[data-prop='bsr']").text(parseInt(bsrSum / productsCount) || 0);
+                $("table td[data-prop='pages']").text(parseInt(pageSum / productsCount) || 0);
+                $("table td[data-prop='reviews']").text(Number(parseInt(reviewSum / productsCount) || 0).toLocaleString());
+                if (products.length > 0) {
+                    $("table td[data-prop='price']").text(products[0].currency + Math.round(priceSum / productsCount * 100) / 100);
+                    $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
+                } else {
+                    $("table td[data-prop='price']").text(0);
+                    $("table td[data-prop='revenue']").text(0);
+                }
+                
+                $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount) || 0).toLocaleString());
+            }
+
+            if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1 && products.length < 20) {
+                showLoading();
+            } else {
+                hideLoading();
+            }
+        });
     };
 
     /**
@@ -355,7 +364,7 @@ let Popup = (function() {
      * @return {void}
      */
     let drawNicheHunterTable = (paramString) => {
-        let products = _background.get().products;
+        let products = _products.concat();
         let searchOptions = null;
         let trackings = _background.items();
         let $tbody = _nicheHuntersTable.find("tbody");
@@ -1062,25 +1071,27 @@ let Popup = (function() {
                         curTab: tabs[0].id
                     });
 
+                    _curTabId = tabs[0].id;
+
                     chrome.tabs.update(tabs[0].id, {active:true}, () => {
                         let status = _background.get();
                         initEvents();
 
-                        if (!_background.started()) {
-                            chrome.tabs.sendMessage(tabs[0].id, {
-                                from: "popup",
-                                action: "get_data",
-                                domain: status.domain,
-                                category: status.category,
-                                page: status.page || 1
-                            }, (response) => {
-                                if (response == undefined) {
-                                    _background.started(false);
-                                } else {
-                                    _background.started(response.started);
-                                }
-                            });
-                        }
+                        // if (!_background.started()) {
+                        //     chrome.tabs.sendMessage(tabs[0].id, {
+                        //         from: "popup",
+                        //         action: "get_data",
+                        //         domain: status.domain,
+                        //         category: status.category,
+                        //         page: status.page || 1
+                        //     }, (response) => {
+                        //         if (response == undefined) {
+                        //             _background.started(false);
+                        //         } else {
+                        //             _background.started(response.started);
+                        //         }
+                        //     });
+                        // }
                     });
                 } else {
                     chrome.tabs.create({
@@ -1123,7 +1134,7 @@ let Popup = (function() {
 
         $("table#results-table").on("click", "a.track-link", (event => {
             let index = event.target.getAttribute("data-index");
-            let product = _background.get().products[index];
+            let product = _products[index];
 
             _selectedProduct = product;
             renderTrackForm(product);

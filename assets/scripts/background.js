@@ -220,7 +220,11 @@ let Background = (() => {
 	let init = () => {
 			chrome.runtime.onInstalled.addListener(function (details) {
 				console.log('previousVersion', details.previousVersion);
-				// checkAuth();
+				chrome.tabs.query({url: "*://www.amazon.com/*"}, (tabs) => {
+					for (let i = 0; tabs && i < tabs.length; i ++) {
+						chrome.tabs.reload(tabs[i].id, {bypassCache: true});
+					}
+				})
 			});
 
 			chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
