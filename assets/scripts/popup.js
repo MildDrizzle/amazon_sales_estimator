@@ -1172,7 +1172,6 @@ let Popup = (function() {
             let $buttons = $("#tracking-products-table .untrack-product");
             for (let i = 0; i < $buttons.length; i ++) {
                 $buttons.eq(i).click();
-                break;
             }
         })
     };
