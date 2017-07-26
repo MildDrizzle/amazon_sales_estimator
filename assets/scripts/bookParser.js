@@ -95,18 +95,18 @@ let BookParser = (() => {
             img = p;
             break;
         }
-        let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
-        if (!priceText.match(/(\d+(.|,))\d+/g)) {
-            priceText = $page.find("#tmmSwatches .swatchElement span.a-color-secondary").eq(0).text().trim();
-            if (!priceText.match(/(\d+(.|,))\d+/g)) {
-                return false;
-            }
-        }
-        let price = (priceText.match(/(\d+(.|,))\d+/g) || [""])[0];
-        priceText = priceText.substr(0, priceText.indexOf(price));
-        let currency = priceText.replace(/(\d+(.|,)*)(\d+)/g, '').trim();
-        let tempTags = currency.split(" ");
-        currency = tempTags[tempTags.length - 1];
+        // let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
+        // if (!priceText.match(/(\d+(.|,))\d+/g)) {
+        //     priceText = $page.find("#tmmSwatches .swatchElement span.a-color-secondary").eq(0).text().trim();
+        //     if (!priceText.match(/(\d+(.|,))\d+/g)) {
+        //         return false;
+        //     }
+        // }
+        // let price = (priceText.match(/(\d+(.|,))\d+/g) || [""])[0];
+        // priceText = priceText.substr(0, priceText.indexOf(price));
+        // let currency = priceText.replace(/(\d+(.|,)*)(\d+)/g, '').trim();
+        // let tempTags = currency.split(" ");
+        // currency = tempTags[tempTags.length - 1];
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul") : $page.find("#detail_bullets_id .content ul")).text().trim();
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
         if (pages == undefined) {
@@ -127,9 +127,9 @@ let BookParser = (() => {
 
         return {
             title,
-            price,
+            // price,
             img,
-            currency,
+            // currency,
             pages,
             asin,
             keywords,
@@ -163,7 +163,7 @@ let BookParser = (() => {
                         info.url = url;
                         info.bsr = bsr;
                         info.reviews = reviews;
-                        info.price = curProduct.price.replace(/,/g, ".");
+                        info.price = (curProduct.price || "0").replace(/,/g, ".");
                         info.currency = curProduct.currency;
                         chrome.runtime.sendMessage({
                             from: "amazon",
