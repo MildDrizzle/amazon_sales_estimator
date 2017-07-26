@@ -1055,7 +1055,7 @@ let Popup = (function() {
 
         $trackingCount.text(trackingProducts.length);
 
-        if (products.length == 0 && !_background.started()) {
+        // if (products.length == 0 && !_background.started()) {
             chrome.tabs.query({url: pattern}, (tabs) => {
                 if (tabs.length > 0) {
                     _background.set({
@@ -1066,19 +1066,21 @@ let Popup = (function() {
                         let status = _background.get();
                         initEvents();
 
-                        chrome.tabs.sendMessage(tabs[0].id, {
-                            from: "popup",
-                            action: "get_data",
-                            domain: status.domain,
-                            category: status.category,
-                            page: status.page || 1
-                        }, (response) => {
-                            if (response == undefined) {
-                                _background.started(false);
-                            } else {
-                                _background.started(response.started);
-                            }
-                        });
+                        if (!_background.started()) {
+                            chrome.tabs.sendMessage(tabs[0].id, {
+                                from: "popup",
+                                action: "get_data",
+                                domain: status.domain,
+                                category: status.category,
+                                page: status.page || 1
+                            }, (response) => {
+                                if (response == undefined) {
+                                    _background.started(false);
+                                } else {
+                                    _background.started(response.started);
+                                }
+                            });
+                        }
                     });
                 } else {
                     chrome.tabs.create({
@@ -1090,9 +1092,9 @@ let Popup = (function() {
                     });
                 }
             });
-        } else {
-            initEvents();
-        }
+        // } else {
+        //     initEvents();
+        // }
     }
 
     /**
