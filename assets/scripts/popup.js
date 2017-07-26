@@ -159,7 +159,7 @@ let Popup = (function() {
             let bsrSum = 0,
                 pageSum = 0,
                 reviewSum = 0,
-                priceSum = 0,
+                priceSum = 0.0,
                 estSaleSum = 0,
                 revenueSum = 0,
                 productsCount = products.length;
@@ -187,7 +187,7 @@ let Popup = (function() {
                 $record.append($("<td/>").text(products[i].pages));
                 pageSum += (parseInt(products[i].pages) || 0);
                 $record.append($("<td/>").text(products[i].currency + products[i].price));
-                priceSum += (parseInt(products[i].price) || 0);
+                priceSum += (parseFloat(products[i].price) || 0.0);
                 $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                 estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
                 $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));

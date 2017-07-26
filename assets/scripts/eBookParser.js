@@ -90,33 +90,22 @@ let EBookParser = (() => {
         let $page = $(text);
         let title = $page.find("#ebooksProductTitle").text().trim();
 
-        if (!$page.find("#ebooks-img-canvas img").eq(0).attr("data-a-dynamic-image")) {
-            return false;
+        if (!$page.find("img.a-dynamic-image").eq(0).attr("data-a-dynamic-image")) {
+            debugger;
+            // return false;
         }
         
-        let tmpImgObj = JSON.parse($page.find("#ebooks-img-canvas img").eq(0).attr("data-a-dynamic-image"));
+        let tmpImgObj = JSON.parse($page.find("img.a-dynamic-image").eq(0).attr("data-a-dynamic-image"));
         let img = null;
         for (p in tmpImgObj) {
             img = p;
             break;
         }
-        // let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
-        // if (!priceText.match(/(\d+.)\d+/g)) {
-        //     priceText = $page.find("#tmmSwatches .swatchElement span.a-color-secondary").eq(0).text().trim();
-        //     if (!priceText.match(/(\d+.)\d+/g)) {
-        //         return false;
-        //     }
-        // }
-        // let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
-        // priceText = priceText.substr(0, priceText.indexOf(price));
-        // let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
-        // let tempTags = currency.split(" ");
-        // currency = (tempTags.length > 0) ? tempTags[tempTags.length - 1] : currency;
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
         // let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
         if (pages == undefined) {
-            debugger;
+            // debugger;
         }
         let prefix = '<meta name="keywords" content="';
         let suffix = '" />';
@@ -124,13 +113,8 @@ let EBookParser = (() => {
         let tmp = text.substr(pos);
         pos = tmp.indexOf(suffix);
         let keywords = tmp.substr(0, pos).trim();
-
-        // let isbn = (bulletString.match(/ISBN:\s(\d+)/g) || ["a none"])[0].split(" ")[1];
         let isbn = "";
         let asin = $page.find("input[name='ASIN.0']").val();
-        // let bsr = $page.find("#SalesRank").text().trim().match(/(\d+)\s/g)[0].match(/\d+/g)[0];
-        // let reviewText = $page.find("#acrCustomerReviewText").text();
-        // let reviews = parseInt(reviewText.match(/(\d+,*)(\d+)*/g)[0].replace(/,/g, ''));
 
         return {
             title,
