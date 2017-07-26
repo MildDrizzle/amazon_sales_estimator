@@ -197,6 +197,7 @@ let Popup = (function() {
                     pageSum += (parseInt(products[i].pages) || 0);
                     $record.append($("<td/>").text(products[i].currency + products[i].price));
                     priceSum += (parseFloat(products[i].price) || 0.0);
+                    _products[i].estSale = parseInt(_background.estimation(products[i].bsr));
                     $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                     estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
                     $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
@@ -420,7 +421,7 @@ let Popup = (function() {
             if (found.length > 0) {
                 $record.append(
                     $("<td/>").html(
-                        `<a data-from="niche" class="untrack-product" data-id="${products[i].id}">UnTrack</a>`
+                        `<a data-from="niche" class="untrack-product" data-id="${found[0].product.id}">UnTrack</a>`
                     )
                 )
             } else {
