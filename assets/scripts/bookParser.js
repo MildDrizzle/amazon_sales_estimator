@@ -149,7 +149,20 @@ let BookParser = (() => {
                         info.bsr = bsr;
                         info.reviews = reviews;
                         info.price = (curProduct.price || "0").replace(/,/g, ".");
-                        info.currency = curProduct.currency;
+                        switch(domain) {
+                            case "amazon.in":
+                                info.currency = "INR";
+                                break;
+                            
+                            case "amazon.com.au":
+                                info.currency = "AUD $";
+                                break;
+
+                            default:
+                                info.currency = curProduct.currency;
+                                break;
+                        }
+                        
                         chrome.runtime.sendMessage({
                             from: "amazon",
                             action: "product-info",
