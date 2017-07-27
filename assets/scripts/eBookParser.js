@@ -41,7 +41,7 @@ let EBookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let itPatterns = {
-        pagesPattern: /(flessibile|stampa|Hardcover|\sLength|Paperback)(\s*):\s(\d+)\s/g,
+        pagesPattern: /(Copertina\srigida|flessibile|stampa|Hardcover|\sLength|Paperback)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let jpPatterns = {
