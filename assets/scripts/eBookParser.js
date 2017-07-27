@@ -6,6 +6,8 @@ let EBookParser = (() => {
     let _products = [];
 
     let _started = false;
+    let _domain = null;
+    let _category = "eBooks";
 
     let comPatterns = {
         pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
@@ -71,14 +73,183 @@ let EBookParser = (() => {
         let protocol = window.location.protocol;
         page = parseInt(page);
 
-        if (domain === "amazon.com") {
+        if (_domain === "amazon.com") {
             url = `${protocol}//www.amazon.com/Best-Sellers-Kindle-Store/zgbs/digital-text/ref=zg_bs_pg_${page}?_encoding=UTF8&pg=${page}&ajax=1`;
         } else {
-            url = `${protocol}//www.${domain}/gp/bestsellers/digital-text/ref=zg_bs_pg_${page}?ie=UTF8&pg=${page}&ajax=1`;
+            url = `${protocol}//www.${_domain}/gp/bestsellers/digital-text/ref=zg_bs_pg_${page}?ie=UTF8&pg=${page}&ajax=1`;
         }
 
         return url;
     };
+
+    // /**
+    //  * Function to parse necessary product detail info from amazon product detail page.
+    //  * @param {string} text 
+    //  * @param {string} pattern 
+    //  * @return {object}
+    //  */
+    // const extractInfo = (text, pattern) => {
+    //     let $page = $(text);
+    //     let title = $page.find("#ebooksProductTitle").text().trim();
+
+    //     if (!$page.find("img.a-dynamic-image").eq(0).attr("data-a-dynamic-image")) {
+    //         debugger;
+    //         // return false;
+    //     }
+        
+    //     let tmpImgObj = JSON.parse($page.find("img.a-dynamic-image").eq(0).attr("data-a-dynamic-image"));
+    //     let img = null;
+    //     for (p in tmpImgObj) {
+    //         img = p;
+    //         break;
+    //     }
+    //     let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
+    //     // let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
+    //     let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
+    //     if (pages == undefined) {
+    //         // debugger;
+    //     }
+    //     let prefix = '<meta name="keywords" content="';
+    //     let suffix = '" />';
+    //     let pos = text.indexOf(prefix) + prefix.length;
+    //     let tmp = text.substr(pos);
+    //     pos = tmp.indexOf(suffix);
+    //     let keywords = tmp.substr(0, pos).trim();
+    //     let isbn = "";
+    //     let asin = $page.find("input[name='ASIN.0']").val();
+
+    //     return {
+    //         title,
+    //         // price,
+    //         img,
+    //         // currency,
+    //         pages,
+    //         keywords,
+    //         asin,
+    //         isbn
+    //     };
+    // };
+
+    // /**
+    //  * Function to send ajax request to amazon product detail page and send request to parse product detail and seed data to Background Script.
+    //  * @param {string} url 
+    //  * @param {number} bsr 
+    //  * @param {number} reviews 
+    //  * @param {string} domain 
+    //  * @return {void}
+    //  */
+    // const parseDetail = (url, bsr, reviews, domain) => {
+    //     let curProduct = _products.shift();
+
+    //     if (curProduct) {
+    //         url = curProduct.url;
+    //         bsr = curProduct.bsr;
+    //         reviews = curProduct.reviews;
+    //         domain = curProduct.domain;
+
+    //         $.ajax({
+    //             url: url,
+    //             method: "GET",
+    //             success: (response) => {
+    //                 let info = extractInfo(response, regPatterns[_domain]);
+    //                 if (info) {
+    //                     info.url = url;
+    //                     info.bsr = bsr;
+    //                     info.reviews = reviews;
+    //                     info.price = (curProduct.price || "0").replace(/,/g, ".");
+    //                     switch(_domain) {
+    //                         case "amazon.in":
+    //                             info.currency = "INR";
+    //                             break;
+                            
+    //                         case "amazon.com.au":
+    //                             info.currency = "AUD";
+    //                             break;
+
+    //                         default:
+    //                             info.currency = curProduct.currency;
+    //                             break;
+    //                     }
+
+    //                     chrome.runtime.sendMessage({
+    //                         from: "amazon",
+    //                         action: "product-info",
+    //                         data: info
+    //                     });
+    //                 }
+
+    //                 parseDetail();
+    //             }
+    //         });
+    //     } else {
+    //         chrome.runtime.sendMessage({
+    //             from: "amazon",
+    //             action: "get_data_completed"
+    //         });
+    //     }
+    // }
+
+    // /**
+    //  * Parse the search result page and get all of product result pages from the url given by trigger.
+    //  * @param {string} text 
+    //  * @param {string} domain 
+    //  * @return {void}
+    //  */
+    // const parseSearchResult = (text, domain) => {
+    //     let $items = $(text);
+    //     let urls = [];
+
+    //     for (let i = 0; i < $items.length; i ++) {
+    //         if (!$items.eq(i).hasClass("zg_itemImmersion")) {
+    //             continue;
+    //         }
+    //         let anchor = ($items.eq(i).find("a.a-link-normal")[0] || {}).href;
+    //         let bsr = ($items.eq(i).find(".zg_rankNumber")[0] || {}).textContent.match(/\d+/g)[0];
+    //         let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent || 0;
+    //         let priceText = ($items.eq(i).find(".p13n-sc-price")[0] || {}).textContent || "";
+    //         let price = (priceText.match(/\d+(.|,)\d+/g) || ["0"])[0];
+    //         priceText = priceText.substr(0, priceText.indexOf(price)).trim();
+    //         let tags = priceText.split(" ");
+    //         let currency = tags[tags.length - 1];
+    //         if (reviews) {
+    //             reviews = reviews.replace(/,/g, '');
+    //         }
+
+    //         _products.push({
+    //             bsr,
+    //             reviews,
+    //             domain: _domain,
+    //             price,
+    //             currency,
+    //             url: anchor
+    //         });
+    //     }
+    // }
+
+    // /**
+    //  * Trigger to scraping all of products from BSR based amazon search result pages.
+    //  * @param {string} domain 
+    //  * @param {number} page 
+    //  * @return {void}
+    //  */
+    // const extractProducts = (domain, page) => {
+    //     let searchUrl = _searchPages.shift();
+
+    //     if (searchUrl) {
+    //         $.ajax({
+    //             url: searchUrl,
+    //             method: "GET",
+    //             success: (response) => {
+    //                 parseSearchResult(response, domain);
+    //                 extractProducts(domain);
+    //             }
+    //         });
+    //     } else {
+    //         //
+    //         parseDetail();
+    //     }
+    // };
+
 
     /**
      * Function to parse necessary product detail info from amazon product detail page.
@@ -86,171 +257,115 @@ let EBookParser = (() => {
      * @param {string} pattern 
      * @return {object}
      */
-    const extractInfo = (text, pattern) => {
+    const parseProductPage = (text, pattern) => {
         let $page = $(text);
-        let title = $page.find("#ebooksProductTitle").text().trim();
+        let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) 
+                        ? $page.find("#productDetailsTable .content ul").eq(0).children("li") 
+                        : $page.find("#detail_bullets_id .content ul")).text().trim();
 
-        if (!$page.find("#ebooks-img-canvas img").eq(0).attr("data-a-dynamic-image")) {
-            return false;
-        }
-        
-        let tmpImgObj = JSON.parse($page.find("#ebooks-img-canvas img").eq(0).attr("data-a-dynamic-image"));
-        let img = null;
-        for (p in tmpImgObj) {
-            img = p;
-            break;
-        }
-        let priceText = $page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text().trim();
-        if (!priceText.match(/(\d+.)\d+/g)) {
-            priceText = $page.find("#tmmSwatches .swatchElement span.a-color-secondary").eq(0).text().trim();
-            if (!priceText.match(/(\d+.)\d+/g)) {
-                return false;
-            }
-        }
-        let price = (priceText.match(/(\d+.)\d+/g) || [""])[0];
-        priceText = priceText.substr(0, priceText.indexOf(price));
-        let currency = priceText.replace(/(\d+.*)(\d+)/g, '').trim();
-        let tempTags = currency.split(" ");
-        currency = (tempTags.length > 0) ? tempTags[tempTags.length - 1] : currency;
-        let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
-        // let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
         let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
-        if (pages == undefined) {
-            debugger;
-        }
+
+        let priceText = ($page.find("#tmmSwatches .swatchElement.selected span.a-color-base").text() || "");
+        let price = (priceText.match(/\d+(.|,)\d+/g) || ["0"])[0];
+        priceText = priceText.substr(0, priceText.indexOf(price)).trim();
+        let tags = priceText.split(" ");
+        let currency = tags[tags.length - 1];
+
         let prefix = '<meta name="keywords" content="';
         let suffix = '" />';
         let pos = text.indexOf(prefix) + prefix.length;
         let tmp = text.substr(pos);
         pos = tmp.indexOf(suffix);
         let keywords = tmp.substr(0, pos).trim();
-
-        // let isbn = (bulletString.match(/ISBN:\s(\d+)/g) || ["a none"])[0].split(" ")[1];
         let isbn = "";
         let asin = $page.find("input[name='ASIN.0']").val();
-        // let bsr = $page.find("#SalesRank").text().trim().match(/(\d+)\s/g)[0].match(/\d+/g)[0];
-        // let reviewText = $page.find("#acrCustomerReviewText").text();
-        // let reviews = parseInt(reviewText.match(/(\d+,*)(\d+)*/g)[0].replace(/,/g, ''));
+        if (asin == undefined) {
+            // debugger;
+        }
 
         return {
-            title,
-            price,
-            img,
-            currency,
             pages,
             keywords,
             asin,
+            price,
+            currency,
             isbn
         };
     };
 
     /**
-     * Function to send ajax request to amazon product detail page and send request to parse product detail and seed data to Background Script.
-     * @param {string} url 
-     * @param {number} bsr 
-     * @param {number} reviews 
-     * @param {string} domain 
+     * Parse the current search result page or the search page respone(Ajax)
+     * @param {string} pageContent 
      * @return {void}
      */
-    const parseDetail = (url, bsr, reviews, domain) => {
-        let curProduct = _products.shift();
+    const parseSearchPage = (pageContent) => {
+        let $posts = null;
+        let data = [];
 
-        if (curProduct) {
-            url = curProduct.url;
-            bsr = curProduct.bsr;
-            reviews = curProduct.reviews;
-            domain = curProduct.domain;
+        if (pageContent) {
+            $posts = $(pageContent);
+        } else {
+            $posts = $("#zg_centerListWrapper div.zg_itemImmersion");
+        }
+
+        for (let i = 0; i < $posts.length; i ++) {
+            if (!$($posts[i]).hasClass("zg_itemImmersion")) {
+                continue;
+            }
+            let bsr = parseInt($posts[i].querySelector("span.zg_rankNumber").textContent);
+            let url = $posts[i].querySelector(".a-link-normal").href;
+            let img = $posts[i].querySelector(".a-link-normal img").src;
+            let $titleTag = $($posts[i]).find(".a-section.a-spacing-mini").eq(0).next();
+            let title = ($titleTag.attr("title") || $titleTag.text()).trim();
+            let priceText = $($posts[i]).find(".p13n-sc-price").eq(0).text().trim();
+            let price = (priceText.match(/\d+(.|,)\d+/g) || [null])[0];
+            
+            priceText = priceText.substr(0, priceText.indexOf(price)).trim();
+            if (price) {
+                price = price.replace(/,/g, ".");
+            }
+
+            let tags = priceText.split(" ");
+            let currency = tags[tags.length - 1];
+            let reviews = ($($posts[i]).find("a.a-size-small.a-link-normal").text() || "0").trim();
+            reviews = reviews.replace(/,/g, "");
+            reviews = parseInt(reviews);
 
             $.ajax({
                 url: url,
                 method: "GET",
                 success: (response) => {
-                    let info = extractInfo(response, regPatterns[domain]);
+                    let info = parseProductPage(response, regPatterns[_domain]);
                     if (info) {
                         info.url = url;
                         info.bsr = bsr;
+                        info.img = img;
+                        info.title = title;
                         info.reviews = reviews;
-                        info.price = curProduct.price.replace(/,/g, ".");
-                        info.currency = curProduct.currency;
+                        info.price = price || info.price;
+                        switch(_domain) {
+                            case "amazon.in":
+                                info.currency = "INR";
+                                break;
+                            
+                            case "amazon.com.au":
+                                info.currency = "AUD";
+                                break;
 
-                        chrome.runtime.sendMessage({
-                            from: "amazon",
-                            action: "product-info",
-                            data: info
-                        });
+                            default:
+                                info.currency = (currency != "") ? currency : info.currency;
+                                break;
+                        }
+
+                        _products.push(info);
+                        if (_products.length > 99) {
+                            _started = false;
+                        }
                     }
-
-                    parseDetail();
                 }
-            });
-        } else {
-            chrome.runtime.sendMessage({
-                from: "amazon",
-                action: "get_data_completed"
             });
         }
     }
-
-    /**
-     * Parse the search result page and get all of product result pages from the url given by trigger.
-     * @param {string} text 
-     * @param {string} domain 
-     * @return {void}
-     */
-    const parseSearchResult = (text, domain) => {
-        let $items = $(text);
-        let urls = [];
-
-        for (let i = 0; i < $items.length; i ++) {
-            if (!$items.eq(i).hasClass("zg_itemImmersion")) {
-                continue;
-            }
-            let anchor = ($items.eq(i).find("a.a-link-normal")[0] || {}).href;
-            let bsr = ($items.eq(i).find(".zg_rankNumber")[0] || {}).textContent.match(/\d+/g)[0];
-            let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent || 0;
-            let priceText = ($items.eq(i).find(".p13n-sc-price")[0] || {}).textContent || "";
-            let price = (priceText.match(/\d+(.|,)\d+/g) || ["0"])[0];
-            priceText = priceText.substr(0, priceText.indexOf(price)).trim();
-            let tags = priceText.split(" ");
-            let currency = tags[tags.length - 1];
-            if (reviews) {
-                reviews = reviews.replace(/,/g, '');
-            }
-
-            _products.push({
-                bsr,
-                reviews,
-                domain,
-                price,
-                currency,
-                url: anchor
-            });
-        }
-    }
-
-    /**
-     * Trigger to scraping all of products from BSR based amazon search result pages.
-     * @param {string} domain 
-     * @param {number} page 
-     * @return {void}
-     */
-    const extractProducts = (domain, page) => {
-        let searchUrl = _searchPages.shift();
-
-        if (searchUrl) {
-            $.ajax({
-                url: searchUrl,
-                method: "GET",
-                success: (response) => {
-                    parseSearchResult(response, domain);
-                    extractProducts(domain);
-                }
-            });
-        } else {
-            //
-            parseDetail();
-        }
-    };
 
     /**
      * Initializer of eBook page scraping TOOL.
@@ -258,22 +373,29 @@ let EBookParser = (() => {
      * @return {void}
      */
     const init = (domain) => {
-        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-            let page = (request.page) ? request.page : 1;
-            if (request.category === "eBooks" && request.action == "get_data") {
-                _searchPages = [];
-                _products = [];
-                _started = true;
-
-                for (let i = 1; i < 6; i ++) {
-                    _searchPages.push(getSearchPageUrl(domain, i))
+        _domain = domain;
+        _started = true;
+        parseSearchPage();
+        for (let i = 2; i < 6; i ++) {
+            let url = getSearchPageUrl(domain, i);
+            $.ajax({
+                url: url,
+                method: "GET",
+                success: (response) => {
+                    parseSearchPage(response);
                 }
-                extractProducts(domain, page);
-                sendResponse({
-                    started: true
-                });
-            } else if (request.category == "eBooks" && request.action == "stop") {
-                _started = false;
+            });
+        }
+        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+            switch(request.from) {
+                case "popup":
+                    if (request.action == "get_data" && request.category == _category) {
+                        sendResponse({
+                            started: _started,
+                            products: _products
+                        });
+                    }
+                    break;
             }
         })
     };

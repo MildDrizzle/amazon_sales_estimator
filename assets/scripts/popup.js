@@ -17,6 +17,7 @@ let Popup = (function() {
         "monthly": 1,
         "daily": 30
     };
+    let _curTabId = null;
     let _nicheSearchOptions = {
         bsr: null,
         title: null,
@@ -40,7 +41,7 @@ let Popup = (function() {
     let _curSortColumn = "bsr";
     let _sortOption = "asc";
 
-    let _nicheHuntersTable = $("table#niche-hunders-table");
+    let _nicheHuntersTable = $("table#niche-hunters-table");
 
     let _globalTimer = null;
     
@@ -54,7 +55,8 @@ let Popup = (function() {
             "amazon.es": "/gp/bestsellers/books/",
             "amazon.fr": "/gp/bestsellers/books/",
             "amazon.in": "/gp/bestsellers/books/",
-            "amazon.it": "/gp/bestsellers/books/"
+            "amazon.it": "/gp/bestsellers/books/",
+            "amazon.co.jp": "/gp/bestsellers/books/"
         },
         "eBooks": {
             "amazon.com.au": "/gp/bestsellers/digital-text/",
@@ -65,7 +67,8 @@ let Popup = (function() {
             "amazon.es": "/gp/bestsellers/digital-text/",
             "amazon.fr": "/gp/bestsellers/digital-text/",
             "amazon.in": "/gp/bestsellers/digital-text/",
-            "amazon.it": "/gp/bestsellers/digital-text/"
+            "amazon.it": "/gp/bestsellers/digital-text/",
+            "amazon.co.jp": "/gp/bestsellers/digital-text/"
         }
     };
 
@@ -121,100 +124,111 @@ let Popup = (function() {
      * @return {void}
      */
     let drawTable = function(forceFlag) {
-        let products = _background.get().products,
-            trackings = _background.items(),
-            index = 1,
-            $tbody = $("table#results-table tbody");
+        chrome.tabs.sendMessage(_curTabId, {
+            from: "popup",
+            action: "get_data",
+            category: $_category.val()
+        }, (response) => {
+            let products = response.products,
+                trackings = _background.items(),
+                index = 1,
+                $tbody = $("table#results-table tbody");
 
-        if (products.length == _products.length && !forceFlag) {
-            return false;
-        } else {
-            _products = products.concat();
-            $tbody.children().remove();
+            $(".tracking-count").text(trackings.length);
 
-            products = products.sort((a, b) => {
-                let aV = getCompareValue(a, _curSortColumn);
-                let bV = getCompareValue(b, _curSortColumn);
-
-                aV = (parseInt(aV) == NaN) ? (aV ? aV: -1) : parseInt(aV);
-                bV = (parseInt(bV) == NaN) ? (bV ? bV: -1) : parseInt(bV);
-                
-                if (typeof aV == "string") {
-                    let flag = (_sortOption === "asc") ? 1 : -1;
-
-                    if (aV > bV) {
-                        return -1 * flag;
-                    } else if (aV < bV) {
-                        return 1 * flag;
-                    } else {
-                        return 0;
-                    }
-                } else {
-                    return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
-                }
-            });
-
-            let bsrSum = 0,
-                pageSum = 0,
-                reviewSum = 0,
-                priceSum = 0,
-                estSaleSum = 0,
-                revenueSum = 0,
-                productsCount = products.length;
-
-            for (let i = 0; i < productsCount; i ++) {
-                let found = trackings.filter(item => item.product.asin == products[i].asin);
-                let $record = $("<tr/>");
-
-                if (found.length > 0) {
-                    $record.addClass("tracking").attr({"title": "Watching"});
-                }
-                
-                $record.append($("<td/>").text(products[i].bsr));
-                bsrSum += (parseInt(products[i].bsr) | 0);
-                $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
-                if (found.length > 0) {
-                    $record.append($("<td/>").append(
-                        $(`<a class='untrack-product' title='Untrack this product' data-index='${i}' data-id='${found[0].product.id}'>UnTrack</a>`)
-                    ));
-                } else {
-                    $record.append($("<td/>").append(
-                        $(`<a class='track-product' title='Track this product' data-index='${i}'>Track</a>`)
-                    ));
-                }
-                $record.append($("<td/>").text(products[i].pages));
-                pageSum += (parseInt(products[i].pages) || 0);
-                $record.append($("<td/>").text(products[i].currency + products[i].price));
-                priceSum += (parseInt(products[i].price) || 0);
-                $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
-                estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
-                $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
-                revenueSum += (parseInt(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])) | 0);
-                $record.append($("<td/>").text(Number(products[i].reviews || 0).toLocaleString()));
-                reviewSum += (parseInt(products[i].reviews) | 0);
-
-                $record.appendTo($tbody);
-            }
-
-            $("table td[data-prop='bsr']").text(parseInt(bsrSum / productsCount) || 0);
-            $("table td[data-prop='pages']").text(parseInt(pageSum / productsCount) || 0);
-            $("table td[data-prop='reviews']").text(Number(parseInt(reviewSum / productsCount) || 0).toLocaleString());
-            if (products.length > 0) {
-                $("table td[data-prop='price']").text(products[0].currency + Math.round(priceSum / productsCount * 100) / 100);
-                $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
+            if (products.length == _products.length && !forceFlag) {
+                return false;
             } else {
-                $("table td[data-prop='price']").text(0);
-                $("table td[data-prop='revenue']").text(0);
-            }
-            
-            $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount) || 0).toLocaleString());
-        }
+                $tbody.children().remove();
 
-        if (_background.started() && ["login", "initial"].indexOf(_curStep) == -1 && products.length < 20) {
-            showLoading();
-        } else {
-            hideLoading();
-        }
+                products = products.sort((a, b) => {
+                    let aV = getCompareValue(a, _curSortColumn);
+                    let bV = getCompareValue(b, _curSortColumn);
+
+                    aV = (parseInt(aV) == NaN) ? (aV ? aV: -1) : parseInt(aV);
+                    bV = (parseInt(bV) == NaN) ? (bV ? bV: -1) : parseInt(bV);
+                    
+                    if (typeof aV == "string") {
+                        let flag = (_sortOption === "asc") ? 1 : -1;
+
+                        if (aV > bV) {
+                            return -1 * flag;
+                        } else if (aV < bV) {
+                            return 1 * flag;
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        return (_sortOption == "asc") ? (aV - bV) : (bV - aV);
+                    }
+                });
+
+                _products = products.concat();
+
+                let bsrSum = 0,
+                    pageSum = 0,
+                    reviewSum = 0,
+                    priceSum = 0.0,
+                    estSaleSum = 0,
+                    revenueSum = 0,
+                    productsCount = products.length;
+
+                for (let i = 0; i < productsCount; i ++) {
+                    _products[i].index = i;
+                    let found = trackings.filter(item => item.product.asin == products[i].asin);
+                    let $record = $("<tr/>");
+
+                    if (found.length > 0) {
+                        $record.addClass("tracking").attr({"title": "Watching"});
+                    }
+                    
+                    $record.append($("<td/>").text(products[i].bsr));
+                    bsrSum += (parseInt(products[i].bsr) | 0);
+                    $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
+                    if (found.length > 0) {
+                        $record.append($("<td/>").append(
+                            $(`<a class='untrack-product' title='Untrack this product' data-index='${i}' data-id='${found[0].product.id}'>UnTrack</a>`)
+                        ));
+                    } else {
+                        $record.append($("<td/>").append(
+                            $(`<a class='track-product' title='Track this product' data-index='${i}'>Track</a>`)
+                        ));
+                    }
+                    $record.append($("<td/>").text(products[i].pages));
+                    pageSum += (parseInt(products[i].pages) || 0);
+                    $record.append($("<td/>").text(products[i].currency + products[i].price));
+                    priceSum += (parseFloat(products[i].price) || 0.0);
+                    _products[i].estSale = parseInt(_background.estimation(products[i].bsr));
+                    $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+                    estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
+                    $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+                    revenueSum += (parseInt(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])) | 0);
+                    $record.append($("<td/>").text(Number(products[i].reviews || 0).toLocaleString()));
+                    reviewSum += (parseInt(products[i].reviews) | 0);
+
+                    $record.appendTo($tbody);
+                }
+
+                $("table td[data-prop='bsr']").text(parseInt(bsrSum / productsCount) || 0);
+                $("table td[data-prop='pages']").text(parseInt(pageSum / productsCount) || 0);
+                $("table td[data-prop='reviews']").text(Number(parseInt(reviewSum / productsCount) || 0).toLocaleString());
+                if (products.length > 0) {
+                    $("table td[data-prop='price']").text(products[0].currency + Math.round(priceSum / productsCount * 100) / 100);
+                    $("table td[data-prop='revenue']").text(products[0].currency + Number(parseInt(revenueSum / productsCount)).toLocaleString());
+                } else {
+                    $("table td[data-prop='price']").text(0);
+                    $("table td[data-prop='revenue']").text(0);
+                }
+                
+                $("table td[data-prop='estSales']").text(Number(parseInt(estSaleSum / productsCount) || 0).toLocaleString());
+            }
+
+            if (response.started && products.length == 0) {
+                showLoading();
+            } else {
+                hideLoading();
+            }
+        });
     };
 
     /**
@@ -225,8 +239,8 @@ let Popup = (function() {
      * @return {boolean}
      */
     const check = (a, op, b) => {
-        a = parseInt(a);
-        b = parseInt(b);
+        a = parseFloat(a);
+        b = parseFloat(b);
         if (a == NaN || b == NaN) {
             return false;
         }
@@ -353,7 +367,7 @@ let Popup = (function() {
      * @return {void}
      */
     let drawNicheHunterTable = (paramString) => {
-        let products = _background.get().products;
+        let products = _products.concat();
         let searchOptions = null;
         let trackings = _background.items();
         let $tbody = _nicheHuntersTable.find("tbody");
@@ -363,10 +377,6 @@ let Popup = (function() {
 
         if (paramString == undefined) {
             paramString = $("#niche-hunters-search-param").val();
-        }
-
-        for (let i = 0; i < products.length; i ++) {
-            products[i].index = i;
         }
 
         products = products.filter((product) => {
@@ -408,7 +418,7 @@ let Popup = (function() {
             if (found.length > 0) {
                 $record.append(
                     $("<td/>").html(
-                        `<a data-from="niche" class="untrack-product" data-id="${products[i].id}">UnTrack</a>`
+                        `<a data-from="niche" class="untrack-product" data-id="${found[0].product.id}">UnTrack</a>`
                     )
                 )
             } else {
@@ -467,8 +477,7 @@ let Popup = (function() {
 
             let lastHistory = response.product.histories[response.product.histories.length - 1];
             let first = response.histories[0].updated_at;
-            let last = lastHistory.updated_at;
-            let tmp = Math.round((new Date(last) - new Date(first)) / (24 * 3600 * 1000));
+            let tmp = Math.round((new Date() - new Date(first)) / (24 * 3600 * 1000));
             $avgDailyRevenue.text(lastHistory.currency + Number(parseInt(dailyRevenueSum / daysTracking)).toLocaleString());
             $(".footer-tracking-days").text((tmp) ? tmp : daysTracking);
             $(".footer-avg-bsr").text(parseInt(avgBSR / daysTracking));
@@ -668,9 +677,6 @@ let Popup = (function() {
         });
 
         if (step == "results") {
-            if (_background.started()) {
-                showLoading();
-            }
             drawTable(true);
         }
 
@@ -688,6 +694,9 @@ let Popup = (function() {
                 $(".mode-1").hide();
                 $(".mode-4").hide();
                 $(".mode-2").show();
+                if (_background.started() && _background.get().products.length < 21) {
+                    showLoading();
+                }
                 break;
 
             case "niche-hunters":
@@ -736,6 +745,7 @@ let Popup = (function() {
                     if (response.status) {
                         setToken(response.token, response.user);
                         $(".login-error-msg").hide();
+                        updateTable();
                         goTo(event.target.getAttribute('data-target'));
                     } else {
                         $(".login-error-msg").show();
@@ -822,7 +832,9 @@ let Popup = (function() {
             }, (response) => {
                 //  To do in failure.
                 if (response.status == false && response.message == "Your token was expired.") {
-                    goTo("login");
+                    if (JSON.parse(localStorage._token || "null")) {
+                        goTo("login");
+                    }
                 }
             });
         } else {
@@ -841,7 +853,8 @@ let Popup = (function() {
             drawNicheHunterTable()
             goTo(targetId);
         })
-        .on("click", "#export", (event) => {
+        .on("click", ".icon-export", (event) => {
+            event.preventDefault();
             let from = event.target.getAttribute("data-from");
             let products = null;
 
@@ -1011,15 +1024,20 @@ let Popup = (function() {
         for (let i = 0; i < items.length; i ++) {
             let daysTracking = 1;
             let curProduct = items[i].product;
+            let parsedProduct = _products.filter(product => {
+                return (product.asin == curProduct.asin)
+            });
             if (curProduct.created_at != curProduct.updated_at) {
                 let first = curProduct.created_at;
-                let last = curProduct.updated_at;
-                let tmp = parseInt((new Date(last) - new Date(first)) / (24 * 3600 * 1000));
+                let last = new Date();
+                let tmp = Math.round((last - new Date(first)) / (24 * 3600 * 1000));
 
                 if (tmp > 1) {
                     daysTracking = tmp;
                 }
+                tmp = Number(tmp).toLocaleString();
             }
+            let index = (parsedProduct.length > 0) ? parsedProduct[0].index : null;
             $tableBody.append(
                 $("<tr/>").append(
                     $("<td/>").text(i + 1),
@@ -1028,7 +1046,7 @@ let Popup = (function() {
                     ),
                     $("<td/>").text(daysTracking),
                     $("<td/>").html(
-                        `<a class='view-track' data-index='${i}'>View</a>`
+                        `<a class='view-track' data-global-index='${index}' data-index='${i}'>View</a>`
                     ),
                     $("<td/>").html(
                         `<a class="untrack-product" data-from="tracking-list" data-id="${items[i].product.id}">UnTrack</a>`
@@ -1049,30 +1067,34 @@ let Popup = (function() {
 
         $trackingCount.text(trackingProducts.length);
 
-        if (products.length == 0 && !_background.started()) {
+        // if (products.length == 0 && !_background.started()) {
             chrome.tabs.query({url: pattern}, (tabs) => {
                 if (tabs.length > 0) {
                     _background.set({
                         curTab: tabs[0].id
                     });
 
+                    _curTabId = tabs[0].id;
+
                     chrome.tabs.update(tabs[0].id, {active:true}, () => {
                         let status = _background.get();
                         initEvents();
 
-                        chrome.tabs.sendMessage(tabs[0].id, {
-                            from: "popup",
-                            action: "get_data",
-                            domain: status.domain,
-                            category: status.category,
-                            page: status.page || 1
-                        }, (response) => {
-                            if (response == undefined) {
-                                _background.started(false);
-                            } else {
-                                _background.started(response.started);
-                            }
-                        });
+                        // if (!_background.started()) {
+                        //     chrome.tabs.sendMessage(tabs[0].id, {
+                        //         from: "popup",
+                        //         action: "get_data",
+                        //         domain: status.domain,
+                        //         category: status.category,
+                        //         page: status.page || 1
+                        //     }, (response) => {
+                        //         if (response == undefined) {
+                        //             _background.started(false);
+                        //         } else {
+                        //             _background.started(response.started);
+                        //         }
+                        //     });
+                        // }
                     });
                 } else {
                     chrome.tabs.create({
@@ -1084,9 +1106,9 @@ let Popup = (function() {
                     });
                 }
             });
-        } else {
-            initEvents();
-        }
+        // } else {
+        //     initEvents();
+        // }
     }
 
     /**
@@ -1105,7 +1127,7 @@ let Popup = (function() {
         if (!_globalTimer) {
             _globalTimer = window.setInterval(() => {
                 drawTable();
-            }, 3000);
+            }, 500);
         }
         drawNicheHunterTable();
 
@@ -1115,7 +1137,7 @@ let Popup = (function() {
 
         $("table#results-table").on("click", "a.track-link", (event => {
             let index = event.target.getAttribute("data-index");
-            let product = _background.get().products[index];
+            let product = _products[index];
 
             _selectedProduct = product;
             renderTrackForm(product);
@@ -1143,6 +1165,14 @@ let Popup = (function() {
                 if ($("#login-email").val().trim() !== "" && $("#login-password").val().trim() != "") {
                     $("#login-submit").click();
                 }
+            }
+        })
+        .on("click", "#untrack-all", (event) => {
+            event.preventDefault();
+
+            let $buttons = $("#tracking-products-table .untrack-product");
+            for (let i = 0; i < $buttons.length; i ++) {
+                $buttons.eq(i).click();
             }
         })
     };

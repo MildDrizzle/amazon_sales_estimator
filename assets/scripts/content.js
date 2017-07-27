@@ -33,7 +33,13 @@ let ContentScript = (function() {
 		action: "status"
 	}, function(response) {
 		if (response.status) {
-			ContentScript.init(response.domain, response.category);
+			let domain = window.location.hostname;
+			let wwwPrefix = "www.";
+
+			if (domain.indexOf(wwwPrefix) > -1) {
+				domain = domain.substr(domain.indexOf(wwwPrefix) + wwwPrefix.length);
+			}
+			ContentScript.init(domain, response.category);
 		}
 	});
 })(window, $);
