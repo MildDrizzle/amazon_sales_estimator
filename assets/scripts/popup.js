@@ -549,7 +549,7 @@ let Popup = (function() {
         let data = products.map(p => toLine([
                 p.bsr,
                 p.title,
-                p.pages,
+                p.pages || "",
                 p.currency + p.price,
                 Number(p.reviews).toLocaleString(),
                 Number(parseInt(_background.estimation(p.bsr))).toLocaleString(),
@@ -859,10 +859,10 @@ let Popup = (function() {
             let products = null;
 
             if (from == "results") {
-                products = _background.get().products;
+                products = _products.concat();
                 downloadProductsToCSV(products);
             } else if (from == "niche-hunter") {
-                products = _nicheHunters;
+                products = _nicheHunters.concat();
                 downloadProductsToCSV(products);
             } else if (from == "track") {
                 downloadProduct(_selectedProduct);
