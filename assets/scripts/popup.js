@@ -182,8 +182,7 @@ let Popup = (function() {
                         $record.addClass("tracking").attr({"title": "Watching"});
                     }
                     
-                    $record.append($("<td/>").text(products[i].bsr));
-                    bsrSum += (parseInt(products[i].bsr) | 0);
+                    $record.append($("<td/>").text(i + 1));
                     $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
                     if (found.length > 0) {
                         $record.append($("<td/>").append(
@@ -194,6 +193,10 @@ let Popup = (function() {
                             $(`<a class='track-product' title='Track this product' data-index='${i}'>Track</a>`)
                         ));
                     }
+
+                    $record.append($("<td/>").text(products[i].bsr));
+                    bsrSum += (parseInt(products[i].bsr) | 0);
+
                     $record.append($("<td/>").text(products[i].pages));
                     pageSum += (parseInt(products[i].pages) || 0);
                     $record.append($("<td/>").text(products[i].currency + products[i].price));
