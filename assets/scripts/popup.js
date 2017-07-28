@@ -538,10 +538,11 @@ let Popup = (function() {
     }
 
     let downloadPlaintext = function(data, filename) {
-        let blob = new Blob([data], { type: "text/plain" })
+        // let blob = new Blob([data], { type: "text/csv;charset=unicode;base64;" })
 
         let el = document.createElement("a")
-        el.href = URL.createObjectURL(blob)
+        // el.href = URL.createObjectURL(blob);
+        el.href = 'data:text/csv;charset=utf-8,%EF%BB%BF'+encodeURIComponent(data);
         el.download = filename
         document.body.appendChild(el)
         el.click()
