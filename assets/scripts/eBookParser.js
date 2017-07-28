@@ -1,28 +1,30 @@
 let EBookParser = (() => {
-    let _urls = [],
-        _detail = {};
-    
-    let _searchPages = [];
-    let _products = [];
-
     let _started = false;
     let _domain = null;
     let _category = "eBooks";
 
+    let _urls = [];
+    let _searchPages = [];
+    let _products = [];
+    let _productsBuffer = [];
+
+    let _searchResultTimer = null;
+    let _productPageTimer = null;
+
     let comPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback|Board\sbook):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     };
     let caPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback|Board\sbook):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let auPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\spages/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback|Board\sbook):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let ukPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback|Board\sbook):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
@@ -34,8 +36,7 @@ let EBookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let frPatterns = {
-        pagesPattern: /(Broché|Poche|imprimée)(\s*):\s(\d+)\s/g,
-        // pagesPattern:/Relié:\s(\d+)\s/g,
+        pagesPattern: /(Broché|Poche|Relié|imprimée)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let inPatterns = {
@@ -331,40 +332,72 @@ let EBookParser = (() => {
             reviews = reviews.replace(/,/g, "");
             reviews = parseInt(reviews);
 
-            $.ajax({
-                url: url,
-                method: "GET",
-                success: (response) => {
-                    let info = parseProductPage(response, regPatterns[_domain]);
-                    if (info) {
-                        info.url = url;
-                        info.bsr = bsr;
-                        info.img = img;
-                        info.title = title;
-                        info.reviews = reviews;
-                        info.price = price || info.price;
-                        switch(_domain) {
-                            case "amazon.in":
-                                info.currency = "INR";
-                                break;
-                            
-                            case "amazon.com.au":
-                                info.currency = "AUD";
-                                break;
-
-                            default:
-                                info.currency = (currency != "") ? currency : info.currency;
-                                break;
-                        }
-
-                        _products.push(info);
-                        if (_products.length > 99) {
-                            _started = false;
-                        }
-                    }
-                }
+            _productsBuffer.push({
+                bsr,
+                url,
+                img,
+                title,
+                price,
+                currency,
+                reviews
             });
         }
+
+        _productPageTimer = window.setInterval(() => {
+            let buffer = _productsBuffer.shift();
+
+            if (buffer == undefined) {
+                clearInterval(_productPageTimer);
+                let bufferUrl = _urls.shift();
+
+                if (bufferUrl == undefined) {
+                    _started = false;
+                } else {
+                    $.ajax({
+                        url: bufferUrl,
+                        method: "GET",
+                        success: (response) => {
+                            parseSearchPage(response);
+                        }
+                    });
+                }
+            } else {
+                $.ajax({
+                    url: buffer.url,
+                    method: "GET",
+                    success: (response) => {
+                        let info = parseProductPage(response, regPatterns[_domain]);
+                        if (info) {
+                            info.url = buffer.url;
+                            info.bsr = buffer.bsr;
+                            info.img = buffer.img;
+                            info.title = buffer.title;
+                            info.reviews = buffer.reviews;
+                            info.price = buffer.price || info.price;
+                            switch(_domain) {
+                                case "amazon.in":
+                                    info.currency = "INR";
+                                    break;
+                                
+                                case "amazon.com.au":
+                                    info.currency = "AUD";
+                                    break;
+
+                                default:
+                                    info.currency = (buffer.currency != "") ? buffer.currency : info.currency;
+                                    break;
+                            }
+
+                            _products.push(info);
+                            // if (_products.length > 99) {
+                            //     _started = false;
+                            // }
+                        }
+                    }
+                });
+            }
+            
+        }, 1000);
     }
 
     /**
@@ -378,13 +411,14 @@ let EBookParser = (() => {
         parseSearchPage();
         for (let i = 2; i < 6; i ++) {
             let url = getSearchPageUrl(domain, i);
-            $.ajax({
-                url: url,
-                method: "GET",
-                success: (response) => {
-                    parseSearchPage(response);
-                }
-            });
+            _urls.push(url);
+            // $.ajax({
+            //     url: url,
+            //     method: "GET",
+            //     success: (response) => {
+            //         parseSearchPage(response);
+            //     }
+            // });
         }
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             switch(request.from) {

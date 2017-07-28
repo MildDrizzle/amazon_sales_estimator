@@ -18,8 +18,11 @@ let ContentScript = (function() {
 	 */
 	const init = (domain, category) => {
 		// _parser = PARSERS[category];
-		BookParser.init(domain);
-		EBookParser.init(domain);
+		if (category == "eBooks") {
+			EBookParser.init(domain);
+		} else if (category == "Books") {
+			BookParser.init(domain);
+		}
 	};
 
 	return {
@@ -32,14 +35,21 @@ let ContentScript = (function() {
 		from: "amazon",
 		action: "status"
 	}, function(response) {
-		if (response.status) {
+		if (response && response.status) {
 			let domain = window.location.hostname;
 			let wwwPrefix = "www.";
+			let path = window.location.pathname;
+			let eBooksPattern = /^\/(Best-Sellers-Kindle-Store-eBooks\/zgbs\/digital-text)|(gp\/bestsellers\/digital-text)\//g;
+			let booksPattern = /^\/(best-sellers-books-Amazon\/zgbs\/books)|(gp\/bestsellers\/books)\//g;
 
 			if (domain.indexOf(wwwPrefix) > -1) {
 				domain = domain.substr(domain.indexOf(wwwPrefix) + wwwPrefix.length);
+				if (path.match(eBooksPattern)) {
+					ContentScript.init(domain, "eBooks");
+				} else if (path.match(booksPattern)) {
+					ContentScript.init(domain, "Books");
+				}
 			}
-			ContentScript.init(domain, response.category);
 		}
 	});
 })(window, $);
