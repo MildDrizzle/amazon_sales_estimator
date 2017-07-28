@@ -638,7 +638,7 @@ let Popup = (function() {
             
             if (userInfo.id == trackingProducts[0].tracked_by) {
                 $(".footer-tracking-days-container").attr({
-                    title: "Tracked by Yourself."
+                    title: ""
                 });
             } else {
                 $(".footer-tracking-days-container").attr({
