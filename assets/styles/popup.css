@@ -127,6 +127,7 @@
     text-align: center;}
 
 table#results-table th {
+    text-align: center;
     cursor: pointer;}
 table#tbl-items td {
     vertical-align: middle;}
