@@ -94,8 +94,10 @@
             clear: both;}
             .user-info-container > div i {
                 cursor: pointer;
+                color: #333;
                 margin: 5px 0 0 39px;}
             .user-info-container > div h5 {
+                color: #333;
                 margin:0;
                 text-align:center;}
     .results-header-center-container {

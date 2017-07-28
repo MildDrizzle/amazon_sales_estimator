@@ -194,7 +194,15 @@ let Popup = (function() {
                         ));
                     }
 
-                    $record.append($("<td/>").text(products[i].bsr));
+                    $record.append(
+                        $("<td/>").append(
+                            $("<a/>").attr({
+                                title: "Open this product in new tab",
+                                href: products[i].url,
+                                target: "_blank"
+                            }).text(products[i].bsr)
+                        )
+                    );
                     bsrSum += (parseInt(products[i].bsr) | 0);
 
                     $record.append($("<td/>").text(products[i].pages));
