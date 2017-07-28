@@ -4,9 +4,9 @@
 	"manifest_version": 2,
 	"description": "__MSG_appDescription__",
 	"icons": {
-		"16": "assets/images/32.png",
-		"38": "assets/images/32.png",
-		"128": "assets/images/32.png"
+		"16": "assets/images/icon.png",
+		"38": "assets/images/icon.png",
+		"128": "assets/images/icon.png"
 	},
 	"default_locale": "en",
 	"background": {
@@ -52,14 +52,14 @@
 	],
 	"browser_action": {
 		"default_icon": {
-			"19": "assets/images/32.png",
-			"38": "assets/images/32.png"
+			"19": "assets/images/icon.png",
+			"38": "assets/images/icon.png"
 		},
 		"default_title": "__MSG_appName__",
 		"default_popup": "assets/html/popup.html"
 	},
 	"web_accessible_resources": [
-		"assets/images/32.png",
+		"assets/images/icon.png",
 		"assets/images/user_icon.jpg"
 	]
 }
