@@ -140,7 +140,7 @@ table#tbl-items td {
     table#tbl-items tbody tr td:last-child {
         text-align: center;}
     table tbody tr.tracking {
-        background: green !important;}
+        background: #f15a23 !important;}
         table tbody tr.tracking a {
             color: black;}
     table#results-table tbody tr a {
