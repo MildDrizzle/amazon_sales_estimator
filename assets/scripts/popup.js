@@ -634,6 +634,17 @@ let Popup = (function() {
         let trackingProducts = _background.items().filter(item => item.product.asin == product.asin);
         let trackButton = document.getElementById("product-track");
         if (trackingProducts.length > 0) {
+            let userInfo = JSON.parse(localStorage._user || "{}");
+            
+            if (userInfo.id == trackingProducts[0].tracked_by) {
+                $(".footer-tracking-days-container").attr({
+                    title: "Tracked by Yourself."
+                });
+            } else {
+                $(".footer-tracking-days-container").attr({
+                    title: "Tracked by System."
+                });
+            }
             trackButton.setAttribute("data-id", trackingProducts[0].product.id);
             trackButton.setAttribute("data-action", "untrack");
             trackButton.textContent = "Untrack this product";
