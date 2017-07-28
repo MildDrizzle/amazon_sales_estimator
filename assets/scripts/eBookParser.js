@@ -12,19 +12,19 @@ let EBookParser = (() => {
     let _productPageTimer = null;
 
     let comPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback|Board\sbook):\s(\d+)/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     };
     let caPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback|Board\sbook):\s(\d+)/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let auPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback|Board\sbook):\s(\d+)/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let ukPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback|Board\sbook):\s(\d+)/g,
+        pagesPattern: /(Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
@@ -82,174 +82,6 @@ let EBookParser = (() => {
 
         return url;
     };
-
-    // /**
-    //  * Function to parse necessary product detail info from amazon product detail page.
-    //  * @param {string} text 
-    //  * @param {string} pattern 
-    //  * @return {object}
-    //  */
-    // const extractInfo = (text, pattern) => {
-    //     let $page = $(text);
-    //     let title = $page.find("#ebooksProductTitle").text().trim();
-
-    //     if (!$page.find("img.a-dynamic-image").eq(0).attr("data-a-dynamic-image")) {
-    //         debugger;
-    //         // return false;
-    //     }
-        
-    //     let tmpImgObj = JSON.parse($page.find("img.a-dynamic-image").eq(0).attr("data-a-dynamic-image"));
-    //     let img = null;
-    //     for (p in tmpImgObj) {
-    //         img = p;
-    //         break;
-    //     }
-    //     let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) ? $page.find("#productDetailsTable .content ul").eq(0).children("li") : $page.find("#detail_bullets_id .content ul")).text().trim();
-    //     // let pages = bulletString.match(/(\d+)\spages/g)[0].trim().split(" ")[0];
-    //     let pages = (bulletString.match(pattern.pagesPattern) || [""])[0].trim().split(" ")[1];
-    //     if (pages == undefined) {
-    //         // debugger;
-    //     }
-    //     let prefix = '<meta name="keywords" content="';
-    //     let suffix = '" />';
-    //     let pos = text.indexOf(prefix) + prefix.length;
-    //     let tmp = text.substr(pos);
-    //     pos = tmp.indexOf(suffix);
-    //     let keywords = tmp.substr(0, pos).trim();
-    //     let isbn = "";
-    //     let asin = $page.find("input[name='ASIN.0']").val();
-
-    //     return {
-    //         title,
-    //         // price,
-    //         img,
-    //         // currency,
-    //         pages,
-    //         keywords,
-    //         asin,
-    //         isbn
-    //     };
-    // };
-
-    // /**
-    //  * Function to send ajax request to amazon product detail page and send request to parse product detail and seed data to Background Script.
-    //  * @param {string} url 
-    //  * @param {number} bsr 
-    //  * @param {number} reviews 
-    //  * @param {string} domain 
-    //  * @return {void}
-    //  */
-    // const parseDetail = (url, bsr, reviews, domain) => {
-    //     let curProduct = _products.shift();
-
-    //     if (curProduct) {
-    //         url = curProduct.url;
-    //         bsr = curProduct.bsr;
-    //         reviews = curProduct.reviews;
-    //         domain = curProduct.domain;
-
-    //         $.ajax({
-    //             url: url,
-    //             method: "GET",
-    //             success: (response) => {
-    //                 let info = extractInfo(response, regPatterns[_domain]);
-    //                 if (info) {
-    //                     info.url = url;
-    //                     info.bsr = bsr;
-    //                     info.reviews = reviews;
-    //                     info.price = (curProduct.price || "0").replace(/,/g, ".");
-    //                     switch(_domain) {
-    //                         case "amazon.in":
-    //                             info.currency = "INR";
-    //                             break;
-                            
-    //                         case "amazon.com.au":
-    //                             info.currency = "AUD";
-    //                             break;
-
-    //                         default:
-    //                             info.currency = curProduct.currency;
-    //                             break;
-    //                     }
-
-    //                     chrome.runtime.sendMessage({
-    //                         from: "amazon",
-    //                         action: "product-info",
-    //                         data: info
-    //                     });
-    //                 }
-
-    //                 parseDetail();
-    //             }
-    //         });
-    //     } else {
-    //         chrome.runtime.sendMessage({
-    //             from: "amazon",
-    //             action: "get_data_completed"
-    //         });
-    //     }
-    // }
-
-    // /**
-    //  * Parse the search result page and get all of product result pages from the url given by trigger.
-    //  * @param {string} text 
-    //  * @param {string} domain 
-    //  * @return {void}
-    //  */
-    // const parseSearchResult = (text, domain) => {
-    //     let $items = $(text);
-    //     let urls = [];
-
-    //     for (let i = 0; i < $items.length; i ++) {
-    //         if (!$items.eq(i).hasClass("zg_itemImmersion")) {
-    //             continue;
-    //         }
-    //         let anchor = ($items.eq(i).find("a.a-link-normal")[0] || {}).href;
-    //         let bsr = ($items.eq(i).find(".zg_rankNumber")[0] || {}).textContent.match(/\d+/g)[0];
-    //         let reviews = ($items.eq(i).find("a.a-link-normal.a-size-small")[0] || {}).textContent || 0;
-    //         let priceText = ($items.eq(i).find(".p13n-sc-price")[0] || {}).textContent || "";
-    //         let price = (priceText.match(/\d+(.|,)\d+/g) || ["0"])[0];
-    //         priceText = priceText.substr(0, priceText.indexOf(price)).trim();
-    //         let tags = priceText.split(" ");
-    //         let currency = tags[tags.length - 1];
-    //         if (reviews) {
-    //             reviews = reviews.replace(/,/g, '');
-    //         }
-
-    //         _products.push({
-    //             bsr,
-    //             reviews,
-    //             domain: _domain,
-    //             price,
-    //             currency,
-    //             url: anchor
-    //         });
-    //     }
-    // }
-
-    // /**
-    //  * Trigger to scraping all of products from BSR based amazon search result pages.
-    //  * @param {string} domain 
-    //  * @param {number} page 
-    //  * @return {void}
-    //  */
-    // const extractProducts = (domain, page) => {
-    //     let searchUrl = _searchPages.shift();
-
-    //     if (searchUrl) {
-    //         $.ajax({
-    //             url: searchUrl,
-    //             method: "GET",
-    //             success: (response) => {
-    //                 parseSearchResult(response, domain);
-    //                 extractProducts(domain);
-    //             }
-    //         });
-    //     } else {
-    //         //
-    //         parseDetail();
-    //     }
-    // };
 
 
     /**
@@ -412,13 +244,6 @@ let EBookParser = (() => {
         for (let i = 2; i < 6; i ++) {
             let url = getSearchPageUrl(domain, i);
             _urls.push(url);
-            // $.ajax({
-            //     url: url,
-            //     method: "GET",
-            //     success: (response) => {
-            //         parseSearchPage(response);
-            //     }
-            // });
         }
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             switch(request.from) {
