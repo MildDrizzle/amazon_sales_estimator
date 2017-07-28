@@ -142,9 +142,8 @@ table#tbl-items td {
     table#tbl-items tbody tr td:last-child {
         text-align: center;}
     table tbody tr.tracking {
-        background: #f15a23 !important;}
-        table tbody tr.tracking a {
-            color: black;}
+        background: orange !important;}
+        table tbody tr.tracking a {}
     table#results-table tbody tr a {
         cursor: pointer;}
 
