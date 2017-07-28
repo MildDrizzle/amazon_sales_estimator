@@ -756,6 +756,7 @@ let Popup = (function() {
                     if (response.status) {
                         setToken(response.token, response.user);
                         $(".login-error-msg").hide();
+                        $(".user-name").text(response.user.name);
                         updateTable();
                         goTo(event.target.getAttribute('data-target'));
                     } else {
