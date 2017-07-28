@@ -7,19 +7,19 @@ let BookParser = (() => {
     let _products = [];
     let _productsBuffer = [];
     let comPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback|book):\s(\d+)/g,
+        pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     };
     let caPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback|book):\s(\d+)/g,
+        pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let auPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback|book):\s(\d+)/g,
+        pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let ukPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback|book):\s(\d+)/g,
+        pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let dePatterns = {
@@ -35,7 +35,7 @@ let BookParser = (() => {
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let inPatterns = {
-        pagesPattern: /(Hardcover|\sLength|Paperback):\s(\d+)\s/g,
+        pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
     }
     let itPatterns = {
