@@ -314,14 +314,14 @@ let Popup = (function() {
                     break;
 
                 case "ms":
-                case "monthly est.Sales":
+                case "monthly Units Sold":
                     if (!check(parseInt(_background.estimation(product.bsr)), op, value)) {
                         return false;
                     }
                     break;
 
                 case "ds":
-                case "daily est.Sales":
+                case "daily Units Sold":
                     if (!check(parseInt(_background.estimation(product.bsr) / 30), op, value)) {
                         return false;
                     }
@@ -543,7 +543,7 @@ let Popup = (function() {
      */
     const downloadProductsToCSV = (products) => {
         let toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
-        let header = ["#BSR", "title", "pages", "price", "reviews", "est.Sales", "Revenue", "url"];
+        let header = ["#BSR", "title", "pages", "price", "reviews", "Units Sold", "Revenue", "url"];
         let category = $_category.val();
         // let products = _background.get().products;
         let data = products.map(p => toLine([
