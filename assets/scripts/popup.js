@@ -164,6 +164,7 @@ let Popup = (function() {
                 });
 
                 _products = products.concat();
+                drawNicheHunterTable();
 
                 let bsrSum = 0,
                     pageSum = 0,
@@ -379,6 +380,10 @@ let Popup = (function() {
      * @return {void}
      */
     let drawNicheHunterTable = (paramString) => {
+        if (paramString == undefined) {
+            paramString = $("#niche-hunters-search-param").val();
+        }
+
         let products = _products.concat();
         let searchOptions = null;
         let trackings = _background.items();
@@ -386,10 +391,6 @@ let Popup = (function() {
         let params = paramString ? paramString.split("&") : [];
         let nicheHunterAvgMonthlyRevenue = $(".footer-avg-monthly-revenu");
         let monthlyRevenueSum = 0;
-
-        if (paramString == undefined) {
-            paramString = $("#niche-hunters-search-param").val();
-        }
 
         products = products.filter((product) => {
             if (!paramString) {
