@@ -213,7 +213,7 @@ let Popup = (function() {
                     _products[i].estSale = parseInt(_background.estimation(products[i].bsr));
                     $record.append($("<td/>").text(Number(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                     estSaleSum += (parseInt(parseInt(_background.estimation(products[i].bsr)  / _revenueOptionvalue[_revenueOption])) | 0);
-                    $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])).toLocaleString()));
+                    $record.append($("<td/>").text(products[i].currency + Number(parseInt(_background.estimation(products[i].bsr) * parseFloat(products[i].price) / _revenueOptionvalue[_revenueOption])).toLocaleString()));
                     revenueSum += (parseInt(parseInt(_background.estimation(products[i].bsr) * products[i].price / _revenueOptionvalue[_revenueOption])) | 0);
                     $record.append($("<td/>").text(Number(products[i].reviews || 0).toLocaleString()));
                     reviewSum += (parseInt(products[i].reviews) | 0);
@@ -628,7 +628,8 @@ let Popup = (function() {
         $isbn.text(product.isbn);
         $pages.text(product.pages);
         product.estSale = parseInt(_background.estimation(product.bsr));
-        $revenue.text(product.currency + Number(parseInt((parseInt(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
+        // $revenue.text(product.currency + Number(parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
+        $revenue.text(product.currency + Number(parseInt(_background.estimation(product.bsr) * parseFloat(product.price))).toLocaleString());
         
         $estSales.text(Number(product.estSale).toLocaleString());
 
