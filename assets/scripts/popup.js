@@ -497,9 +497,9 @@ let Popup = (function() {
 
             let lastHistory = response.product.histories[response.product.histories.length - 1];
             let first = response.histories[0].updated_at;
-            let tmp = Math.round((new Date() - new Date(first)) / (24 * 3600 * 1000));
+            let tmp = parseInt((new Date() - new Date(first)) / (24 * 3600 * 1000));
             $avgDailyRevenue.text(lastHistory.currency + Number(parseInt(dailyRevenueSum / daysTracking)).toLocaleString());
-            $(".footer-tracking-days").text((tmp) ? tmp : daysTracking);
+            $(".footer-tracking-days").text(tmp);
             $(".footer-avg-bsr").text(parseInt(avgBSR / daysTracking));
 
             Highcharts.chart('graph-container', {
@@ -1074,7 +1074,7 @@ let Popup = (function() {
         $tableBody.children().remove();
 
         for (let i = 0; i < items.length; i ++) {
-            let daysTracking = 1;
+            let daysTracking = 0;
             let curProduct = items[i].product;
             let parsedProduct = _products.filter(product => {
                 return (product.asin == curProduct.asin)
@@ -1082,7 +1082,7 @@ let Popup = (function() {
             if (curProduct.created_at != curProduct.updated_at) {
                 let first = curProduct.created_at;
                 let last = new Date();
-                let tmp = Math.round((last - new Date(first)) / (24 * 3600 * 1000));
+                let tmp = parseInt((last - new Date(first)) / (24 * 3600 * 1000));
 
                 if (tmp > 1) {
                     daysTracking = tmp;
