@@ -426,11 +426,12 @@ let Popup = (function() {
                 $("<td/>").append(
                     $("<a/>").attr({
                         href: products[i].url,
-                        title: truncateString(products[i].title, 20)
+                        title: truncateString(products[i].title, 20),
+                        target: "_blank"
                     }).text(i + 1)
                 ),
                 $("<td/>").append(
-                    $(`<a href="${products[i].url}" target="_newTab" title="${products[i].title}">${truncateString(products[i].title, 15)}</a>`)
+                    $(`<a title="${products[i].title}" class="track-link" data-index="${products[i].index}">${truncateString(products[i].title, 15)}</a>`)
                 )
             );
             
@@ -1186,7 +1187,7 @@ let Popup = (function() {
         //     "autoWidth": false
         // });
 
-        $("table#results-table").on("click", "a.track-link", (event => {
+        $("table").on("click", "a.track-link", (event => {
             let index = event.target.getAttribute("data-index");
             let product = _products[index];
 
