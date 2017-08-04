@@ -423,7 +423,12 @@ let Popup = (function() {
             // $record.append($("<td/>").text(Number(products[i].reviews).toLocaleString()));
 
             $record.append(
-                $("<td/>").text(i + 1),
+                $("<td/>").append(
+                    $("<a/>").attr({
+                        href: products[i].url,
+                        title: truncateString(products[i].title, 20)
+                    }).text(i + 1)
+                ),
                 $("<td/>").append(
                     $(`<a href="${products[i].url}" target="_newTab" title="${products[i].title}">${truncateString(products[i].title, 15)}</a>`)
                 )
