@@ -687,6 +687,7 @@ let Popup = (function() {
      * @param {string} step 
      */
     const goTo = (step) => {
+        let userInfo = JSON.parse(localStorage._user || "{}");
         _steps.forEach(function(val) {
             if (step == val) {
                 $("#" + val).show();
@@ -704,7 +705,11 @@ let Popup = (function() {
         });
 
         if (step == "results") {
-            drawTable(true);
+            if (userInfo.membership_tier == "e") {
+                goTo("renew");
+            } else {
+                drawTable(true);
+            }
         }
 
         switch(step) {
@@ -824,6 +829,7 @@ let Popup = (function() {
                             goTo("renew");
                         } else if (response.status == false && response.message) {
                             alert(response.message);
+                            goTo("renew");
                         }
                     })
                     break;
@@ -929,6 +935,7 @@ let Popup = (function() {
                     goTo("renew");
                 } else if (response.status == false && response.message) {
                     alert(response.message);
+                    goTo("renew");
                 }
             });
         })

@@ -151,7 +151,9 @@ let Background = (() => {
 		}, (response) => {
 			localStorage._token = JSON.stringify(null);
 			localStorage._user = JSON.stringify({});
-			failure(response);
+			if (typeof failure === "function") {
+				failure(response);
+			}
 		})
 	};
 
