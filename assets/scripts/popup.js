@@ -1092,9 +1092,11 @@ let Popup = (function() {
             let index = (parsedProduct.length > 0) ? parsedProduct[0].index : null;
             $tableBody.append(
                 $("<tr/>").append(
-                    $("<td/>").text(i + 1),
                     $("<td/>").html(
-                        `<a href="${items[i].product.url}" target="_newTab">${truncateString(items[i].product.title, 40)}</a>`
+                        `<a href="${items[i].product.url}" target="_newTab">${i + 1}</a>`
+                    ),
+                    $("<td/>").html(
+                        `<a class="view-track" data-global-index="${index}" data-index="${i}">${truncateString(items[i].product.title, 40)}</a>`
                     ),
                     $("<td/>").text(daysTracking),
                     $("<td/>").html(
