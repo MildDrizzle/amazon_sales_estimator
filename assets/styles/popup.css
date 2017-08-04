@@ -128,7 +128,7 @@
 #resutls-average-table td {
     text-align: center;}
 
-table#results-table th {
+table th {
     text-align: center;
     cursor: pointer;}
 table#tbl-items td {
