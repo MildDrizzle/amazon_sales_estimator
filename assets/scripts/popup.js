@@ -705,7 +705,7 @@ let Popup = (function() {
         });
 
         if (step == "results") {
-            if (userInfo.membership_tier == "e") {
+            if (userInfo && userInfo.membership_tier == "e") {
                 goTo("renew");
             } else {
                 drawTable(true);
@@ -826,6 +826,7 @@ let Popup = (function() {
                         if (response.status == false && response.message == "Your token was expired.") {
                             goTo("login");
                         } else if (response.status == false && response.message == "Your membership was expired.") {
+                            localStorage._user = JSON.stringify({});
                             goTo("renew");
                         } else if (response.status == false && response.message) {
                             alert(response.message);
@@ -932,6 +933,7 @@ let Popup = (function() {
                 if (response.status == false && response.message == "Your token was expired.") {
                     goTo("login");
                 } else if (response.status == false && response.message == "Your membership was expired.") {
+                    localStorage._user = JSON.stringify({});
                     goTo("renew");
                 } else if (response.status == false && response.message) {
                     alert(response.message);

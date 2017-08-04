@@ -1,8 +1,8 @@
 'use strict';
 let _mainHost = null;
-let env = "dev";
+// let env = "dev";
 // let env = "staging";
-// let env = "product";
+let env = "product";
 
 if (env == "dev") {
 	_mainHost = "http://localhost:8000/";
