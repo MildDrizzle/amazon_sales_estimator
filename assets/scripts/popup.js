@@ -7,6 +7,7 @@ let Popup = (function() {
             "tracking-products",
             "track",
             "initial",
+            "renew",
             "login"
         ];
 
@@ -689,7 +690,7 @@ let Popup = (function() {
         _steps.forEach(function(val) {
             if (step == val) {
                 $("#" + val).show();
-                if (["track", "tracking-products", "niche-hunters"].indexOf(step) == -1) {
+                if (["track", "tracking-products", "niche-hunters", "renew"].indexOf(step) == -1) {
                     _curStep = step;
                     _background.step(step);
                 } else if (step == "login") {
@@ -819,6 +820,10 @@ let Popup = (function() {
                         //  To do in failure.
                         if (response.status == false && response.message == "Your token was expired.") {
                             goTo("login");
+                        } else if (response.status == false && response.message == "Your membership was expired.") {
+                            goTo("renew");
+                        } else if (response.status == false && response.message) {
+                            alert(response.message);
                         }
                     })
                     break;
@@ -896,6 +901,7 @@ let Popup = (function() {
             }
         })
         .on("click", "a.track-product", (event) => {
+            event.preventDefault();
             let index = event.target.getAttribute("data-index");
             let $record = $(event.target).parents("tr");
             let option = event.target.getAttribute("data-from");
@@ -919,6 +925,10 @@ let Popup = (function() {
                 //  To do in failure.
                 if (response.status == false && response.message == "Your token was expired.") {
                     goTo("login");
+                } else if (response.status == false && response.message == "Your membership was expired.") {
+                    goTo("renew");
+                } else if (response.status == false && response.message) {
+                    alert(response.message);
                 }
             });
         })

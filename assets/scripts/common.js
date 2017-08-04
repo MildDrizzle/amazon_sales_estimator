@@ -1,8 +1,8 @@
 'use strict';
 let _mainHost = null;
-// let env = "dev";
+let env = "dev";
 // let env = "staging";
-let env = "product";
+// let env = "product";
 
 if (env == "dev") {
 	_mainHost = "http://localhost:8000/";
@@ -43,7 +43,7 @@ let restAPI = (function(window, jQuery) {
 					success(response);
 				}
 			} else {
-				if (response.message = "Your token was expired.") {
+				if (response.message == "Your token was expired.") {
 					localStorage._token = JSON.stringify(null);
 					localStorage._user = JSON.stringify({});
 				}
