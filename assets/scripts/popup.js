@@ -109,11 +109,15 @@ let Popup = (function() {
             case "title":
             case "pages":
             case "price":
-            case "estSale":
             case "reviews":
                 return obj[colName];
+
             case "monthly_rev":
                 return Number(parseInt(_background.estimation(obj.bsr) * obj.price));
+
+            case "estSale":
+                return Number(parseInt(_background.estimation(obj.bsr)));
+
             default:
                 return 1;
         }
