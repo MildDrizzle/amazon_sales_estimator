@@ -568,12 +568,13 @@ let Popup = (function() {
      */
     const downloadProductsToCSV = (products) => {
         let toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
-        let header = ["#BSR", "title", "pages", "price", "reviews", "Units Sold", "Revenue", "url"];
+        let header = ["title", "BSR", "pages", "price", "reviews", "Units Sold", "Revenue", "url"];
         let category = $_category.val();
         // let products = _background.get().products;
+        let index = 1;
         let data = products.map(p => toLine([
-                p.bsr,
                 p.title,
+                p.bsr,
                 p.pages || "",
                 p.currency + p.price,
                 Number(p.reviews).toLocaleString(),
@@ -623,12 +624,15 @@ let Popup = (function() {
             $pages = $("#product-pages"),
             $asin = $("#product-asin");
 
+        $pages.text(product.pages);
+
         if (flag) {
             let lastHistory = product.histories[product.histories.length - 1];
             product.price = lastHistory.price;
             product.reviews = lastHistory.reviews;
             product.bsr = lastHistory.bsr;
             product.currency = lastHistory.currency;
+            $pages.text(lastHistory.pages);
         }
         
         $img[0].src = product.img;
@@ -638,7 +642,6 @@ let Popup = (function() {
         $reviews.text(Number(product.reviews).toLocaleString());
         $bsr.text("#" + product.bsr);
         $isbn.text(product.isbn);
-        $pages.text(product.pages);
         product.estSale = parseInt(_background.estimation(product.bsr));
         // $revenue.text(product.currency + Number(parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
         $revenue.text(product.currency + Number(parseInt(_background.estimation(product.bsr) * parseFloat(product.price))).toLocaleString());
@@ -659,6 +662,7 @@ let Popup = (function() {
                     title: "Tracked by System."
                 });
             }
+            
             trackButton.setAttribute("data-id", trackingProducts[0].product.id);
             trackButton.setAttribute("data-action", "untrack");
             trackButton.textContent = "Untrack this product";
