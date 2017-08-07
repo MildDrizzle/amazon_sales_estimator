@@ -951,7 +951,7 @@ let Popup = (function() {
                     goTo("renew");
                 } else if (response.status == false && response.message) {
                     alert(response.message);
-                    goTo("renew");
+                    // goTo("renew");
                 }
             });
         })
