@@ -175,6 +175,8 @@ table#tbl-items td {
             width: 154px;
             margin: 5px 0 0 35px;
             margin-top: 10px;}
+            #track table td {
+                text-align: center;}
 
 .logout {
     cursor: pointer;}
