@@ -568,7 +568,7 @@ let Popup = (function() {
      */
     const downloadProductsToCSV = (products) => {
         let toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
-        let header = ["title", "BSR", "pages", "price", "reviews", "Units Sold", "Revenue", "url"];
+        let header = ["title", "BSR", "pages", "price", "Units Sold", "Revenue", "reviews", "url"];
         let category = $_category.val();
         // let products = _background.get().products;
         let index = 1;
@@ -577,9 +577,9 @@ let Popup = (function() {
                 p.bsr,
                 p.pages || "",
                 p.currency + p.price,
-                Number(p.reviews).toLocaleString(),
                 Number(parseInt(_background.estimation(p.bsr))).toLocaleString(),
                 p.currency + Number(parseInt(_background.estimation(p.bsr) * p.price)).toLocaleString(),
+                Number(p.reviews).toLocaleString(),
                 p.url
         ]));
         
