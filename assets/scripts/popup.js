@@ -1087,16 +1087,16 @@ let Popup = (function() {
             let parsedProduct = _products.filter(product => {
                 return (product.asin == curProduct.asin)
             });
-            if (curProduct.created_at != curProduct.updated_at) {
-                let first = curProduct.created_at;
-                let last = new Date();
-                let tmp = parseInt((last - new Date(first)) / (24 * 3600 * 1000));
+            // if (curProduct.created_at != curProduct.updated_at) {
+            let first = curProduct.created_at;
+            let last = new Date();
+            let tmp = parseInt((last - new Date(first)) / (24 * 3600 * 1000));
 
-                if (tmp > 1) {
-                    daysTracking = tmp;
-                }
-                tmp = Number(tmp).toLocaleString();
+            if (tmp > 1) {
+                daysTracking = tmp;
             }
+            tmp = Number(tmp).toLocaleString();
+            // }
             let index = (parsedProduct.length > 0) ? parsedProduct[0].index : null;
             $tableBody.append(
                 $("<tr/>").append(
