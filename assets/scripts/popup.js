@@ -702,6 +702,11 @@ let Popup = (function() {
      */
     const goTo = (step) => {
         let userInfo = JSON.parse(localStorage._user || "{}");
+
+        if ((userInfo.membership_tier == "t" || userInfo.membership_tier == "l") && step == "niche-hunters") {
+            alert("Your membership can't visit the Niche Hunters.");
+            return false;
+        }
         _steps.forEach(function(val) {
             if (step == val) {
                 $("#" + val).show();
