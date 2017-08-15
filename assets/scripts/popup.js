@@ -37,7 +37,7 @@ let Popup = (function() {
     let _background = chrome.extension.getBackgroundPage().Background;
 
     let $_category = $("#category");
-    let $_domain = $("#domain");
+    let $_domain = $("select.domain");
 
     let _curSortColumn = "bsr";
     let _sortOption = "asc";
@@ -202,11 +202,11 @@ let Popup = (function() {
                         $record.append($("<td/>").append($("<a/>").addClass("track-link").attr({"data-index": i}).text(truncateString(products[i].title, 30)).attr({title: "Track : " + products[i].title})));
                         if (found.length > 0) {
                             $record.append($("<td/>").append(
-                                $(`<a class='untrack-product' title='Untrack this product' data-index='${i}' data-id='${found[0].product.id}'>UnTrack</a>`)
+                                $(`<a class='untrack-product' title='Untrack this title' data-index='${i}' data-id='${found[0].product.id}'>UnTrack</a>`)
                             ));
                         } else {
                             $record.append($("<td/>").append(
-                                $(`<a class='track-product' title='Track this product' data-index='${i}'>Track</a>`)
+                                $(`<a class='track-product' title='Track this title' data-index='${i}'>Track</a>`)
                             ));
                         }
 
@@ -669,7 +669,7 @@ let Popup = (function() {
             
             trackButton.setAttribute("data-id", trackingProducts[0].product.id);
             trackButton.setAttribute("data-action", "untrack");
-            trackButton.textContent = "Untrack this product";
+            trackButton.textContent = "Untrack this title";
             trackButton.className = "btn btn-danger";
             $(".track-detail-info").show();
 
@@ -677,7 +677,7 @@ let Popup = (function() {
         } else {
             trackButton.setAttribute("data-id", null);
             trackButton.setAttribute("data-action", "track");
-            trackButton.textContent = "Track this product";
+            trackButton.textContent = "Track this title";
             trackButton.className = "btn btn-primary";
             $(".track-detail-info").hide();
             $("#graph-container").children().remove();
@@ -844,7 +844,7 @@ let Popup = (function() {
                         console.log(response);
                         event.target.setAttribute("data-action", "untrack");
                         event.target.setAttribute("data-id", response.product.id);
-                        event.target.textContent = "Untrack this product";
+                        event.target.textContent = "Untrack this title";
                         event.target.className = "btn btn-danger";
                     }, (response) => {
                         //  To do in failure.
@@ -865,7 +865,7 @@ let Popup = (function() {
                     _background.untrack(productID, (response) => {
                         event.target.setAttribute("data-action", "track");
                         event.target.setAttribute("data-id", null);
-                        event.target.textContent = "Track this product";
+                        event.target.textContent = "Track this title";
                         event.target.className = "btn btn-primary";
                     }, (response) => {
                         //  To do in failure.
@@ -1012,7 +1012,7 @@ let Popup = (function() {
                 }
             })
         })
-        .on("change", "#domain", (event) => {
+        .on("change", "select.domain", (event) => {
             event.preventDefault();
 
             if (event.target.value == "amazon.com.au") {
