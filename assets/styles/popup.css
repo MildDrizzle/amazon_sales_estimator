@@ -189,7 +189,7 @@ table#tbl-items td {
     width: 100%; */
     background: rgba(255,255,255,0.8);}
 
-span.main-nav-link {
+a.main-nav-link {
     padding-left:5px;
     cursor:pointer;}
 

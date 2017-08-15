@@ -911,7 +911,7 @@ let Popup = (function() {
                 goTo("login");
             });
         })
-        .on("click", "span.main-nav-link", (event) => {
+        .on("click", "a.main-nav-link", (event) => {
             let targetId = event.target.getAttribute("data-target");
             updateTrackingProductsTable();
             drawNicheHunterTable()
