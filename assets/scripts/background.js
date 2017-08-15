@@ -52,14 +52,15 @@ let Background = (() => {
 	 * @return {void}
 	 */
 	const setCredentials = (email, password) => {
-		_credentials = {email, password};
+		localStorage._credentials = JSON.stringify({email, password});
+		// _credentials = {email, password};
 	}
 
 	/**
 	 * Function to get username and password.
 	 */
 	const getCredentials = () => {
-		return _credentials;
+		return JSON.parse(localStorage._credentials || "{}");
 	}
 
 	/**

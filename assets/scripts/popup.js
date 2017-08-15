@@ -717,10 +717,12 @@ let Popup = (function() {
                 if (["track", "tracking-products", "niche-hunters", "renew"].indexOf(step) == -1) {
                     _curStep = step;
                     _background.step(step);
-                } else if (step == "login") {
+                }
+                
+                if (step == "login") {
                     let credential = _background.credentials();
-                    $("#login-email").text(credential.email);
-                    $("#login-password").text(credential.email);
+                    $("#login-email").val(credential.email);
+                    $("#login-password").val(credential.password);
                 }
             } else {
                 $("#" + val).hide();
@@ -1107,6 +1109,7 @@ let Popup = (function() {
             tmp = Number(tmp).toLocaleString();
             // }
             let index = (parsedProduct.length > 0) ? parsedProduct[0].index : null;
+            let format = (items[i].product.category_id == 3) ? "eBook" : "Book";
             $tableBody.append(
                 $("<tr/>").append(
                     $("<td/>").html(
@@ -1115,6 +1118,7 @@ let Popup = (function() {
                     $("<td/>").html(
                         `<a class="view-track" data-global-index="${index}" data-index="${i}">${truncateString(items[i].product.title, 40)}</a>`
                     ),
+                    $("<td/>").text(format),
                     $("<td/>").text(daysTracking),
                     $("<td/>").html(
                         `<a class='view-track' data-global-index='${index}' data-index='${i}'>View</a>`
@@ -1246,6 +1250,8 @@ let Popup = (function() {
                 $buttons.eq(i).click();
             }
         })
+
+        // $("table").floatThead();
     };
 
     const getSelectedProduct = () => {
