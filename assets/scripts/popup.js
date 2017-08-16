@@ -11,6 +11,7 @@ let Popup = (function() {
             "login"
         ];
 
+    let _subscriptionCheckInterval = null;
     let _itemsTable = null;
     let _productsTable = null;
     let _revenueOption = JSON.parse(localStorage._revenue_option || "null") || "monthly";
@@ -1188,6 +1189,26 @@ let Popup = (function() {
         // }
     }
 
+    const checkSubscription = () => {
+        let userInfo = JSON.parse(localStorage._user || "{}");
+        let token = JSON.parse(localStorage._token || "null");
+
+        if (token && userInfo.email) {
+            _background.checkSubscription(userInfo.email, (response) => {
+                let user = response.user;
+                if (userInfo.updated_at != user.updated_at) {
+                    _curStep = "login";
+                    goTo(_curStep);
+                    localStorage._user = JSON.stringify({});
+                }
+            }, () => {
+                _curStep = "login";
+                goTo(_curStep);
+                localStorage._user = JSON.stringify({});
+            })
+        }
+    }
+
     /**
      * Initializer of this object. In this method, periodic bot to refresh table will be initialized.
      */
@@ -1205,6 +1226,12 @@ let Popup = (function() {
             _globalTimer = window.setInterval(() => {
                 drawTable();
             }, 500);
+        }
+
+        if (!_subscriptionCheckInterval) {
+            _subscriptionCheckInterval = window.setInterval(() => {
+                checkSubscription();
+            }, 10000);
         }
         drawNicheHunterTable();
 

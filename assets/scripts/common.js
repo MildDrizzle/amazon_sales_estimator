@@ -70,6 +70,20 @@ let restAPI = (function(window, jQuery) {
 	}
 
 	/**
+	 * Check subscription with email.
+	 * @param {string} email 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 */
+	const checkSubscription = (email, success, failure) => {
+		let params = {
+			email: email
+		}
+
+		sendRequest(_v1ApiBaseUrl + "membership/check", params, success, failure);
+	}
+
+	/**
 	 * Getting initial sample parameters to compute estimation of unit sales.
 	 * @param {string} domain 
 	 * @param {string} category 
@@ -208,7 +222,8 @@ let restAPI = (function(window, jQuery) {
 		samples: getInitialSamples,
 		register: register,
 		login: login,
-		logout: logout
+		logout: logout,
+		check:checkSubscription
 	};
 	
 })(window, $)

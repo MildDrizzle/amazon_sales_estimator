@@ -362,6 +362,13 @@ let Background = (() => {
 		}, failure)
 	}
 
+	/**
+	 * 
+	 * @param {number} id 
+	 * @param {function} success 
+	 * @param {function} failure 
+	 * @return {void}
+	 */
 	const findTrackingProduct = (id, success, failure) => {
 		_restAPI.findTrack(id, (response) => {
 			if (response.status) {
@@ -392,6 +399,7 @@ let Background = (() => {
 		logout: logout,
 		samples: getSamples,
 		register: _restAPI.register,
+		checkSubscription: _restAPI.check,
 		updateSamples: updateSamples,
 		url: getCurUrl,
 		estimation: calculate,
