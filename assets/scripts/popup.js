@@ -1196,7 +1196,7 @@ let Popup = (function() {
         if (token && userInfo.email) {
             _background.checkSubscription(userInfo.email, (response) => {
                 let user = response.user;
-                if (userInfo.updated_at != user.updated_at) {
+                if (userInfo.updated_at != user.updated_at || userInfo.membership_tier != user.membership_tier) {
                     _curStep = "login";
                     goTo(_curStep);
                     localStorage._user = JSON.stringify({});
