@@ -38,17 +38,24 @@ let ContentScript = (function() {
 		if (response && response.status) {
 			let domain = window.location.hostname;
 			let wwwPrefix = "www.";
+			let category = response.category;
 			let path = window.location.pathname;
 			let eBooksPattern = /^\/(Best-Sellers-Kindle-Store-eBooks\/zgbs\/digital-text)|(gp\/bestsellers\/digital-text)\//g;
 			let booksPattern = /^\/(best-sellers-books-Amazon\/zgbs\/books)|(gp\/bestsellers\/books)\//g;
 
 			if (domain.indexOf(wwwPrefix) > -1) {
 				domain = domain.substr(domain.indexOf(wwwPrefix) + wwwPrefix.length);
-				if (path.match(eBooksPattern)) {
+
+				if (category == "eBooks") {
 					ContentScript.init(domain, "eBooks");
-				} else if (path.match(booksPattern)) {
+				} else if (category == "Books") {
 					ContentScript.init(domain, "Books");
 				}
+				// if (path.match(eBooksPattern)) {
+				// 	ContentScript.init(domain, "eBooks");
+				// } else if (path.match(booksPattern)) {
+				// 	ContentScript.init(domain, "Books");
+				// }
 			}
 		}
 	});

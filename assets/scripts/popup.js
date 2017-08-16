@@ -80,9 +80,10 @@ let Popup = (function() {
     const getSearchUrl = () => {
         let state = _background.get();
         let bsrPath = bsrPagesPath[state.category][state.domain];
+        let keyword = (state.category == "eBooks") ? "digital-text" : "books";
 
         return {
-            pattern: `*://www.${state.domain}${bsrPath}`,
+            pattern: `https://www.${state.domain}/*/${keyword}/*`,
             https: `https://www.${state.domain}${bsrPath}`,
             http: `http://www.${state.domain}${bsrPath}`
         };
