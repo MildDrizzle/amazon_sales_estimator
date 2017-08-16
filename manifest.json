@@ -25,7 +25,6 @@
 		"*://54.175.85.52/*",
 		"storage"
 	],
-	"options_page": "assets/html/login.html",
 	"content_scripts": [
 		{
 			"matches": [
