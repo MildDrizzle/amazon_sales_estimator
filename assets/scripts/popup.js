@@ -912,6 +912,7 @@ let Popup = (function() {
             });
         })
         .on("click", "a.main-nav-link", (event) => {
+            event.preventDefault();
             let targetId = event.target.getAttribute("data-target");
             updateTrackingProductsTable();
             drawNicheHunterTable()
