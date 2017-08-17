@@ -49,7 +49,7 @@ let BookParser = (() => {
     let itPatterns = {
         pagesPattern: /(Copertina\srigida|flessibile|stampa)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Posizione\snella\sclassifica\sBestseller\sdi\sAmazon:\s+#)(\d+(,\d+)*)/g
     }
     let jpPatterns = {
         pagesPattern: /大型本:\s(\d+)/g,

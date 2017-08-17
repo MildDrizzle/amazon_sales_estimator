@@ -66,11 +66,11 @@ let Popup = (function() {
             "amazon.com": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/154606011/ref=zg_bs_nav_kstore_1_kstore",
             "amazon.co.uk": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/341689031/ref=zg_bs_nav_kinc_1_kinc",
             "amazon.de": "/gp/bestsellers/digital-text/530886031/ref=zg_bs_nav_kinc_1_kinc",
-            "amazon.es": "/gp/bestsellers/digital-text/827231031",
-            "amazon.fr": "/gp/bestsellers/digital-text/695398031/",
-            "amazon.in": "/gp/bestsellers/digital-text/1634753031",
-            "amazon.it": "/gp/bestsellers/digital-text/827182031/",
-            "amazon.co.jp": "/gp/bestsellers/digital-text/2275256051"
+            "amazon.es": "/gp/bestsellers/digital-text/827231031/ref=zg_bs_unv_kinc_2_1335544031_1",
+            "amazon.fr": "/gp/bestsellers/digital-text/695398031/ref=zg_bs_unv_kinc_2_891039031_1",
+            "amazon.in": "/gp/bestsellers/digital-text/1634753031/ref=zg_bs_unv_kinc_2_1637004031_1",
+            "amazon.it": "/gp/bestsellers/digital-text/827182031/ref=zg_bs_unv_kinc_2_1338379031_1",
+            "amazon.co.jp": "/gp/bestsellers/digital-text/2275256051/ref=zg_bs_unv_kinc_2_2292699051_1"
         }
     };
 
@@ -84,7 +84,7 @@ let Popup = (function() {
         let keyword = (state.category == "eBooks") ? "digital-text" : "books";
 
         return {
-            pattern: `https://www.${state.domain}/*/${keyword}/*`,
+            pattern: `*://www.${state.domain}/*/${keyword}/*`,
             https: `https://www.${state.domain}${bsrPath}`,
             http: `http://www.${state.domain}${bsrPath}`
         };
