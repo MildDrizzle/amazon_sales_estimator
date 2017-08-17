@@ -14,52 +14,52 @@ let EBookParser = (() => {
     let comPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     };
     let caPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     }
     let auPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     }
     let ukPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     }
     let dePatterns = {
         pagesPattern: /(Geschenkartikel|Taschenbuch|Broschiert|Ausgabe|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBestseller-Rang:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\sBestseller-Rang:\s+#)(\d+((,|.)\d+)*)/g
     }
     let esPatterns = {
         pagesPattern: /(blanda|impresión|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Clasificación\sen\slos\smás\svendidos\sde\sAmazon:\s*n.°\s*)(\d+(,\d+)*)/g
+        bsrPattern: /(Clasificación\sen\slos\smás\svendidos\sde\sAmazon:\s*n.°\s*)(\d+((,|.)\d+)*)/g
     }
     let frPatterns = {
         pagesPattern: /(Broché|Poche|Relié|imprimée)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\s*n°)(\d+(,\d+)*)/g
+        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\s*n°)(\d+((,|.)\d+)*)/g
     }
     let inPatterns = {
         pagesPattern: /(Flexibound|Paperback|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     }
     let itPatterns = {
         pagesPattern: /(Copertina\srigida|flessibile|stampa|Hardcover|\sLength|Paperback)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Posizione\snella\sclassifica\sBestseller\sdi\sAmazon:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Posizione\snella\sclassifica\sBestseller\sdi\sAmazon:\s+#)(\d+((,|.)\d+)*)/g
     }
     let jpPatterns = {
         pagesPattern: /(大型本|Hardcover|\sLength|Paperback):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     }
     let regPatterns = {
         "amazon.com": comPatterns,
@@ -126,8 +126,8 @@ let EBookParser = (() => {
             // debugger;
         }
 
-        let bsrString = (bulletString.match(pattern.bsrPattern) || ["0"])[0].match(/\d+(,\d+)*/g)[0];
-        let bsr = parseInt(bsrString.replace(/,/g, ""));
+        let bsrString = (bulletString.match(pattern.bsrPattern) || ["0"])[0].match(/\d+((,|.)\d+)*/g)[0];
+        let bsr = parseInt(bsrString.replace(/(,|\.)/g, ""));
 
         return {
             pages,
@@ -157,6 +157,10 @@ let EBookParser = (() => {
                     continue;
                 }
                 let bsr = parseInt($posts[i].querySelector("span.zg_rankNumber").textContent);
+
+                if (!$posts[i].querySelector(".a-link-normal")) {
+                    continue;
+                }
                 let url = $posts[i].querySelector(".a-link-normal").href;
                 let img = $posts[i].querySelector(".a-link-normal img").src;
                 let $titleTag = $($posts[i]).find(".a-section.a-spacing-mini").eq(0).next();

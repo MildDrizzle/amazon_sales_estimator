@@ -213,7 +213,7 @@ let Popup = (function() {
                         }
 
                         $record.append(
-                            $("<td/>").text(products[i].bsr)
+                            $("<td/>").text(Number(products[i].bsr).toLocaleString())
                         );
                         bsrSum += (parseInt(products[i].bsr) | 0);
 
@@ -460,7 +460,7 @@ let Popup = (function() {
             }
             let estSale = parseInt(_background.estimation(products[i].bsr));
             $record.append(
-                $("<td/>").text(products[i].bsr),
+                $("<td/>").text(Number(products[i].bsr).toLocaleString()),
                 $("<td/>").text(products[i].pages),
                 $("<td/>").text(products[i].reviews),
                 $("<td/>").text(products[i].currency + products[i].price),
@@ -580,7 +580,7 @@ let Popup = (function() {
         let index = 1;
         let data = products.map(p => toLine([
                 p.title,
-                p.bsr,
+                Number(p.bsr).toLocaleString(),
                 p.pages || "",
                 p.currency + p.price,
                 Number(parseInt(_background.estimation(p.bsr))).toLocaleString(),
@@ -599,7 +599,7 @@ let Popup = (function() {
         let category = $_category.val();
 
         let data = [
-            toLine([ "BSR", p.bsr ]),
+            toLine([ "BSR", Number(p.bsr).toLocaleString() ]),
             toLine([ "Title", p.title ]),
             toLine([ "Pages", p.pages ]),
             toLine([ "Price", p.currency + p.price ]),
@@ -646,7 +646,7 @@ let Popup = (function() {
         $asin.text(product.asin);
         $price.text(product.currency + product.price);
         $reviews.text(Number(product.reviews).toLocaleString());
-        $bsr.text("#" + product.bsr);
+        $bsr.text("#" + Number(product.bsr).toLocaleString());
         $isbn.text(product.isbn);
         product.estSale = parseInt(_background.estimation(product.bsr));
         // $revenue.text(product.currency + Number(parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
