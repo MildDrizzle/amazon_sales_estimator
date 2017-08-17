@@ -8,43 +8,53 @@ let BookParser = (() => {
     let _productsBuffer = [];
     let comPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     };
     let caPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let auPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let ukPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let dePatterns = {
         pagesPattern: /(Geschenkartikel|Taschenbuch|Ausgabe|Broschiert):\s(\d+)\s/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let esPatterns = {
         pagesPattern: /(blanda|impresión):\s(\d+)\s/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let frPatterns = {
         pagesPattern: /(Broché|Poche|imprimée)(\s*):\s(\d+)\s/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\sn°)(\d+(,\d+)*)/g
     }
     let inPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let itPatterns = {
         pagesPattern: /(Copertina\srigida|flessibile|stampa)(\s*):\s(\d+)\s/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let jpPatterns = {
         pagesPattern: /大型本:\s(\d+)/g,
-        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g
+        isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
+        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let regPatterns = {
         "amazon.com": comPatterns,
@@ -111,10 +121,14 @@ let BookParser = (() => {
             debugger;
         }
 
+        let bsrString = (bulletString.match(pattern.bsrPattern) || ["0"])[0].match(/\d+(,\d+)*/g)[0];
+        let bsr = parseInt(bsrString.replace(/,/g, ""));
+
         return {
             pages,
             keywords,
             asin,
+            bsr,
             price,
             currency,
             isbn
@@ -196,7 +210,7 @@ let BookParser = (() => {
                         let info = parseProductPage(response, regPatterns[_domain]);
                         if (info) {
                             info.url = buffer.url;
-                            info.bsr = buffer.bsr;
+                            // info.bsr = buffer.bsr;
                             info.img = buffer.img;
                             info.title = buffer.title;
                             info.reviews = buffer.reviews;

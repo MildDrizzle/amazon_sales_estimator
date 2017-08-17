@@ -61,16 +61,16 @@ let Popup = (function() {
             "amazon.co.jp": "/gp/bestsellers/books/"
         },
         "eBooks": {
-            "amazon.com.au": "/gp/bestsellers/digital-text/",
-            "amazon.ca": "/gp/bestsellers/digital-text/",
-            "amazon.com": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/",
-            "amazon.co.uk": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/",
-            "amazon.de": "/gp/bestsellers/digital-text/",
-            "amazon.es": "/gp/bestsellers/digital-text/",
-            "amazon.fr": "/gp/bestsellers/digital-text/",
-            "amazon.in": "/gp/bestsellers/digital-text/",
-            "amazon.it": "/gp/bestsellers/digital-text/",
-            "amazon.co.jp": "/gp/bestsellers/digital-text/"
+            "amazon.com.au": "/gp/bestsellers/digital-text/2496762051",
+            "amazon.ca": "/gp/bestsellers/digital-text/2980423011/",
+            "amazon.com": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/154606011/ref=zg_bs_nav_kstore_1_kstore",
+            "amazon.co.uk": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/341689031/ref=zg_bs_nav_kinc_1_kinc",
+            "amazon.de": "/gp/bestsellers/digital-text/530886031/ref=zg_bs_nav_kinc_1_kinc",
+            "amazon.es": "/gp/bestsellers/digital-text/827231031",
+            "amazon.fr": "/gp/bestsellers/digital-text/695398031/",
+            "amazon.in": "/gp/bestsellers/digital-text/1634753031",
+            "amazon.it": "/gp/bestsellers/digital-text/827182031/",
+            "amazon.co.jp": "/gp/bestsellers/digital-text/2275256051"
         }
     };
 
