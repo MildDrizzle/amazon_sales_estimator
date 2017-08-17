@@ -9,52 +9,52 @@ let BookParser = (() => {
     let comPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
     };
     let caPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let auPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let ukPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback|book):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let dePatterns = {
         pagesPattern: /(Geschenkartikel|Taschenbuch|Ausgabe|Broschiert):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\sBestseller-Rang:\s+#)(\d+(,\d+)*)/g
     }
     let esPatterns = {
         pagesPattern: /(blanda|impresión):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Clasificación\sen\slos\smás\svendidos\sde\sAmazon:\s*n.°\s*)(\d+(,\d+)*)/g
     }
     let frPatterns = {
         pagesPattern: /(Broché|Poche|imprimée)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\sn°)(\d+(,\d+)*)/g
+        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\s*n°)(\d+(,\d+)*)/g
     }
     let inPatterns = {
         pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let itPatterns = {
         pagesPattern: /(Copertina\srigida|flessibile|stampa)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let jpPatterns = {
         pagesPattern: /大型本:\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBest\sSellers\sRank:\s+#)(\d+(,\d+)*)/g
+        bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+(,\d+)*)/g
     }
     let regPatterns = {
         "amazon.com": comPatterns,
@@ -146,96 +146,109 @@ let BookParser = (() => {
 
         if (pageContent) {
             $posts = $(pageContent);
-        } else {
-            $posts = $("#zg_centerListWrapper div.zg_itemImmersion");
-        }
 
-        for (let i = 0; i < $posts.length; i ++) {
-            if (!$($posts[i]).hasClass("zg_itemImmersion")) {
-                continue;
+            for (let i = 0; i < $posts.length; i ++) {
+                if (!$($posts[i]).hasClass("zg_itemImmersion")) {
+                    continue;
+                }
+                let bsr = parseInt($posts[i].querySelector("span.zg_rankNumber").textContent);
+                let url = $posts[i].querySelector(".a-link-normal").href;
+                let img = $posts[i].querySelector(".a-link-normal img").src;
+                let $titleTag = $($posts[i]).find(".a-section.a-spacing-mini").eq(0).next();
+                let title = ($titleTag.attr("title") || $titleTag.text()).trim();
+                let priceText = $($posts[i]).find(".p13n-sc-price").eq(0).text().trim();
+                let price = (priceText.match(/\d+(.|,)\d+/g) || [null])[0];
+                
+                priceText = priceText.substr(0, priceText.indexOf(price)).trim();
+                if (price) {
+                    price = price.replace(/,/g, ".");
+                }
+
+                let tags = priceText.split(" ");
+                let currency = tags[tags.length - 1];
+                let reviews = ($($posts[i]).find("a.a-size-small.a-link-normal").text() || "0").trim();
+                reviews = reviews.replace(/,/g, "");
+                reviews = parseInt(reviews);
+
+                _productsBuffer.push({
+                    bsr,
+                    url,
+                    img,
+                    title,
+                    price,
+                    currency,
+                    reviews
+                });
             }
-            let bsr = parseInt($posts[i].querySelector("span.zg_rankNumber").textContent);
-            let url = $posts[i].querySelector(".a-link-normal").href;
-            let img = $posts[i].querySelector(".a-link-normal img").src;
-            let $titleTag = $($posts[i]).find(".a-section.a-spacing-mini").eq(0).next();
-            let title = ($titleTag.attr("title") || $titleTag.text()).trim();
-            let priceText = $($posts[i]).find(".p13n-sc-price").eq(0).text().trim();
-            let price = (priceText.match(/\d+(.|,)\d+/g) || [null])[0];
-            
-            priceText = priceText.substr(0, priceText.indexOf(price)).trim();
-            if (price) {
-                price = price.replace(/,/g, ".");
-            }
 
-            let tags = priceText.split(" ");
-            let currency = tags[tags.length - 1];
-            let reviews = ($($posts[i]).find("a.a-size-small.a-link-normal").text() || "0").trim();
-            reviews = reviews.replace(/,/g, "");
-            reviews = parseInt(reviews);
+            _productPageTimer = window.setInterval(() => {
+                let buffer = _productsBuffer.shift();
 
-            _productsBuffer.push({
-                bsr,
-                url,
-                img,
-                title,
-                price,
-                currency,
-                reviews
-            });
-        }
+                if (buffer == undefined) {
+                    clearInterval(_productPageTimer);
+                    let bufferUrl = _urls.shift();
 
-        _productPageTimer = window.setInterval(() => {
-            let buffer = _productsBuffer.shift();
-
-            if (buffer == undefined) {
-                clearInterval(_productPageTimer);
-                let bufferUrl = _urls.shift();
-
-                if (bufferUrl == undefined) {
-                    _started = false;
+                    if (bufferUrl == undefined) {
+                        _started = false;
+                    } else {
+                        $.ajax({
+                            url: bufferUrl,
+                            method: "GET",
+                            success: (response) => {
+                                parseSearchPage(response);
+                            }
+                        });
+                    }
                 } else {
                     $.ajax({
-                        url: bufferUrl,
+                        url: buffer.url,
                         method: "GET",
                         success: (response) => {
-                            parseSearchPage(response);
+                            let info = parseProductPage(response, regPatterns[_domain]);
+                            if (info) {
+                                info.url = buffer.url;
+                                // info.bsr = buffer.bsr;
+                                info.img = buffer.img;
+                                info.title = buffer.title;
+                                info.reviews = buffer.reviews;
+                                info.price = buffer.price || info.price;
+                                switch(_domain) {
+                                    case "amazon.in":
+                                        info.currency = "INR";
+                                        break;
+                                    
+                                    case "amazon.com.au":
+                                        info.currency = "AUD";
+                                        break;
+
+                                    default:
+                                        info.currency = (buffer.currency != "") ? buffer.currency : info.currency;
+                                        break;
+                                }
+
+                                _products.push(info);
+                            }
                         }
                     });
                 }
+                
+            }, 1000);
+        } else {
+            // $posts = $("#zg_centerListWrapper div.zg_itemImmersion");
+            let bufferUrl = _urls.shift();
+
+            if (bufferUrl == undefined) {
+                _started = false;
             } else {
                 $.ajax({
-                    url: buffer.url,
+                    url: bufferUrl,
                     method: "GET",
                     success: (response) => {
-                        let info = parseProductPage(response, regPatterns[_domain]);
-                        if (info) {
-                            info.url = buffer.url;
-                            // info.bsr = buffer.bsr;
-                            info.img = buffer.img;
-                            info.title = buffer.title;
-                            info.reviews = buffer.reviews;
-                            info.price = buffer.price || info.price;
-                            switch(_domain) {
-                                case "amazon.in":
-                                    info.currency = "INR";
-                                    break;
-                                
-                                case "amazon.com.au":
-                                    info.currency = "AUD";
-                                    break;
-
-                                default:
-                                    info.currency = (buffer.currency != "") ? buffer.currency : info.currency;
-                                    break;
-                            }
-
-                            _products.push(info);
-                        }
+                        parseSearchPage(response);
                     }
                 });
             }
-            
-        }, 1000);
+        }
     }
 
     /**
@@ -247,11 +260,14 @@ let BookParser = (() => {
     const init = (domain) => {
         _domain = domain;
         _started = true;
-        parseSearchPage();
-        for (let i = 2; i < 6; i ++) {
-            let url = getSearchPageUrl(domain, i);
+        // parseSearchPage();
+        let $links = $(".zg_page a");
+        for (let i = 0; i < $links.length; i ++) {
+            // let url = getSearchPageUrl(domain, i);
+            let url = $links.eq(i).attr("ajaxurl");
             _urls.push(url);
         }
+        parseSearchPage();
 
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             switch(request.from) {

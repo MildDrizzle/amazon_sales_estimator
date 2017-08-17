@@ -61,8 +61,8 @@ let Popup = (function() {
             "amazon.co.jp": "/gp/bestsellers/books/"
         },
         "eBooks": {
-            "amazon.com.au": "/gp/bestsellers/digital-text/2496762051",
-            "amazon.ca": "/gp/bestsellers/digital-text/2980423011/",
+            "amazon.com.au": "/gp/bestsellers/digital-text/2496751051/ref=zg_bs_nav_kinc_1_kinc",
+            "amazon.ca": "/gp/bestsellers/digital-text/2980423011/ref=zg_bs_unv_kinc_2_5783471011_1/",
             "amazon.com": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/154606011/ref=zg_bs_nav_kstore_1_kstore",
             "amazon.co.uk": "/Best-Sellers-Kindle-Store-eBooks/zgbs/digital-text/341689031/ref=zg_bs_nav_kinc_1_kinc",
             "amazon.de": "/gp/bestsellers/digital-text/530886031/ref=zg_bs_nav_kinc_1_kinc",
