@@ -1101,7 +1101,7 @@ let Popup = (function() {
             let parsedProduct = _products.filter(product => {
                 return (product.asin == curProduct.asin)
             });
-            // if (curProduct.created_at != curProduct.updated_at) {
+            
             let first = curProduct.created_at;
             let last = new Date();
             let tmp = parseInt((last - new Date(first)) / (24 * 3600 * 1000));
@@ -1110,7 +1110,7 @@ let Popup = (function() {
                 daysTracking = tmp;
             }
             tmp = Number(tmp).toLocaleString();
-            // }
+            
             let index = (parsedProduct.length > 0) ? parsedProduct[0].index : null;
             let format = (items[i].product.category_id == 3) ? "eBook" : "Book";
             $tableBody.append(
@@ -1145,48 +1145,28 @@ let Popup = (function() {
 
         $trackingCount.text(trackingProducts.length);
 
-        // if (products.length == 0 && !_background.started()) {
-            chrome.tabs.query({url: pattern}, (tabs) => {
-                if (tabs.length > 0) {
+        chrome.tabs.query({url: pattern}, (tabs) => {
+            if (tabs.length > 0) {
+                _background.set({
+                    curTab: tabs[0].id
+                });
+
+                _curTabId = tabs[0].id;
+
+                chrome.tabs.update(tabs[0].id, {active:true}, () => {
+                    let status = _background.get();
+                    initEvents();
+                });
+            } else {
+                chrome.tabs.create({
+                    url: http
+                }, (tab) => {
                     _background.set({
-                        curTab: tabs[0].id
+                        curTab: tab.id
                     });
-
-                    _curTabId = tabs[0].id;
-
-                    chrome.tabs.update(tabs[0].id, {active:true}, () => {
-                        let status = _background.get();
-                        initEvents();
-
-                        // if (!_background.started()) {
-                        //     chrome.tabs.sendMessage(tabs[0].id, {
-                        //         from: "popup",
-                        //         action: "get_data",
-                        //         domain: status.domain,
-                        //         category: status.category,
-                        //         page: status.page || 1
-                        //     }, (response) => {
-                        //         if (response == undefined) {
-                        //             _background.started(false);
-                        //         } else {
-                        //             _background.started(response.started);
-                        //         }
-                        //     });
-                        // }
-                    });
-                } else {
-                    chrome.tabs.create({
-                        url: http
-                    }, (tab) => {
-                        _background.set({
-                            curTab: tab.id
-                        });
-                    });
-                }
-            });
-        // } else {
-        //     initEvents();
-        // }
+                });
+            }
+        });
     }
 
     const checkSubscription = () => {
@@ -1235,10 +1215,6 @@ let Popup = (function() {
         }
         drawNicheHunterTable();
 
-        // _productsTable = $("#results-table").DataTable({
-        //     "autoWidth": false
-        // });
-
         $("table").on("click", "a.track-link", (event => {
             let index = event.target.getAttribute("data-index");
             let product = _products[index];
@@ -1279,8 +1255,6 @@ let Popup = (function() {
                 $buttons.eq(i).click();
             }
         })
-
-        // $("table").floatThead();
     };
 
     const getSelectedProduct = () => {
