@@ -34,17 +34,17 @@ let Parser = (() => {
     let dePatterns = {
         pagesPattern: /(Geschenkartikel|Taschenbuch|Broschiert|Ausgabe|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Amazon\sBestseller-Rang:\s+#)(\d+((,|.)\d+)*)/g
+        bsrPattern: /(Amazon\sBestseller-Rang:\s+(#|Nr\.\s*))(\d+((,|.)\d+)*)/g
     }
     let esPatterns = {
         pagesPattern: /(blanda|impresión|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Clasificación\sen\slos\smás\svendidos\sde\sAmazon:\s*n.°\s*)(\d+((,|.)\d+)*)/g
+        bsrPattern: /(Clasificación\sen\slos\smás\svendidos\sde\sAmazon:\s*n\.°\s*)(\d+((,|.)\d+)*)/g
     }
     let frPatterns = {
         pagesPattern: /(Broché|Poche|Relié|imprimée)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\s*n°)(\d+((,|.)\d+)*)/g
+        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\s*(n°)*)(\d+((,|.)\d+)*)/g
     }
     let inPatterns = {
         pagesPattern: /(Flexibound|Paperback|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
@@ -54,7 +54,7 @@ let Parser = (() => {
     let itPatterns = {
         pagesPattern: /(Copertina\srigida|flessibile|stampa|Hardcover|\sLength|Paperback)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Posizione\snella\sclassifica\sBestseller\sdi\sAmazon:\s+#)(\d+((,|.)\d+)*)/g
+        bsrPattern: /(Posizione\snella\sclassifica\sBestseller\sdi\sAmazon:\s+(#|n\.\s*))(\d+((,|.)\d+)*)/g
     }
     let jpPatterns = {
         pagesPattern: /(大型本|Hardcover|\sLength|Paperback):\s(\d+)/g,
