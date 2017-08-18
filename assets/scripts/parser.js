@@ -78,11 +78,26 @@ let Parser = (() => {
     /**
      * Function to parse necessary product detail info from amazon product detail page.
      * @param {string} text 
-     * @param {string} pattern 
      * @return {object}
      */
-    const parseProductPage = (text, pattern) => {
+    const parseProductPage = (text) => {
+        let pattern = regPatterns[_domain];
         let $page = $(text);
+        let title = ($page.find("#ebooksProductTitle")[0] || $page.find("#productTitle")[0]).textContent;
+        let imgTag = ($page.find("#mainImageContainer")[0] || $page.find("#ebooks-img-canvas")[0]).querySelector("img");
+        let img = null;
+        try {
+            let tmpString = imgTag.getAttribute("data-a-dynamic-image");
+            let tmpJSON = JSON.parse(tmpString);
+            for (let p in tmpJSON) {
+                img = p;
+                break;
+            }
+        } catch(e) {
+            console.log(e);
+            img = imgTag.src;
+        }
+        let url = window.location.href;
         let bulletString = (($page.find("#productDetailsTable .content ul").length > 0) 
                         ? $page.find("#productDetailsTable .content ul").eq(0).children("li") 
                         : $page.find("#detail_bullets_id .content ul")).text().trim();
@@ -100,13 +115,13 @@ let Parser = (() => {
         }
 
         let prefix = '<meta name="keywords" content="';
-        let suffix = '" />';
+        let suffix = '"';
         let pos = text.indexOf(prefix) + prefix.length;
         let tmp = text.substr(pos);
         pos = tmp.indexOf(suffix);
         let keywords = tmp.substr(0, pos).trim();
         let isbn = "";
-        let asin = ($page.find("input[name='ASIN.0']") || $page.find("#ASIN")).val();
+        let asin = $page.find("input[name='ASIN.0']").val() || $page.find("#ASIN").val();
         if (asin == undefined) {
             // debugger;
         }
@@ -115,6 +130,9 @@ let Parser = (() => {
         let bsr = parseInt(bsrString.replace(/(,|\.)/g, ""));
 
         return {
+            title,
+            img,
+            url,
             pages,
             keywords,
             asin,
@@ -203,7 +221,7 @@ let Parser = (() => {
                         url: buffer.url,
                         method: "GET",
                         success: (response) => {
-                            let info = parseProductPage(response, regPatterns[_domain]);
+                            let info = parseProductPage(response);
                             if (info) {
                                 info.url = buffer.url;
                                 // info.bsr = buffer.bsr;
@@ -280,6 +298,8 @@ let Parser = (() => {
     }
 
     const initIndividualParser = () => {
+        let textContent = document.documentElement.innerHTML;
+        let product = parseProductPage(textContent);
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             switch(request.from) {
                 case "popup":
