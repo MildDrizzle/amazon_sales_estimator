@@ -11,6 +11,8 @@ let Popup = (function() {
             "login"
         ];
 
+    let _mode = null;
+
     let _subscriptionCheckInterval = null;
     let _itemsTable = null;
     let _productsTable = null;
@@ -101,6 +103,10 @@ let Popup = (function() {
             https: `https://www.${state.domain}${bsrPath}`,
             http: `http://www.${state.domain}${bsrPath}`
         };
+    }
+
+    const getMode = () => {
+        return _mode;
     }
 
     /**
@@ -820,6 +826,19 @@ let Popup = (function() {
                         $(".user-name").text(response.user.name);
                         updateTable();
                         goTo(event.target.getAttribute('data-target'));
+
+                        if (getMode() == "individual") {
+                            _background.updateSamples((samples) => {
+                                _selectedProduct.estSale = parseInt(_background.estimation(_selectedProduct.bsr));
+                                renderTrackForm(_selectedProduct);
+                                goTo("track");
+                            }, (response) => {
+                                //  To do in failure.
+                                if (response.status == false && response.message == "Your token was expired.") {
+                                    goTo("login");
+                                }
+                            });
+                        }
                     } else {
                         $(".login-error-msg").show();
                     }
@@ -1239,6 +1258,7 @@ let Popup = (function() {
      */
     const init = function(tabId, params) {
         _curTabId = tabId;
+        _mode = params.mode;
         if (_background.get().domain == "amazon.com.au") {
             $("#category").children("option.category-books").remove();
             _background.set({
@@ -1311,9 +1331,9 @@ let Popup = (function() {
             category: params.category
         });
         if (params.mode == "individual") {
+            _selectedProduct = params.product;
             _background.updateSamples((samples) => {
-                params.product.estSale = parseInt(_background.estimation(params.product.bsr));
-                _selectedProduct = params.product;
+                _selectedProduct.estSale = parseInt(_background.estimation(_selectedProduct.bsr));
                 renderTrackForm(_selectedProduct);
                 goTo("track");
             }, (response) => {
