@@ -95,6 +95,10 @@ let Parser = (() => {
         let tags = priceText.split(" ");
         let currency = tags[tags.length - 1];
 
+        if (currency == "EUR") {
+            currency = "€";
+        }
+
         let prefix = '<meta name="keywords" content="';
         let suffix = '" />';
         let pos = text.indexOf(prefix) + prefix.length;
@@ -156,6 +160,11 @@ let Parser = (() => {
 
                 let tags = priceText.split(" ");
                 let currency = tags[tags.length - 1];
+                
+                if (currency == "EUR") {
+                    currency = "€";
+                }
+
                 let reviews = ($($posts[i]).find("a.a-size-small.a-link-normal").text() || "0").trim();
                 reviews = reviews.replace(/,/g, "");
                 reviews = parseInt(reviews);
@@ -204,7 +213,8 @@ let Parser = (() => {
                                 info.price = buffer.price || info.price;
                                 switch(_domain) {
                                     case "amazon.in":
-                                        info.currency = "INR";
+                                        // info.currency = "INR";
+                                        info.currency = "₹";
                                         break;
                                     
                                     case "amazon.com.au":
