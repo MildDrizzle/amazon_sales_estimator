@@ -861,6 +861,7 @@ let Popup = (function() {
                         event.target.setAttribute("data-id", response.product.id);
                         event.target.textContent = "Untrack this title";
                         event.target.className = "btn btn-danger";
+                        drawChart(response.product.id);
                     }, (response) => {
                         //  To do in failure.
                         if (response.status == false && response.message == "Your token was expired.") {
@@ -882,6 +883,10 @@ let Popup = (function() {
                         event.target.setAttribute("data-id", null);
                         event.target.textContent = "Track this title";
                         event.target.className = "btn btn-primary";
+                        $("#graph-container").children().remove();
+                        $("#graph-container").append(
+                            $(`<h4 style="text-align:center;padding-top:140px;">Tracking is not enabled for this title yet.</h4>`)
+                        );
                     }, (response) => {
                         //  To do in failure.
                         if (response.status == false && response.message == "Your token was expired.") {
