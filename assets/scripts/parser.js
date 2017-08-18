@@ -1,12 +1,14 @@
-let BookParser = (() => {
+let Parser = (() => {
     let _started = false;
-    let _category = "Books";
+    let _domain = null;
+    let _category = null;
+    let _mode = null;
 
     let _urls = [];
     let _searchPages = [];
     let _products = [];
     let _productsBuffer = [];
-
+    
     let _productPageTimer = null;
 
     let comPatterns = {
@@ -30,32 +32,32 @@ let BookParser = (() => {
         bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     }
     let dePatterns = {
-        pagesPattern: /(Geschenkartikel|Taschenbuch|Ausgabe|Broschiert):\s(\d+)\s/g,
+        pagesPattern: /(Geschenkartikel|Taschenbuch|Broschiert|Ausgabe|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
         bsrPattern: /(Amazon\sBestseller-Rang:\s+#)(\d+((,|.)\d+)*)/g
     }
     let esPatterns = {
-        pagesPattern: /(blanda|impresión):\s(\d+)\s/g,
+        pagesPattern: /(blanda|impresión|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
         bsrPattern: /(Clasificación\sen\slos\smás\svendidos\sde\sAmazon:\s*n.°\s*)(\d+((,|.)\d+)*)/g
     }
     let frPatterns = {
-        pagesPattern: /(Broché|Poche|imprimée)(\s*):\s(\d+)\s/g,
+        pagesPattern: /(Broché|Poche|Relié|imprimée)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
         bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\s*n°)(\d+((,|.)\d+)*)/g
     }
     let inPatterns = {
-        pagesPattern: /(Flexibound|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
+        pagesPattern: /(Flexibound|Paperback|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
         bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     }
     let itPatterns = {
-        pagesPattern: /(Copertina\srigida|flessibile|stampa)(\s*):\s(\d+)\s/g,
+        pagesPattern: /(Copertina\srigida|flessibile|stampa|Hardcover|\sLength|Paperback)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
         bsrPattern: /(Posizione\snella\sclassifica\sBestseller\sdi\sAmazon:\s+#)(\d+((,|.)\d+)*)/g
     }
     let jpPatterns = {
-        pagesPattern: /大型本:\s(\d+)/g,
+        pagesPattern: /(大型本|Hardcover|\sLength|Paperback):\s(\d+)/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
         bsrPattern: /(Amazon\s(Best\sSellers|Bestsellers)\sRank:\s+#)(\d+((,|.)\d+)*)/g
     }
@@ -72,25 +74,6 @@ let BookParser = (() => {
         "amazon.co.jp": jpPatterns
     }
 
-    /**
-     * Getting a proper amazon Best Seller Ranking url for Books category for the given page.
-     * @param {string} domain 
-     * @param {number} page 
-     * @return {string}
-     */
-    const getSearchPageUrl = (domain, page) => {
-        let url = null;
-        let protocol = window.location.protocol;
-        page = parseInt(page);
-
-        if (domain === "amazon.com") {
-            url = `${protocol}//www.amazon.com/best-sellers-books-Amazon/zgbs/books/ref=zg_bs_pg_${page}?_encoding=UTF8&pg=${page}&ajax=1`;
-        } else {
-            url = `${protocol}//www.${domain}/gp/bestsellers/books/ref=zg_bs_pg_${page}?ie=UTF8&pg=${page}&ajax=1`;
-        }
-
-        return url;
-    };
 
     /**
      * Function to parse necessary product detail info from amazon product detail page.
@@ -121,7 +104,7 @@ let BookParser = (() => {
         let isbn = "";
         let asin = ($page.find("input[name='ASIN.0']") || $page.find("#ASIN")).val();
         if (asin == undefined) {
-            debugger;
+            // debugger;
         }
 
         let bsrString = (bulletString.match(pattern.bsrPattern) || ["0"])[0].match(/\d+((,|.)\d+)*/g)[0];
@@ -234,6 +217,9 @@ let BookParser = (() => {
                                 }
 
                                 _products.push(info);
+                                // if (_products.length > 99) {
+                                //     _started = false;
+                                // }
                             }
                         }
                     });
@@ -258,19 +244,10 @@ let BookParser = (() => {
         }
     }
 
-    /**
-     * Initializer of Book Parsing Took for the given domain. This will be executed by message sent from backgroudn script.
-     * So when user choose "Books" category in Popup.
-     * @param {string} domain 
-     * @return {void}
-     */
-    const init = (domain) => {
-        _domain = domain;
+    const initListParser = () => {
         _started = true;
-        // parseSearchPage();
         let $links = $(".zg_page a");
         for (let i = 0; i < $links.length; i ++) {
-            // let url = getSearchPageUrl(domain, i);
             let url = $links.eq(i).attr("ajaxurl");
             _urls.push(url);
         }
@@ -281,33 +258,49 @@ let BookParser = (() => {
                 case "popup":
                     if (request.action == "get_data" && request.category == _category) {
                         sendResponse({
+                            layout: true,
+                            mode: _mode,
                             started: _started,
                             products: _products
                         });
                     }
                     break;
             }
-        })
+        });
+    }
 
-        // domain = window.location.host.substr("www.".length);
-        // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        //     let page = (request.page) ? request.page : 1;
-        //     if (request.category == "Books" && request.action == "get_data") {
-        //         _searchPages = [];
-        //         _products = [];
-        //         _started = true;
+    const initIndividualParser = () => {
+        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+            switch(request.from) {
+                case "popup":
+                    if (request.action == "get_data" && request.category == _category) {
+                        sendResponse({
+                            layout: true,
+                            mode: _mode,
+                            started: _started,
+                            products: _products
+                        });
+                    }
+                    break;
+            }
+        });
+    }
 
-        //         for (let i = 1; i < 6; i ++) {
-        //             _searchPages.push(getSearchPageUrl(domain, i));
-        //         }
-        //         extractProducts(domain, page);
-        //         sendResponse({
-        //             started: true
-        //         });
-        //     } else if (request.category == "Books" && request.action == "stop") {
-        //         _started = false;
-        //     }
-        // })
+    /**
+     * Initializer of eBook page scraping TOOL.
+     * @param {string} domain 
+     * @return {void}
+     */
+    const init = (domain, category, mode) => {
+        _domain = domain;
+        _category = category;
+        _mode = mode;
+
+        if (mode === "list") {
+            initListParser();
+        } else if (mode === "individual") {
+            initIndividualParser();
+        }
     };
 
     return {

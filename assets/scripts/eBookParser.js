@@ -7,8 +7,7 @@ let EBookParser = (() => {
     let _searchPages = [];
     let _products = [];
     let _productsBuffer = [];
-
-    let _searchResultTimer = null;
+    
     let _productPageTimer = null;
 
     let comPatterns = {
@@ -121,7 +120,7 @@ let EBookParser = (() => {
         pos = tmp.indexOf(suffix);
         let keywords = tmp.substr(0, pos).trim();
         let isbn = "";
-        let asin = $page.find("input[name='ASIN.0']").val();
+        let asin = ($page.find("input[name='ASIN.0']") || $page.find("#ASIN")).val();
         if (asin == undefined) {
             // debugger;
         }

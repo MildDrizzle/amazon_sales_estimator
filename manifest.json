@@ -43,6 +43,7 @@
 				"assets/scripts/jquery.js",
 				"assets/scripts/bookParser.js",
 				"assets/scripts/eBookParser.js",
+				"assets/scripts/parser.js",
 				"assets/scripts/content.js"
 			],
 			"run_at": "document_end",
