@@ -46,6 +46,19 @@ let Popup = (function() {
     let _nicheHuntersTable = $("table#niche-hunters-table");
 
     let _globalTimer = null;
+
+    let _validDomains = [
+        "amazon.com.au",
+        "amazon.ca",
+        "amazon.com",
+        "amazon.co.uk",
+        "amazon.de",
+        "amazon.es",
+        "amazon.fr",
+        "amazon.in",
+        "amazon.it",
+        // "amazon.co.jp",
+    ];
     
     const bsrPagesPath = {
         "Books": {
@@ -1139,34 +1152,33 @@ let Popup = (function() {
      */
     const updateTable = () => {
         let {pattern, http, https} = getSearchUrl();
-        let products = _background.get().products;
         let trackingProducts = _background.items();
         let $trackingCount = $(".tracking-count");
 
         $trackingCount.text(trackingProducts.length);
 
-        chrome.tabs.query({url: pattern}, (tabs) => {
-            if (tabs.length > 0) {
-                _background.set({
-                    curTab: tabs[0].id
-                });
+        // chrome.tabs.query({url: pattern}, (tabs) => {
+        //     if (tabs.length > 0) {
+        //         _background.set({
+        //             curTab: tabs[0].id
+        //         });
 
-                _curTabId = tabs[0].id;
+        //         _curTabId = tabs[0].id;
 
-                chrome.tabs.update(tabs[0].id, {active:true}, () => {
-                    let status = _background.get();
-                    initEvents();
-                });
-            } else {
-                chrome.tabs.create({
-                    url: http
-                }, (tab) => {
-                    _background.set({
-                        curTab: tab.id
-                    });
-                });
-            }
-        });
+        //         chrome.tabs.update(tabs[0].id, {active:true}, () => {
+        //             let status = _background.get();
+        //             initEvents();
+        //         });
+        //     } else {
+        //         chrome.tabs.create({
+        //             url: http
+        //         }, (tab) => {
+        //             _background.set({
+        //                 curTab: tab.id
+        //             });
+        //         });
+        //     }
+        // });
     }
 
     const checkSubscription = () => {
@@ -1192,7 +1204,8 @@ let Popup = (function() {
     /**
      * Initializer of this object. In this method, periodic bot to refresh table will be initialized.
      */
-    const init = function() {
+    const init = function(tabId, params) {
+        _curTabId = tabId;
         if (_background.get().domain == "amazon.com.au") {
             $("#category").children("option.category-books").remove();
             _background.set({
@@ -1200,7 +1213,8 @@ let Popup = (function() {
             });
         }
 
-        updateTable();
+        // updateTable();
+        initEvents();
 
         if (!_globalTimer) {
             _globalTimer = window.setInterval(() => {
@@ -1254,7 +1268,32 @@ let Popup = (function() {
             for (let i = 0; i < $buttons.length; i ++) {
                 $buttons.eq(i).click();
             }
-        })
+        });
+
+        $_domain.val(params.domain);
+        $_category.val(params.category).change();
+
+        _background.set({
+            domain: params.domain,
+            category: params.category
+        });
+        if (params.mode == "individual") {
+            _background.updateSamples((samples) => {
+                params.product.estSale = parseInt(_background.estimation(params.product.bsr));
+                _selectedProduct = params.product;
+                renderTrackForm(_selectedProduct);
+                goTo("track");
+            }, (response) => {
+                //  To do in failure.
+                if (response.status == false && response.message == "Your token was expired.") {
+                    goTo("login");
+                }
+            });
+        } else if (params.mode == "list") {
+            goTo("results");
+        } else if (!params.layout) {
+            goTo();
+        }
     };
 
     const getSelectedProduct = () => {
@@ -1263,10 +1302,35 @@ let Popup = (function() {
 
     return {
         init: init,
-        selected: getSelectedProduct
+        domains: _validDomains,
+        selected: getSelectedProduct,
+        searchURL: getSearchUrl
     };
 })();
 
 (function(window, jQuery) {
-    Popup.init();
+    const isCorrectUrl = (url) => {
+        let loc = new URL(url);
+        let wwwPrefix = "www.";
+        let domain = (loc.hostname.indexOf(wwwPrefix) > -1) ? loc.host.substr(wwwPrefix.length) : loc.host;
+
+        if (["http:", "https:"].indexOf(loc.protocol) == -1) {
+            return false;
+        } else if (Popup.domains.indexOf(domain) == -1) {
+            return false;
+        }
+        return true;
+    }
+    chrome.tabs.query({active: true}, (tabs) => {
+        if (isCorrectUrl(tabs[0].url)) {
+            chrome.tabs.sendMessage(tabs[0].id, {
+                from: "popup", 
+                action: "get_data"
+            }, (response) => {
+                Popup.init(tabs[0].id, response);
+            });
+        } else {
+            chrome.tabs.create({url: Popup.searchURL().https});
+        }
+    });
 })(window, $);

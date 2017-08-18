@@ -84,7 +84,7 @@ let Parser = (() => {
         let pattern = regPatterns[_domain];
         let $page = $(text);
         let title = ($page.find("#ebooksProductTitle")[0] || $page.find("#productTitle")[0]).textContent;
-        let imgTag = ($page.find("#mainImageContainer")[0] || $page.find("#ebooks-img-canvas")[0]).querySelector("img");
+        let imgTag = ($page.find("#mainImageContainer")[0] || $page.find("#main-image-container")[0] || $page.find("#ebooks-img-canvas")[0]).querySelector("img");
         let img = null;
         try {
             let tmpString = imgTag.getAttribute("data-a-dynamic-image");
@@ -129,6 +129,9 @@ let Parser = (() => {
         let bsrString = (bulletString.match(pattern.bsrPattern) || ["0"])[0].match(/\d+((,|.)\d+)*/g)[0];
         let bsr = parseInt(bsrString.replace(/(,|\.)/g, ""));
 
+        let reviewsText = ($page.find("#acrCustomerReviewText")[0] || {}).textContent || "0";
+        let reviews = parseInt(reviewsText.match(/\d+(,\d+)*/g)[0].replace(/,/g, ""));
+
         return {
             title,
             img,
@@ -139,6 +142,7 @@ let Parser = (() => {
             bsr,
             price,
             currency,
+            reviews,
             isbn
         };
     };
@@ -284,9 +288,11 @@ let Parser = (() => {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             switch(request.from) {
                 case "popup":
-                    if (request.action == "get_data" && request.category == _category) {
+                    if (request.action == "get_data") {
                         sendResponse({
                             layout: true,
+                            domain: _domain,
+                            category: _category,
                             mode: _mode,
                             started: _started,
                             products: _products
@@ -303,12 +309,15 @@ let Parser = (() => {
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             switch(request.from) {
                 case "popup":
-                    if (request.action == "get_data" && request.category == _category) {
+                    if (request.action == "get_data") {
                         sendResponse({
                             layout: true,
                             mode: _mode,
+                            domain: _domain,
+                            category: _category,
                             started: _started,
-                            products: _products
+                            products: _products,
+                            product
                         });
                     }
                     break;

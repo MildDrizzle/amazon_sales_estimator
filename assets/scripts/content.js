@@ -77,7 +77,7 @@ let ContentScript = (function() {
 			chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 				switch(request.from) {
 					case "popup":
-						if (request.action == "get_data" && request.category == _category) {
+						if (request.action == "get_data") {
 							sendResponse({
 								started: _started,
 								layout: false

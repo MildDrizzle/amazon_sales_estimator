@@ -18,11 +18,6 @@
 	},
 	"permissions": [
 		"tabs",
-		"*://www.rightmove.co.uk/*",
-		"*://www.zoopla.co.uk/*",
-		"*://www.onthemarket.com/*",
-		"http://localhost/*",
-		"*://54.175.85.52/*",
 		"storage"
 	],
 	"content_scripts": [
