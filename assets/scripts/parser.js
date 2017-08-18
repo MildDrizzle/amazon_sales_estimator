@@ -39,12 +39,12 @@ let Parser = (() => {
     let esPatterns = {
         pagesPattern: /(blanda|impresión|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Clasificación\sen\slos\smás\svendidos\sde\sAmazon:\s*n\.°\s*)(\d+((,|.)\d+)*)/g
+        bsrPattern: /(Clasificación\sen\slos\smás\svendidos\sde\sAmazon:\s*n(\.*)(°|º)\s*)(\d+((,|.)\d+)*)/g
     }
     let frPatterns = {
         pagesPattern: /(Broché|Poche|Relié|imprimée)(\s*):\s(\d+)\s/g,
         isbnPattern: /ISBN\-13:\s(\d+\-\d+)/g,
-        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\s*(n°)*)(\d+((,|.)\d+)*)/g
+        bsrPattern: /(Classement\sdes\smeilleures\sventes\sd\'Amazon:\s*n(\.*)(°|º)*)(\d+((,|.)\d+)*)/g
     }
     let inPatterns = {
         pagesPattern: /(Flexibound|Paperback|Hardcover|\sLength|Paperback):\s(\d+)\s/g,
@@ -109,6 +109,18 @@ let Parser = (() => {
         priceText = priceText.substr(0, priceText.indexOf(price)).trim();
         let tags = priceText.split(" ");
         let currency = tags[tags.length - 1];
+        price = price.replace(/,/g, ".");
+
+        switch(_domain) {
+            case "amazon.in":
+                // currency = "INR";
+                currency = "₹";
+                break;
+            
+            case "amazon.com.au":
+                currency = "AUD";
+                break;
+        }
 
         if (currency == "EUR") {
             currency = "€";

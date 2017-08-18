@@ -1048,37 +1048,65 @@ let Popup = (function() {
                 }).text("Books"))
             }
 
-            _background.updateSamples((samples) => {
-                _background.set({
-                    domain: event.target.value,
-                    products: []
-                });
-                _background.started(false);
-                updateTable();
-            }, (response) => {
-                //  To do in failure.
-                if (response.status == false && response.message == "Your token was expired.") {
-                    goTo("login");
-                }
+             _background.set({
+                domain: event.target.value,
+                products: []
             });
+
+            let {pattern, http, https} = getSearchUrl();
+            chrome.tabs.create({
+                url: http
+            }, (tab) => {
+                _background.set({
+                    curTab: tab.id
+                });
+            });
+
+            // _background.updateSamples((samples) => {
+            //     _background.set({
+            //         domain: event.target.value,
+            //         products: []
+            //     });
+            //     _background.started(false);
+            //     updateTable();
+            // }, (response) => {
+            //     //  To do in failure.
+            //     if (response.status == false && response.message == "Your token was expired.") {
+            //         goTo("login");
+            //     }
+            // });
         })
         .on("change", "#category", (event) => {
             event.preventDefault();
 
-            _background.updateSamples((samples) => {
-                _background.set({
-                    category: event.target.value,
-                    products: []
-                });
-                _background.started(false);
-
-                updateTable();
-            }, (response) => {
-                //  To do in failure.
-                if (response.status == false && response.message == "Your token was expired.") {
-                    goTo("login");
-                }
+            _background.set({
+                category: event.target.value,
+                products: []
             });
+
+            let {pattern, http, https} = getSearchUrl();
+            chrome.tabs.create({
+                url: http
+            }, (tab) => {
+                _background.set({
+                    curTab: tab.id
+                });
+            });
+
+            // _background.updateSamples((samples) => {
+            //     _background.set({
+            //         category: event.target.value,
+            //         products: []
+            //     });
+            //     _background.started(false);
+
+            //     updateTable();
+            // }, (response) => {
+            //     //  To do in failure.
+            //     if (response.status == false && response.message == "Your token was expired.") {
+            //         goTo("login");
+            //     }
+            // });
         })
         .on("change", "#revenue_option", (event) => {
             _revenueOption = event.target.value;
@@ -1276,7 +1304,7 @@ let Popup = (function() {
         });
 
         $_domain.val(params.domain);
-        $_category.val(params.category).change();
+        $_category.val(params.category);
 
         _background.set({
             domain: params.domain,
