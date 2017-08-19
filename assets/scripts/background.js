@@ -187,6 +187,10 @@ let Background = (() => {
 		if (typeof bsr === "string") {
 			bsr = parseInt(bsr);
 		}
+
+		if (bsr == 0) {
+			return 0;
+		}
         let _data = _initialSamples;
 		let _estimation = null;
 
