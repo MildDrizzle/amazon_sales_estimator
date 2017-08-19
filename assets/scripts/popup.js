@@ -11,7 +11,7 @@ let Popup = (function() {
             "login"
         ];
 
-    let _mode = null;
+    let _mode = "list";
 
     let _subscriptionCheckInterval = null;
     let _itemsTable = null;
@@ -150,6 +150,9 @@ let Popup = (function() {
      * @return {void}
      */
     let drawTable = function(forceFlag) {
+        if (!_curTabId) {
+            return false;
+        }
         chrome.tabs.sendMessage(_curTabId, {
             from: "popup",
             action: "get_data",
@@ -731,9 +734,9 @@ let Popup = (function() {
      * @param {string} step 
      */
     const goTo = (step) => {
-        let userInfo = JSON.parse(localStorage._user || "{}");
+        let userInfo = getUser();
 
-        if ((userInfo.membership_tier == "t" || userInfo.membership_tier == "l") && step == "niche-hunters") {
+        if ((userInfo.membership_tier == "t" || userInfo.membership_tier == "l" || userInfo.membership_tier == "e") && step == "niche-hunters") {
             alert("Your membership can't visit the Niche Hunters.");
             return false;
         }
@@ -1239,7 +1242,7 @@ let Popup = (function() {
     }
 
     const checkSubscription = () => {
-        let userInfo = JSON.parse(localStorage._user || "{}");
+        let userInfo = getUser();
         let token = JSON.parse(localStorage._token || "null");
 
         if (token && userInfo.email) {
@@ -1262,8 +1265,6 @@ let Popup = (function() {
      * Initializer of this object. In this method, periodic bot to refresh table will be initialized.
      */
     const init = function(tabId, params) {
-        _curTabId = tabId;
-        _mode = params.mode;
         if (_background.get().domain == "amazon.com.au") {
             $("#category").children("option.category-books").remove();
             _background.set({
@@ -1296,61 +1297,71 @@ let Popup = (function() {
             goTo("track");
         }));
 
-        if (JSON.parse(localStorage._token || "null")) {
-            let userInfo = JSON.parse(localStorage._user);
-
-            $(".user-name").text(userInfo.name);
-        }
-
         $("#revenue_option").val(_revenueOption);
+        
+                $(document)
+                .on("keypress", "#login-email", (event) => {
+                    if (event.which == 13 || event.keyCode == 13) {
+                        if (event.target.value.trim() !== "") {
+                            $("#login-password").focus();
+                        }
+                    }
+                })
+                .on("keypress", "#login-password", (event) => {
+                    if (event.which == 13 || event.keyCode == 13) {
+                        if ($("#login-email").val().trim() !== "" && $("#login-password").val().trim() != "") {
+                            $("#login-submit").click();
+                        }
+                    }
+                })
+                .on("click", "#untrack-all", (event) => {
+                    event.preventDefault();
+        
+                    let $buttons = $("#tracking-products-table .untrack-product");
+                    for (let i = 0; i < $buttons.length; i ++) {
+                        $buttons.eq(i).click();
+                    }
+                });
 
-        $(document)
-        .on("keypress", "#login-email", (event) => {
-            if (event.which == 13 || event.keyCode == 13) {
-                if (event.target.value.trim() !== "") {
-                    $("#login-password").focus();
-                }
+        if (!params) {
+            goTo("login");
+        } else {
+            _curTabId = tabId;
+            _mode = params.mode;
+        
+
+            if (JSON.parse(localStorage._token || "null")) {
+                let userInfo = JSON.parse(localStorage._user);
+
+                $(".user-name").text(userInfo.name);
             }
-        })
-        .on("keypress", "#login-password", (event) => {
-            if (event.which == 13 || event.keyCode == 13) {
-                if ($("#login-email").val().trim() !== "" && $("#login-password").val().trim() != "") {
-                    $("#login-submit").click();
-                }
-            }
-        })
-        .on("click", "#untrack-all", (event) => {
-            event.preventDefault();
 
-            let $buttons = $("#tracking-products-table .untrack-product");
-            for (let i = 0; i < $buttons.length; i ++) {
-                $buttons.eq(i).click();
-            }
-        });
+        
 
-        $_domain.val(params.domain);
-        $_category.val(params.category);
+            $_domain.val(params.domain);
+            $_category.val(params.category);
 
-        _background.set({
-            domain: params.domain,
-            category: params.category
-        });
-        if (params.mode == "individual") {
-            _selectedProduct = params.product;
-            _background.updateSamples((samples) => {
-                _selectedProduct.estSale = parseInt(_background.estimation(_selectedProduct.bsr));
-                renderTrackForm(_selectedProduct);
-                goTo("track");
-            }, (response) => {
-                //  To do in failure.
-                if (response.status == false && response.message == "Your token was expired.") {
-                    goTo("login");
-                }
+            _background.set({
+                domain: params.domain,
+                category: params.category
             });
-        } else if (params.mode == "list") {
-            goTo("results");
-        } else if (!params.layout) {
-            goTo();
+            if (params.mode == "individual") {
+                _selectedProduct = params.product;
+                _background.updateSamples((samples) => {
+                    _selectedProduct.estSale = parseInt(_background.estimation(_selectedProduct.bsr));
+                    renderTrackForm(_selectedProduct);
+                    goTo("track");
+                }, (response) => {
+                    //  To do in failure.
+                    if (response.status == false && response.message == "Your token was expired.") {
+                        goTo("login");
+                    }
+                });
+            } else if (params.mode == "list") {
+                goTo("results");
+            } else if (!params.layout) {
+                goTo();
+            }
         }
     };
 
@@ -1380,15 +1391,20 @@ let Popup = (function() {
         return true;
     }
     chrome.tabs.query({active: true}, (tabs) => {
-        if (isCorrectUrl(tabs[0].url)) {
-            chrome.tabs.sendMessage(tabs[0].id, {
-                from: "popup", 
-                action: "get_data"
-            }, (response) => {
-                Popup.init(tabs[0].id, response);
-            });
+        
+        if (JSON.parse(localStorage._token || "null") && JSON.parse(localStorage._user || "{}").membership_tier && JSON.parse(localStorage._user || "{}").membership_tier != "e") {
+            if (isCorrectUrl(tabs[0].url)) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    from: "popup", 
+                    action: "get_data"
+                }, (response) => {
+                    Popup.init(tabs[0].id, response);
+                });
+            } else {
+                chrome.tabs.create({url: Popup.searchURL().https});
+            }
         } else {
-            chrome.tabs.create({url: Popup.searchURL().https});
+            Popup.init(tabs[0].id);
         }
     });
 })(window, $);
