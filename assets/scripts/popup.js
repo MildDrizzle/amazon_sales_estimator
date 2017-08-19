@@ -617,21 +617,22 @@ let Popup = (function() {
     }
 
     const downloadProduct = (p) => {
-        const toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
-        let category = $_category.val();
+        downloadProductsToCSV([p]);
+        // const toLine = arr => arr.map(x => `"${(x + "").replace(/"/g, '""')}"`).join(",");
+        // let category = $_category.val();
 
-        let data = [
-            toLine([ "BSR", Number(p.bsr).toLocaleString() ]),
-            toLine([ "Title", p.title ]),
-            toLine([ "Pages", p.pages ]),
-            toLine([ "Price", p.currency + p.price ]),
-            toLine([ "Reviews", Number(p.reviews).toLocaleString() ]),
-            toLine([ "Est. Sales", Number(parseInt(_background.estimation(p.bsr))).toLocaleString() ]),
-            toLine([ "Est. Revenue", p.currency + Number(parseInt(_background.estimation(p.bsr) * p.price)).toLocaleString() ]),
-            toLine([ "URL", p.url ])
-        ]
+        // let data = [
+        //     toLine([ "BSR", Number(p.bsr).toLocaleString() ]),
+        //     toLine([ "Title", p.title ]),
+        //     toLine([ "Pages", p.pages ]),
+        //     toLine([ "Price", p.currency + p.price ]),
+        //     toLine([ "Reviews", Number(p.reviews).toLocaleString() ]),
+        //     toLine([ "Est. Sales", Number(parseInt(_background.estimation(p.bsr))).toLocaleString() ]),
+        //     toLine([ "Est. Revenue", p.currency + Number(parseInt(_background.estimation(p.bsr) * p.price)).toLocaleString() ]),
+        //     toLine([ "URL", p.url ])
+        // ]
 
-        downloadPlaintext(data.join("\n"), `${category}-detail-${new Date().toISOString()}.csv`)
+        // downloadPlaintext(data.join("\n"), `${category}-detail-${new Date().toISOString()}.csv`)
     }
 
     /**
