@@ -126,10 +126,17 @@ let restAPI = (function(window, jQuery) {
 	 * @param {function} failure 
 	 * @return {void}
 	 */
-	const getHistories = (id, success, failure) => {
+	const getHistories = (id, product, success, failure) => {
 		let params = {
 			token: JSON.parse(localStorage._token),
-			id: id
+			id: id,
+			pages: product.pages,
+			bsr: product.bsr,
+			currency: product.currency,
+			price: product.price,
+			est: product.estSale,
+			monthly_rev: product.monthly_rev,
+			reviews: product.reviews,
 		};
 
 		sendRequest(_v1ApiBaseUrl + "items/get", params, success, failure);
@@ -168,7 +175,7 @@ let restAPI = (function(window, jQuery) {
 		sendRequest(_v1ApiBaseUrl + "items", params, success, failure);
 	}
 
-	const findTrackingProduct = (productId, success, failure) => {
+	const findTrackingProduct = (productId, product, success, failure) => {
 		let params = {
 			token: JSON.parse(localStorage._token),
 			id: productId
@@ -215,7 +222,7 @@ let restAPI = (function(window, jQuery) {
 		base: _mainHost,
 		apiBaseUrl: _v1ApiBaseUrl,
 		trackings: getTrackingProducts,
-		findTrack: findTrackingProduct,
+		findTrack: getHistories,
 		track: trackProduct,
 		untrack: untrackProduct,
 		histories: getHistories,

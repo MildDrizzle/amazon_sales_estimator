@@ -18,6 +18,7 @@
 	},
 	"permissions": [
 		"tabs",
+		"http://34.230.77.124/",
 		"storage"
 	],
 	"content_scripts": [

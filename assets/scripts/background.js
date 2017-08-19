@@ -318,8 +318,8 @@ let Background = (() => {
 	 * @param {function} failure 
 	 * @return {void}
 	 */
-	const getHistories = (id, success, failure) => {
-		_restAPI.histories(id, success, failure);
+	const getHistories = (id, product, success, failure) => {
+		_restAPI.histories(id, product, success, failure);
 	}
 
 	/**
@@ -373,8 +373,8 @@ let Background = (() => {
 	 * @param {function} failure 
 	 * @return {void}
 	 */
-	const findTrackingProduct = (id, success, failure) => {
-		_restAPI.findTrack(id, (response) => {
+	const findTrackingProduct = (id, product, success, failure) => {
+		_restAPI.findTrack(id, product, (response) => {
 			if (response.status) {
 				if (typeof success == "function") {
 					success(response);
@@ -408,7 +408,7 @@ let Background = (() => {
 		url: getCurUrl,
 		estimation: calculate,
 		items: getTrackingProducts,
-		item: findTrackingProduct,
+		item: getHistories,
 		track: trackProduct,
 		untrack: untrackProduct,
 		histories: getHistories,

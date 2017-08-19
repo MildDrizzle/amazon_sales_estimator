@@ -502,10 +502,12 @@ let Popup = (function() {
     /**
      * Draw change history chart for a given product being tracked by user.
      * @param {number} productID 
+     * @param {object} product
      * @return {void}
      */
-    const drawChart = (productID) => {
-        _background.histories(productID, (response) => {
+    const drawChart = (productID, product) => {
+        product.monthly_rev = parseInt(_background.estimation(product.bsr));
+        _background.histories(productID, product, (response) => {
             let revenueData = [];
             let bsrData = [];
             let xAxisData = [];
@@ -529,7 +531,7 @@ let Popup = (function() {
             let tmp = parseInt((new Date() - new Date(first)) / (24 * 3600 * 1000));
             $avgDailyRevenue.text(lastHistory.currency + Number(parseInt(dailyRevenueSum / daysTracking)).toLocaleString());
             $(".footer-tracking-days").text(tmp);
-            $(".footer-avg-bsr").text(parseInt(avgBSR / daysTracking));
+            $(".footer-avg-bsr").text("#" + Number(parseInt(avgBSR / daysTracking)).toLocaleString());
 
             Highcharts.chart('graph-container', {
                 chart: {
@@ -665,13 +667,14 @@ let Popup = (function() {
         $asin.text(product.asin);
         $price.text(product.currency + product.price);
         $reviews.text(Number(product.reviews).toLocaleString());
-        $bsr.text("#" + Number(product.bsr).toLocaleString());
+        $bsr.text( "#" + Number(product.bsr).toLocaleString());
         $isbn.text(product.isbn);
         product.estSale = parseInt(_background.estimation(product.bsr));
         // $revenue.text(product.currency + Number(parseInt((parseFloat(product.price || 1) * parseInt(product.estSale || 1)))).toLocaleString());
         $revenue.text(product.currency + Number(parseInt(_background.estimation(product.bsr) * parseFloat(product.price))).toLocaleString());
         
         $estSales.text(Number(product.estSale).toLocaleString());
+        $(".footer-avg-bsr").text("-")
 
         let trackingProducts = _background.items().filter(item => item.product.asin == product.asin);
         let trackButton = document.getElementById("product-track");
@@ -694,7 +697,7 @@ let Popup = (function() {
             trackButton.className = "btn btn-danger";
             $(".track-detail-info").show();
 
-            drawChart(trackingProducts[0].product.id);
+            drawChart(trackingProducts[0].product.id, product);
         } else {
             trackButton.setAttribute("data-id", null);
             trackButton.setAttribute("data-action", "track");
@@ -1040,7 +1043,7 @@ let Popup = (function() {
             let items = _background.items();
             let product = items[index];
             
-            _background.item(product.product.id, (response) => {
+            _background.item(product.product.id, {}, (response) => {
                 debugger;
                 product = response.product;
                 renderTrackForm(product, true);
