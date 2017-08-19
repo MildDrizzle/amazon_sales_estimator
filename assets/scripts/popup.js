@@ -11,7 +11,7 @@ let Popup = (function() {
             "login"
         ];
 
-    let _mode = "list";
+    let _mode = null;
 
     let _subscriptionCheckInterval = null;
     let _itemsTable = null;
@@ -835,7 +835,10 @@ let Popup = (function() {
                         updateTable();
                         goTo(event.target.getAttribute('data-target'));
 
-                        if (getMode() == "individual") {
+                        if (!getMode()) {
+                            chrome.tabs.create({url: getSearchUrl().https});
+                        }
+                        else if (getMode() == "individual") {
                             _background.updateSamples((samples) => {
                                 _selectedProduct.estSale = parseInt(_background.estimation(_selectedProduct.bsr));
                                 renderTrackForm(_selectedProduct);
