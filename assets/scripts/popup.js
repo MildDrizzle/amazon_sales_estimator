@@ -829,26 +829,31 @@ let Popup = (function() {
             } else if (event.target.getAttribute('data-action') === "login") {
                 _background.login($("#login-email").val(), $("#login-password").val(), (response) => {
                     if (response.status) {
-                        setToken(response.token, response.user);
-                        $(".login-error-msg").hide();
-                        $(".user-name").text(response.user.name);
-                        updateTable();
-                        goTo(event.target.getAttribute('data-target'));
+                        if (response.user.membership_tier === "e") {
+                            $("#renew .main-nav-link").hide();
+                            goTo("renew");
+                        } else {
+                            setToken(response.token, response.user);
+                            $(".login-error-msg").hide();
+                            $(".user-name").text(response.user.name);
+                            updateTable();
+                            goTo(event.target.getAttribute('data-target'));
 
-                        if (!getMode()) {
-                            chrome.tabs.create({url: getSearchUrl().https});
-                        }
-                        else if (getMode() == "individual") {
-                            _background.updateSamples((samples) => {
-                                _selectedProduct.estSale = parseInt(_background.estimation(_selectedProduct.bsr));
-                                renderTrackForm(_selectedProduct);
-                                goTo("track");
-                            }, (response) => {
-                                //  To do in failure.
-                                if (response.status == false && response.message == "Your token was expired.") {
-                                    goTo("login");
-                                }
-                            });
+                            if (!getMode()) {
+                                chrome.tabs.create({url: getSearchUrl().https});
+                            }
+                            else if (getMode() == "individual") {
+                                _background.updateSamples((samples) => {
+                                    _selectedProduct.estSale = parseInt(_background.estimation(_selectedProduct.bsr));
+                                    renderTrackForm(_selectedProduct);
+                                    goTo("track");
+                                }, (response) => {
+                                    //  To do in failure.
+                                    if (response.status == false && response.message == "Your token was expired.") {
+                                        goTo("login");
+                                    }
+                                });
+                            }
                         }
                     } else {
                         $(".login-error-msg").show();
