@@ -530,6 +530,7 @@ let Popup = (function() {
             let first = response.histories[0].updated_at;
             let tmp = parseInt((new Date() - new Date(first)) / (24 * 3600 * 1000));
             $avgDailyRevenue.text(lastHistory.currency + Number(parseInt(dailyRevenueSum / daysTracking)).toLocaleString());
+            $("#product-monthly_revenue").text("#" + Number(parseInt(dailyRevenueSum / daysTracking * 30).toLocaleString()));
             $(".footer-tracking-days").text(tmp);
             $(".footer-avg-bsr").text("#" + Number(parseInt(avgBSR / daysTracking)).toLocaleString());
 
